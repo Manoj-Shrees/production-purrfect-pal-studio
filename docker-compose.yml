@@ -1,0 +1,47 @@
+services:
+
+# purrfect pal main web-app
+  main-app:
+    build: ./main-app
+    container_name: main-app-c
+  
+# MySQL Database
+  db:
+    image: manojshrees/purrfectpalstudio-db:latest
+    container_name: db-c
+    ports:
+      - "3306:3306"
+    restart: unless-stopped # Automatically restart the container if it stops
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+
+# Node.js Backend
+  backend:
+    image: manojshrees/purrfectpalstudio-backend:latest
+    container_name: backend-c
+    ports:
+      - "3000:3000"
+    restart: unless-stopped  # Automatically restart the container if it stops
+    depends_on:
+      - db
+
+
+# nginx Frontend
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - main-app-c
+      - db-c
+      - backend-c
+
+
+
+# Volumes for persistent data
+volumes:
+  mysql_data:
