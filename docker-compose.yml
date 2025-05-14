@@ -4,6 +4,8 @@ services:
   main-app:
     build: ./main-app
     container_name: main-app-c
+    expose:
+      - "80"
   
 # MySQL Database
   db:
@@ -32,7 +34,8 @@ services:
     image: nginx:latest
     container_name: nginx-proxy
     ports:
-      - "80"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
