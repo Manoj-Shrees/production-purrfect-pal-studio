@@ -22,7 +22,7 @@ services:
     image: manojshrees/purrfectpalstudio-backend:latest
     container_name: backend-c
     ports:
-      - "3000:3000"
+      - "8080:8080"
     restart: unless-stopped  # Automatically restart the container if it stops
     depends_on:
       - db
@@ -36,6 +36,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./main-app/dist:/usr/share/nginx/html
 
     depends_on:
       - main-app
