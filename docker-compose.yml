@@ -3,7 +3,7 @@ services:
 # purrfect pal main web-app
   main-app:
     build: ./main-app
-    container_name: main-app-c
+    container_name: main-app
   
 # MySQL Database
   db:
@@ -36,7 +36,7 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - main-app-c
+      - main-app
       - db-c
       - backend-c
 
