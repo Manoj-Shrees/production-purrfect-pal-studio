@@ -4,9 +4,7 @@ services:
   main-app:
     build: ./main-app
     container_name: main-app-c
-    expose:
-      - "80"  # Exposing port 80 internally to other services, but NOT binding to host port
-
+    
   # MySQL Database
   db:
     image: manojshrees/purrfectpalstudio-db:latest
@@ -36,6 +34,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
       - ./main-app/dist:/usr/share/nginx/html
 
     depends_on:
