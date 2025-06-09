@@ -7,6 +7,11 @@ services:
     build: ./main-app
     container_name: main-app-c
 
+  # Artist Angular App (builds with Dockerfile in ./artist-app)
+  artist-app:
+    build: ./artist-app
+    container_name: artist-app-c
+
   # MySQL Database
   db:
     image: manojshrees/purrfectpalstudio-db:latest
@@ -53,6 +58,7 @@ services:
 
     depends_on:
       - main-app
+      - artist-app
       - backend
       - db
 
