@@ -1,17 +1,19 @@
+version: '3.8'
+
 services:
 
-  # purrfect pal main web-app
+  # Main Angular App (builds with Dockerfile in ./main-app)
   main-app:
     build: ./main-app
     container_name: main-app-c
-    
+
   # MySQL Database
   db:
     image: manojshrees/purrfectpalstudio-db:latest
     container_name: db-c
     ports:
       - "3306:3306"
-    restart: unless-stopped # Automatically restart the container if it stops
+    restart: unless-stopped
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -21,30 +23,38 @@ services:
     container_name: backend-c
     ports:
       - "8080:8080"
-    restart: unless-stopped  # Automatically restart the container if it stops
+    restart: unless-stopped
     depends_on:
       - db
 
-  # Nginx Frontend
+  # Nginx Frontend (serves both Angular apps + API proxy)
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
     ports:
-      - "80:80"  # Nginx container will bind port 80 on the host to its port 80 (only this container)
-      - "443:443"  # Nginx container will bind port 443 on the host to its port 443 (only this container)
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      # Main Nginx config and site configs
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+      # Shared proxy config
+      - ./nginx/api_proxy.conf:/etc/nginx/api_proxy.conf:ro
+      - ./nginx/proxy_params:/etc/nginx/proxy_params:ro
+
+      # SSL Certificates
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./certs:/etc/ssl/certs:ro
-      - ./main-app/dist:/usr/share/nginx/html
+
+      # Angular built apps (assumes apps are pre-built)
+      - ./main-app/dist:/usr/share/nginx/html/main-app:ro
+      - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro  # Add this if you have a second app
 
     depends_on:
       - main-app
-      - db 
       - backend
+      - db
 
-# Volumes for persistent data
 volumes:
   mysql_data:
