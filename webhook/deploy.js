@@ -21,7 +21,7 @@ http.createServer((req, res) => {
       }
       
       // Pull latest code and rebuild Docker
-      exec('cd /path/to/your/repo && git pull && docker-compose up -d --build', (err, stdout, stderr) => {
+      exec('cd production-purrfect-pal-studio && git pull && docker-compose up -d --build', (err, stdout, stderr) => {
         if (err) {
           console.error('Deploy error:', err);
           res.writeHead(500);
