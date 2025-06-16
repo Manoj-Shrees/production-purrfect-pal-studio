@@ -62,5 +62,11 @@ services:
       - backend
       - db
 
+  webhook:
+    build: ./webhook
+    container_name: webhook-listener
+    networks:
+      - pps-network
+
 volumes:
   mysql_data:
