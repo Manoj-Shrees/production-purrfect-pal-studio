@@ -6,11 +6,15 @@ services:
   main-app:
     build: ./main-app
     container_name: main-app-c
+    networks:
+      - pps-network
 
   # Artist Angular App (builds with Dockerfile in ./artist-app)
   artist-app:
     build: ./artist-app
     container_name: artist-app-c
+    networks:
+      - pps-network
 
   # MySQL Database
   db:
@@ -21,6 +25,8 @@ services:
     restart: unless-stopped
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - pps-network
 
   # Node.js Backend
   backend:
@@ -31,6 +37,8 @@ services:
     restart: unless-stopped
     depends_on:
       - db
+    networks:
+      - pps-network
 
   # Nginx Frontend (serves both Angular apps + API proxy)
   nginx:
@@ -54,14 +62,17 @@ services:
 
       # Angular built apps (assumes apps are pre-built)
       - ./main-app/dist:/usr/share/nginx/html/main-app:ro
-      - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro  # Add this if you have a second app
+      - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro
 
     depends_on:
       - main-app
       - artist-app
       - backend
       - db
+    networks:
+      - pps-network
 
+  # Webhook Listener (GitHub auto-deploy)
   webhook:
     build: ./webhook
     container_name: webhook-listener
@@ -70,3 +81,7 @@ services:
 
 volumes:
   mysql_data:
+
+networks:
+  pps-network:
+    driver: bridge
