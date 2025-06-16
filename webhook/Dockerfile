@@ -3,6 +3,9 @@
 FROM node:22-slim
 
 
+# Install git
+RUN apt-get update && apt-get install -y git
+
 # Create app directory
 WORKDIR /app
 
@@ -13,4 +16,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the server
-CMD ["node", "deploy.js"]
+CMD ["node", "index.js"]
