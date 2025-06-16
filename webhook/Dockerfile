@@ -3,17 +3,17 @@
 FROM node:22-slim
 
 
-# Install git
-RUN apt-get update && apt-get install -y git
+# Install git and docker CLI
+RUN apt-get update && apt-get install -y git docker.io
 
-# Create app directory
+# Set working directory
 WORKDIR /app
 
-# Copy files (your webhook server script)
+# Copy the webhook script and package.json if any
 COPY . .
 
-# Expose port
+# Expose webhook port
 EXPOSE 3000
 
-# Start the server
+# Start the webhook server
 CMD ["node", "index.js"]
