@@ -2,7 +2,7 @@ const http = require('http');
 const crypto = require('crypto');
 const { exec } = require('child_process');
 
-const SECRET = 'mysecret123'; // Use the same secret as in GitHub webhook
+const SECRET = 'Suw@s@77m@g@r!'; // Use the same secret as in GitHub webhook
 
 function verifySignature(req, body) {
   const signature = req.headers['x-hub-signature-256'];
