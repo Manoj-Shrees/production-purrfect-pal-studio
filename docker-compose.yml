@@ -76,6 +76,8 @@ services:
   webhook:
     build: ./webhook
     container_name: webhook-listener
+    volumes:
+    - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
     networks:
       - pps-network
 
