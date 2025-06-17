@@ -59,7 +59,7 @@ http.createServer((req, res) => {
       const deployCommand = `
                               cd /app/production-purrfect-pal-studio && \
                               git pull && \
-                              docker-compose --profile no-redeploy up -d --build
+                              docker-compose --profile !no-redeploy up -d --build
                             `;
 
 
