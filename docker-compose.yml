@@ -83,6 +83,7 @@ services:
       - VIRTUAL_PORT=3000
     volumes:
     - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
+    - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - pps-network
 
