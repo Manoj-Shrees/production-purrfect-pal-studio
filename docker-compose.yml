@@ -39,6 +39,7 @@ services:
       - db
     networks:
       - pps-network
+      
 
   # Nginx Frontend (serves both Angular apps + API proxy)
   nginx:
