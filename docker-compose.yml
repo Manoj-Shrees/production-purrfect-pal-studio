@@ -64,7 +64,6 @@ services:
       - ./main-app/dist:/usr/share/nginx/html/main-app:ro
       - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro
 
-
     depends_on:
       - main-app
       - artist-app
