@@ -23,6 +23,7 @@ function shouldIgnorePush(payload) {
   return true; // All changes are within `.webhook/`
 }
 
+
 http.createServer((req, res) => {
   if (req.method === 'POST' && req.url === '/deploy') {
     let body = '';
