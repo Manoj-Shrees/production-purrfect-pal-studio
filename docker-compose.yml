@@ -40,7 +40,6 @@ services:
     networks:
       - pps-network
       
-
   # Nginx Frontend (serves both Angular apps + API proxy)
   nginx:
     image: nginx:latest
