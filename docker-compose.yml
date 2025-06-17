@@ -74,6 +74,7 @@ services:
 
   # Webhook Listener (GitHub auto-deploy)
   webhook:
+    profiles: ["no-redeploy"]
     build: ./webhook
     container_name: webhook-listener
     expose:
