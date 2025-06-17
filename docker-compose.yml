@@ -76,6 +76,11 @@ services:
   webhook:
     build: ./webhook
     container_name: webhook-listener
+    expose:
+      - "3000"
+    environment:
+      - VIRTUAL_HOST=purrfectpal.studio
+      - VIRTUAL_PORT=3000
     volumes:
     - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
     networks:
