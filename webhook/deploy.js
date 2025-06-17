@@ -49,7 +49,7 @@ http.createServer((req, res) => {
       }
 
       // Trigger deploy
-      exec('cd /app/production-purrfect-pal-studio && git pull && docker-compose up -d --build', (err, stdout, stderr) => {
+      exec('cd /app/production-purrfect-pal-studio && git pull && docker compose up -d --build', (err, stdout, stderr) => {
         if (err) {
           console.error('Deploy error:', err);
           res.writeHead(500);
