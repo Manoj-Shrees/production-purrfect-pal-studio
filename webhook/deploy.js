@@ -56,8 +56,15 @@ http.createServer((req, res) => {
         return res.end('Ignored: Commit skipped');
       }
 
+      const deployCommand = `
+                              cd /app/production-purrfect-pal-studio && \
+                              git pull && \
+                              docker-compose up -d --build
+                            `;
+
+
       // ✅ Trigger deploy
-      exec('cd /app/production-purrfect-pal-studio && git pull && docker-compose up -d --build', (err, stdout, stderr) => {
+      exec(deployCommand, (err, stdout, stderr) => {
         if (err) {
           console.error('Deploy error:', err);
           res.writeHead(500);
