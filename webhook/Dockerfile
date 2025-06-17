@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the webhook server
-CMD ["node", "index.js"]
+CMD ["node", "deploy.js"]
