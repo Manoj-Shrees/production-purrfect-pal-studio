@@ -14,15 +14,23 @@ function shouldIgnorePush(payload) {
   if (!payload.commits || !Array.isArray(payload.commits)) return false;
 
   for (const commit of payload.commits) {
+    const msg = commit.message.toLowerCase();
+
+    // ✅ Skip deploy if commit message includes [skip-deploy]
+    if (msg.includes('[skip-deploy]')) {
+      console.log('Ignoring push due to [skip-deploy] in commit message.');
+      return true;
+    }
+
+    // ✅ Ignore if all files are in `.webhook/`
     const allFiles = [...commit.added, ...commit.modified, ...commit.removed];
-    // If any file is outside `.webhook/`, we should deploy
     if (allFiles.some(file => !file.startsWith('.webhook/'))) {
       return false; // Found a relevant file
     }
   }
-  return true; // All changes are within `.webhook/`
-}
 
+  return true; // All commits ignored
+}
 
 http.createServer((req, res) => {
   if (req.method === 'POST' && req.url === '/deploy') {
@@ -44,12 +52,11 @@ http.createServer((req, res) => {
       }
 
       if (shouldIgnorePush(payload)) {
-        console.log('Ignoring push: only changes in .webhook/ directory');
         res.writeHead(200);
-        return res.end('Ignored: Only .webhook/ changes');
+        return res.end('Ignored: Commit skipped');
       }
 
-      // Trigger deploy
+      // ✅ Trigger deploy
       exec('cd /app/production-purrfect-pal-studio && git pull && docker-compose up -d --build', (err, stdout, stderr) => {
         if (err) {
           console.error('Deploy error:', err);
