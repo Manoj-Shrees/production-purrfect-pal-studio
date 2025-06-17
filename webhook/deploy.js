@@ -2,12 +2,25 @@ const http = require('http');
 const crypto = require('crypto');
 const { exec } = require('child_process');
 
-const SECRET = 'Suw@s@77m@g@r!'; // Use the same secret as in GitHub webhook
+const SECRET = 'Suw@s@77m@g@r!'; // Match GitHub webhook secret
 
 function verifySignature(req, body) {
   const signature = req.headers['x-hub-signature-256'];
   const hmac = crypto.createHmac('sha256', SECRET).update(body).digest('hex');
   return signature === `sha256=${hmac}`;
+}
+
+function shouldIgnorePush(payload) {
+  if (!payload.commits || !Array.isArray(payload.commits)) return false;
+
+  for (const commit of payload.commits) {
+    const allFiles = [...commit.added, ...commit.modified, ...commit.removed];
+    // If any file is outside `.webhook/`, we should deploy
+    if (allFiles.some(file => !file.startsWith('.webhook/'))) {
+      return false; // Found a relevant file
+    }
+  }
+  return true; // All changes are within `.webhook/`
 }
 
 http.createServer((req, res) => {
@@ -19,8 +32,23 @@ http.createServer((req, res) => {
         res.writeHead(403);
         return res.end('Forbidden: Invalid signature');
       }
-      
-      // Pull latest code and rebuild Docker
+
+      let payload;
+      try {
+        payload = JSON.parse(body);
+      } catch (e) {
+        console.error('Invalid JSON:', e);
+        res.writeHead(400);
+        return res.end('Bad Request: Invalid JSON');
+      }
+
+      if (shouldIgnorePush(payload)) {
+        console.log('Ignoring push: only changes in .webhook/ directory');
+        res.writeHead(200);
+        return res.end('Ignored: Only .webhook/ changes');
+      }
+
+      // Trigger deploy
       exec('cd /app/production-purrfect-pal-studio && git pull && docker compose up -d --build', (err, stdout, stderr) => {
         if (err) {
           console.error('Deploy error:', err);
@@ -36,4 +64,4 @@ http.createServer((req, res) => {
     res.writeHead(404);
     res.end('Not Found');
   }
-}).listen(3000, '0.0.0.0', () => console.log('Webhook listener started on port 3000'))
+}).listen(3000, '0.0.0.0', () => console.log('Webhook listener started on port 3000'));
