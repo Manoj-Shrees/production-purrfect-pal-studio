@@ -71,7 +71,7 @@ services:
       - db
     networks:
       - pps-network
-      
+
 
   # Webhook Listener (GitHub auto-deploy)
   webhook:
@@ -91,7 +91,6 @@ services:
 
 volumes:
   mysql_data:
-  
 
 networks:
   pps-network:
