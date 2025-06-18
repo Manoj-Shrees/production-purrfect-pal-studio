@@ -61,8 +61,7 @@ http.createServer((req, res) => {
                               git remote set-url origin https://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@github.com/Manoj-Shrees/production-purrfect-pal-studio.git && \
                               git pull origin main && \
                               docker login -u manojshrees -p dckr_pat_qdIJ5BjDGpqfvcLC-B5iEiflnGU && \  
-                              docker-compose down && \
-                               docker-compose pull && \
+                              docker-compose pull && \
                               docker-compose up -d --build
                             `;
 
