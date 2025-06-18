@@ -40,22 +40,6 @@ services:
     networks:
       - pps-network
 
-    # Webhook Listener (GitHub auto-deploy)
-  webhook:
-    profiles: ["no-redeploy"]
-    build: ./webhook
-    container_name: webhook-listener
-    expose:
-      - "3000"
-    environment:
-      - VIRTUAL_HOST=purrfectpal.studio
-      - VIRTUAL_PORT=3000
-    volumes:
-    - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
-    - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - pps-network
-      
   # Nginx Frontend (serves both Angular apps + API proxy)
   nginx:
     image: nginx:latest
@@ -88,7 +72,22 @@ services:
     networks:
       - pps-network
 
- 
+
+  # Webhook Listener (GitHub auto-deploy)
+  webhook:
+    profiles: ["no-redeploy"]
+    build: ./webhook
+    container_name: webhook-listener
+    expose:
+      - "3000"
+    environment:
+      - VIRTUAL_HOST=purrfectpal.studio
+      - VIRTUAL_PORT=3000
+    volumes:
+    - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
+    - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - pps-network
 
 volumes:
   mysql_data:
