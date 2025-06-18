@@ -72,6 +72,20 @@ services:
     networks:
       - pps-network
 
+  webhook:
+    image: almir/webhook
+    container_name: webhook-listener
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock    # access to host docker
+      - ../production-purrfect-pal-studio:/app/production-purrfect-pal-studio
+      - ./webhook/hooks.json:/etc/webhook/hooks.json
+    networks:
+      - pps-network
+    command: -/webhook/hooks=/etc/webhook/hooks.json -port 3000 -verbose
+    ports:
+      - 3000:3000   # Can use NGINX reverse proxy instead
+
+
 volumes:
   mysql_data:
 
