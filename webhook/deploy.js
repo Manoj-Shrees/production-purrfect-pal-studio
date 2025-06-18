@@ -63,8 +63,7 @@ http.createServer((req, res) => {
                               docker login -u manojshrees -p dckr_pat_qdIJ5BjDGpqfvcLC-B5iEiflnGU && \  
                               docker-compose pull && \
                               docker-compose up -d --force-recreate 
-                            `;
-
+                            `
 
       // ✅ Trigger deploy
       exec(deployCommand, (err, stdout, stderr) => {
