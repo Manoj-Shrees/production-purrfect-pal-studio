@@ -13,3 +13,8 @@ services:
       - 3000:3000   # Can use NGINX reverse proxy instead
     networks:
       - pps-network
+
+
+networks:
+  pps-network:
+    driver: bridge
