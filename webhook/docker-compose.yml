@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  webhook:
+    image: almir/webhook
+    container_name: webhook-listener
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock        # Needed to run docker-compose
+      - ../production-purrfect-pal-studio:/app/production-purrfect-pal-studio
+      - ./hooks.json:/etc/webhook/hooks.json
+    command: -hooks=/etc/webhook/hooks.json -verbose
+    ports:
+      - 3000:3000   # Can use NGINX reverse proxy instead

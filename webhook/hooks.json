@@ -1,0 +1,10 @@
+[
+  {
+    "id": "deploy",
+    "execute-command": "/app/production-purrfect-pal-studio/deploy.sh",
+    "command-working-directory": "/app/production-purrfect-pal-studio",
+    "pass-environment-to-command": [],
+    "response-message": "Deployment triggered.",
+    "include-command-output-in-response": true
+  }
+]
