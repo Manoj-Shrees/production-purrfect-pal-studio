@@ -6,6 +6,7 @@ services:
   main-app:
     build: ./main-app
     container_name: main-app-c
+    restart: unless-stopped
     networks:
       - pps-network
 
@@ -13,6 +14,7 @@ services:
   artist-app:
     build: ./artist-app
     container_name: artist-app-c
+    restart: unless-stopped
     networks:
       - pps-network
 
@@ -44,6 +46,7 @@ services:
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -78,6 +81,7 @@ services:
     profiles: ["no-redeploy"]
     build: ./webhook
     container_name: webhook-listener
+    restart: unless-stopped
     expose:
       - "3000"
     environment:
