@@ -56,14 +56,24 @@ http.createServer((req, res) => {
         return res.end('Ignored: Commit skipped');
       }
 
-      const deployCommand = `
-                              cd /app/production-purrfect-pal-studio && \
-                              git remote set-url origin https://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@github.com/Manoj-Shrees/production-purrfect-pal-studio.git && \
-                              git pull origin main && \
-                              docker login -u manojshrees -p dckr_pat_qdIJ5BjDGpqfvcLC-B5iEiflnGU && \  
-                              docker-compose pull && \
-                              docker-compose up -d --force-recreate 
-                            `
+    const deployCommand = `
+      echo "[*] Backing up database..." && \
+      docker exec db-c mysqldump -u adminPPS --password='Toor@77admin*' db > /backups/db_backup_$(date +%F_%H-%M-%S).sql && \
+      echo "[*] Backing up static files..." && \
+      
+      echo "[*] Backing up volume..." && \
+      docker run --rm -v production-purrfect-pal-studio_mysql_data/volume -v /backups:/backup busybox \
+        tar czf /backup/volume_backup_$(date +%F_%H-%M-%S).tar.gz -C /volume . && \
+      
+      echo "[*] Pulling code and redeploying..." && \
+      cd /app/production-purrfect-pal-studio && \
+      git remote set-url origin https://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@github.com/Manoj-Shrees/production-purrfect-pal-studio.git && \
+      git pull origin main && \
+      docker login -u manojshrees -p dckr_pat_qdIJ5BjDGpqfvcLC-B5iEiflnGU && \
+      docker-compose pull && \
+      docker-compose up -d --force-recreate --remove-orphans
+    `;
+
 
       // ✅ Trigger deploy
       exec(deployCommand, (err, stdout, stderr) => {
