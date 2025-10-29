@@ -37,6 +37,8 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    environment:
+      - PPS_KEY=PurrfectPalStudio2024$%^
     depends_on:
       - db
     networks:
