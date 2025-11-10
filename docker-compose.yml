@@ -74,6 +74,8 @@ services:
       - artist-app
       - backend
       - db
+    environment:
+      - PPS_KEY=PurrfectPalStudio2024$%^
     networks:
       - pps-network
 
