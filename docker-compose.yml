@@ -49,6 +49,8 @@ services:
     image: nginx:latest
     container_name: nginx-proxy
     restart: unless-stopped
+    environment:
+      PPS_KEY: "PurrfectPalStudio2024$%^"
     ports:
       - "80:80"
       - "443:443"
@@ -74,8 +76,6 @@ services:
       - artist-app
       - backend
       - db
-    environment:
-      PPS_KEY: "PurrfectPalStudio2024$%^"
     networks:
       - pps-network
 
