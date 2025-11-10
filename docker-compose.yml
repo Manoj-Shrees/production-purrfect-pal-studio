@@ -75,7 +75,7 @@ services:
       - backend
       - db
     environment:
-      - PPS_KEY=PurrfectPalStudio2024$%^
+      PPS_KEY: "PurrfectPalStudio2024$%^"
     networks:
       - pps-network
 
