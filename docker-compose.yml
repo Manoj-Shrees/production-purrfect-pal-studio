@@ -79,8 +79,6 @@ services:
       - pps-network
 
   # ── Backend – Two instances for redundancy ───
-  #  Nginx load-balances across backend-1 & backend-2.
-  #  If one crashes, Docker restarts it; the other keeps serving.
 
   backend-1:
     image: manojshrees/purrfectpalstudio-backend:latest
@@ -125,8 +123,6 @@ services:
       - pps-network
 
   # ── Nginx ────────────────────────────────────
-  #  :80  → serves ACME challenge files + redirects everything else to HTTPS
-  #  :443 → serves the actual site using Let's Encrypt certs
 
   nginx:
     image: nginx:latest
@@ -186,12 +182,20 @@ services:
     networks:
       - pps-network
 
-  # ── DB Backup ────────────────────────────────
+  # ── DB Backup (fully inlined - no separate folder needed) ────
 
   db-backup:
-    build: ./db-backup
     container_name: db-backup-c
     restart: always
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM alpine:latest
+        RUN apk add --no-cache mysql-client dcron git bash
+        COPY db-backup/backup.sh /backup.sh
+        COPY db-backup/entrypoint.sh /entrypoint.sh
+        RUN chmod +x /backup.sh /entrypoint.sh
+        ENTRYPOINT ["/entrypoint.sh"]
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=adminPPS
