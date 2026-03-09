@@ -196,7 +196,7 @@ services:
       - BACKUP_CRON=0 2 * * *
       - RETENTION_DAYS=14
       - GITHUB_TOKEN=REPLACE_WITH_TOKEN
-      - GITHUB_REPO=suwas/purrfect-pal-studio-db-backups
+      - GITHUB_REPO=manoj-shrees/purrfect-pal-studio-db-backups
       - GITHUB_BRANCH=main
     volumes:
       - ./backups:/backups
