@@ -1,104 +1,237 @@
 version: '3.8'
 
+# ─────────────────────────────────────────────
+#  PurrfectPalStudio – Production Compose
+#  Improvements:
+#    1. restart: always + healthchecks on every service
+#    2. Two backend replicas behind Nginx upstream (no SPOF)
+#    3. DB auto-backup to local volume (daily via cron)
+#    4. DB backup pushed to GitHub (via db-backup service)
+#    5. Auto SSL via Certbot + Let's Encrypt (auto-renews)
+# ─────────────────────────────────────────────
+#
+#  FIRST-TIME SSL SETUP (run once on a fresh server):
+#
+#    Step 1 – Start Nginx on HTTP only so the ACME challenge can be served:
+#      docker compose up -d nginx
+#
+#    Step 2 – Obtain the certificate:
+#      docker compose run --rm certbot certonly \
+#        --webroot --webroot-path=/var/www/certbot \
+#        --email suwasmgr77@gmail.com --agree-tos --no-eff-email \
+#        -d purrfectpal.studio -d www.purrfectpal.studio
+#
+#    Step 3 – Bring everything up (Nginx will now serve HTTPS):
+#      docker compose up -d
+#
+#  After that, Certbot checks renewal every 12 h automatically.
+# ─────────────────────────────────────────────
+
 services:
 
-  # Main Angular App (builds with Dockerfile in ./main-app)
+  # ── Angular Apps ────────────────────────────
+
   main-app:
     build: ./main-app
     container_name: main-app-c
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       - pps-network
 
-  # Artist Angular App (builds with Dockerfile in ./artist-app)
   artist-app:
     build: ./artist-app
     container_name: artist-app-c
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       - pps-network
 
-  # MySQL Database
+  # ── MySQL Database ───────────────────────────
+
   db:
     image: manojshrees/purrfectpalstudio-db:latest
     container_name: db-c
     ports:
       - "3306:3306"
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=Toor@77@MTS@77*"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     volumes:
       - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Toor@77@MTS@77*
     networks:
       - pps-network
 
-  # Node.js Backend
-  backend:
+  # ── Backend – Two instances for redundancy ───
+  #  Nginx load-balances across backend-1 & backend-2.
+  #  If one crashes, Docker restarts it; the other keeps serving.
+
+  backend-1:
     image: manojshrees/purrfectpalstudio-backend:latest
-    container_name: backend-c
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
+    container_name: backend-c-1
+    restart: always
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     environment:
       - PPS_KEY=PurrfectPalStudio2024$%^
+      - INSTANCE_ID=1
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - pps-network
 
-  # Nginx Frontend (serves both Angular apps + API proxy)
+  backend-2:
+    image: manojshrees/purrfectpalstudio-backend:latest
+    container_name: backend-c-2
+    restart: always
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    environment:
+      - PPS_KEY=PurrfectPalStudio2024$%^
+      - INSTANCE_ID=2
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pps-network
+
+  # ── Nginx ────────────────────────────────────
+  #  :80  → serves ACME challenge files + redirects everything else to HTTPS
+  #  :443 → serves the actual site using Let's Encrypt certs
+
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     environment:
       PPS_KEY: "PurrfectPalStudio2024$%^"
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      # Main Nginx config and site configs
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
-
-      # Shared proxy config
       - ./nginx/api_proxy.conf:/etc/nginx/api_proxy.conf:ro
       - ./nginx/proxy_params:/etc/nginx/proxy_params:ro
-
-      # SSL Certificates
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - certbot-certs:/etc/letsencrypt:ro
+      - certbot-webroot:/var/www/certbot:ro
       - ./certs:/etc/ssl/certs:ro
-
-      # Angular built apps (assumes apps are pre-built)
       - ./main-app/dist:/usr/share/nginx/html/main-app:ro
       - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro
-
     depends_on:
       - main-app
       - artist-app
-      - backend
+      - backend-1
+      - backend-2
       - db
     networks:
       - pps-network
 
+  # ── Certbot / Let's Encrypt ──────────────────
 
-  # Webhook Listener (GitHub auto-deploy)
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    restart: always
+    volumes:
+      - certbot-certs:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    environment:
+      - CERTBOT_EMAIL=suwasmgr77@gmail.com
+    entrypoint: >
+      /bin/sh -c "
+        trap exit TERM;
+        while :; do
+          certbot renew
+            --webroot
+            --webroot-path=/var/www/certbot
+            --deploy-hook 'kill -HUP \$$(cat /var/run/nginx.pid 2>/dev/null) 2>/dev/null || true'
+            --quiet;
+          sleep 12h & wait \$${!};
+        done"
+    networks:
+      - pps-network
+
+  # ── DB Backup ────────────────────────────────
+
+  db-backup:
+    build: ./db-backup
+    container_name: db-backup-c
+    restart: always
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=adminPPS
+      - MYSQL_PASSWORD=Toor@PPS@77admin*
+      - MYSQL_DATABASE=purrfectpalstudiodb
+      - BACKUP_CRON=0 2 * * *
+      - RETENTION_DAYS=14
+      - GITHUB_TOKEN=REPLACE_WITH_TOKEN
+      - GITHUB_REPO=suwas/purrfect-pal-studio-db-backups
+      - GITHUB_BRANCH=main
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pps-network
+
+  # ── Webhook Listener ─────────────────────────
+
   webhook:
     profiles: ["no-redeploy"]
     build: ./webhook
     container_name: webhook-listener
-    restart: unless-stopped
+    restart: always
     expose:
       - "3000"
     environment:
       - VIRTUAL_HOST=purrfectpal.studio
       - VIRTUAL_PORT=3000
     volumes:
-    - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
-    - /var/run/docker.sock:/var/run/docker.sock
+      - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - pps-network
 
 volumes:
   mysql_data:
+  certbot-certs:
+  certbot-webroot:
 
 networks:
   pps-network:
