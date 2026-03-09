@@ -182,20 +182,12 @@ services:
     networks:
       - pps-network
 
-  # ── DB Backup (fully inlined - no separate folder needed) ────
+  # ── DB Backup ────────────────────────────────
 
   db-backup:
     container_name: db-backup-c
     restart: always
-    build:
-      context: .
-      dockerfile_inline: |
-        FROM alpine:latest
-        RUN apk add --no-cache mysql-client dcron git bash
-        COPY db-backup/backup.sh /backup.sh
-        COPY db-backup/entrypoint.sh /entrypoint.sh
-        RUN chmod +x /backup.sh /entrypoint.sh
-        ENTRYPOINT ["/entrypoint.sh"]
+    build: ./db-backup
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=adminPPS
