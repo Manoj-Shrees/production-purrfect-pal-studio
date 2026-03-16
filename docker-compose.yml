@@ -111,12 +111,6 @@ services:
     environment:
       - PPS_KEY=PurrfectPalStudio2024$%^
       - INSTANCE_ID=1
-      # ── APNs push notifications ──────────────
-      - APNS_KEY_PATH=/app/certs/AuthKey_RTK23AMVGZ.p8
-      - APNS_KEY_ID=RTK23AMVGZ
-      - APNS_TEAM_ID=78YS9Y4X69
-      - APNS_BUNDLE_ID=com.purrfectpal.studio.admin
-      - APNS_PRODUCTION=false
     volumes:
       - ./certs:/app/certs:ro
     depends_on:
@@ -194,27 +188,45 @@ services:
   # ── Certbot / Let's Encrypt ──────────────────
 
   certbot:
-    image: certbot/certbot:latest
-    container_name: certbot
-    restart: always
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/www/certbot:/var/www/certbot
-    environment:
-      - CERTBOT_EMAIL=suwasmgr77@gmail.com
-    entrypoint: >
-      /bin/sh -c "
-        trap exit TERM;
-        while :; do
-          certbot renew
-            --webroot
-            --webroot-path=/var/www/certbot
-            --deploy-hook 'kill -HUP \$$(cat /var/run/nginx.pid 2>/dev/null) 2>/dev/null || true'
-            --quiet;
-          sleep 12h & wait \$${!};
-        done"
-    networks:
-      - pps-network
+  image: certbot/certbot:latest
+  container_name: certbot
+  restart: always
+  volumes:
+    - /etc/letsencrypt:/etc/letsencrypt
+    - /var/www/certbot:/var/www/certbot
+  environment:
+    - CERTBOT_EMAIL=suwasmgr77@gmail.com
+  entrypoint: >
+    /bin/sh -c "
+      trap exit TERM;
+      if [ ! -f /etc/letsencrypt/live/purrfectpal.studio/fullchain.pem ]; then
+        echo '[Certbot] No cert found — obtaining for all domains...';
+        certbot certonly
+          --webroot
+          --webroot-path=/var/www/certbot
+          --email suwasmgr77@gmail.com
+          --agree-tos
+          --no-eff-email
+          --non-interactive
+          -d purrfectpal.studio
+          -d www.purrfectpal.studio
+          -d admin.purrfectpal.studio
+          -d www.admin.purrfectpal.studio
+          -d artist.purrfectpal.studio
+          -d www.artist.purrfectpal.studio;
+      else
+        echo '[Certbot] Cert already exists — skipping initial obtain';
+      fi;
+      while :; do
+        certbot renew
+          --webroot
+          --webroot-path=/var/www/certbot
+          --quiet
+          --deploy-hook 'nginx -s reload' 2>/dev/null || true;
+        sleep 12h & wait $${!};
+      done"
+  networks:
+    - pps-network
 
   # ── DB Backup ────────────────────────────────
 
