@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Purrfect Pal Studio — the free admin panel for digital pet art studio managers. Available on iOS and macOS."/>
+  <title>Purrfect Pal Studio</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── NAV ── -->
+  <nav>
+    <a href="#" class="brand">
+      <img class="brand-logo"
+        src="https://www.purrfectpal.studio/assets/images/pps-logo.png"
+        alt="PPS"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <span class="brand-fb">PPS</span>
+      <span class="brand-name">Purrfect Pal Studio</span>
+    </a>
+    <div class="nav-r">
+      <ul class="nav-links">
+        <li><a href="#screens">Screenshots</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#download">Download</a></li>
+      </ul>
+      <a href="#download" class="nav-cta">Download Free</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="pill">
+      <span class="pill-dot"></span>
+      Version 2.1 — Available Now
+    </div>
+
+    <h1>Purrfect Pal Studio<br/><em>Admin Panel</em></h1>
+
+    <p class="hero-sub">
+      The free admin panel for digital pet art studio managers and artists — on iOS and macOS.
+    </p>
+
+    <div class="dl" id="download">
+      <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
+        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
+        </svg>
+        <div class="abtn-text">
+          <span class="ts">Download on the</span>
+          <span class="tb">App Store</span>
+        </div>
+      </a>
+      <a href="https://www.admin.purrfectpal.studio/macos/PPS-admin-app.dmg" target="_blank" class="abtn mac">
+        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
+        </svg>
+        <div class="abtn-text">
+          <span class="ts">Download on the</span>
+          <span class="tb">Mac App Store</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="st"><span class="st-n g">5.0 ★</span><span class="st-l">Rating</span></div>
+      <div class="st"><span class="st-n">Free</span><span class="st-l">No cost</span></div>
+      <div class="st"><span class="st-n">v2.1</span><span class="st-l">Latest</span></div>
+      <div class="st"><span class="st-n">11.8 MB</span><span class="st-l">Size</span></div>
+    </div>
+  </section>
+
+  <hr/>
+
+  <!-- ── SCREENSHOTS ── -->
+  <section class="sc-section reveal" id="screens">
+    <div class="sc-head">
+      <div class="sc-lbl">Screenshots</div>
+      <h2 class="sc-h">See it in action.<br/><span>iPhone &amp; Mac.</span></h2>
+    </div>
+
+    <div class="sc-tabs">
+      <button class="sc-tab active" data-car="ip">📱 iPhone</button>
+      <button class="sc-tab" data-car="mac">💻 Mac</button>
+    </div>
+
+    <!-- iPhone carousel -->
+    <div class="car-wrap show" id="car-ip">
+      <div class="stage" id="stage-ip">
+        <div class="stage-glow"></div>
+        <button class="arr arr-p" data-car="ip">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+
+        <div class="slide portrait" data-index="0">
+          <img src="assets/screenshots/ip_login.png"   alt="Sign In"         loading="lazy"/>
+          <span class="slide-lbl">Sign In</span>
+        </div>
+        <div class="slide portrait" data-index="1">
+          <img src="assets/screenshots/ip_admin.png"   alt="Admin Panel"     loading="lazy"/>
+          <span class="slide-lbl">Admin Panel</span>
+        </div>
+        <div class="slide portrait" data-index="2">
+          <img src="assets/screenshots/ip_orders.png"  alt="Orders"          loading="lazy"/>
+          <span class="slide-lbl">Orders</span>
+        </div>
+        <div class="slide portrait" data-index="3">
+          <img src="assets/screenshots/ip_photos.png"  alt="Pet Photos"      loading="lazy"/>
+          <span class="slide-lbl">Pet Photos</span>
+        </div>
+        <div class="slide portrait" data-index="4">
+          <img src="assets/screenshots/ip_sales.png"   alt="Sales"           loading="lazy"/>
+          <span class="slide-lbl">Sales</span>
+        </div>
+        <div class="slide portrait" data-index="5">
+          <img src="assets/screenshots/ip_pod.png"     alt="Print on Demand" loading="lazy"/>
+          <span class="slide-lbl">Print on Demand</span>
+        </div>
+        <div class="slide portrait" data-index="6">
+          <img src="assets/screenshots/ip_catalog.png" alt="Catalog"         loading="lazy"/>
+          <span class="slide-lbl">Catalog</span>
+        </div>
+        <div class="slide portrait" data-index="7">
+          <img src="assets/screenshots/ip_add.png"     alt="Add Item"        loading="lazy"/>
+          <span class="slide-lbl">Add Item</span>
+        </div>
+        <div class="slide portrait" data-index="8">
+          <img src="assets/screenshots/ip_art.png"     alt="Artwork"         loading="lazy"/>
+          <span class="slide-lbl">Artwork</span>
+        </div>
+        <div class="slide portrait" data-index="9">
+          <img src="assets/screenshots/ip_finale.png"  alt="Overview"        loading="lazy"/>
+          <span class="slide-lbl">Overview</span>
+        </div>
+
+        <button class="arr arr-n" data-car="ip">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="dots" id="dots-ip">
+        <button class="dot" data-index="0"></button>
+        <button class="dot" data-index="1"></button>
+        <button class="dot" data-index="2"></button>
+        <button class="dot" data-index="3"></button>
+        <button class="dot" data-index="4"></button>
+        <button class="dot" data-index="5"></button>
+        <button class="dot" data-index="6"></button>
+        <button class="dot" data-index="7"></button>
+        <button class="dot" data-index="8"></button>
+        <button class="dot" data-index="9"></button>
+      </div>
+      <p class="swipe-hint">Swipe or use arrows · Click side cards to navigate</p>
+    </div>
+
+    <!-- Mac carousel -->
+    <div class="car-wrap" id="car-mac">
+      <div class="stage" id="stage-mac">
+        <div class="stage-glow"></div>
+        <button class="arr arr-p" data-car="mac">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+
+        <div class="slide landscape" data-index="0">
+          <img src="assets/screenshots/mac_login.png"     alt="Sign In"         loading="lazy"/>
+          <span class="slide-lbl">Sign In</span>
+        </div>
+        <div class="slide landscape" data-index="1">
+          <img src="assets/screenshots/mac_orders.png"    alt="Orders"          loading="lazy"/>
+          <span class="slide-lbl">Orders</span>
+        </div>
+        <div class="slide landscape" data-index="2">
+          <img src="assets/screenshots/mac_order_det.png" alt="Order Detail"    loading="lazy"/>
+          <span class="slide-lbl">Order Detail</span>
+        </div>
+        <div class="slide landscape" data-index="3">
+          <img src="assets/screenshots/mac_user.png"      alt="Users"           loading="lazy"/>
+          <span class="slide-lbl">Users</span>
+        </div>
+        <div class="slide landscape" data-index="4">
+          <img src="assets/screenshots/mac_sales.png"     alt="Sales"           loading="lazy"/>
+          <span class="slide-lbl">Sales</span>
+        </div>
+        <div class="slide landscape" data-index="5">
+          <img src="assets/screenshots/mac_pod.png"       alt="Print on Demand" loading="lazy"/>
+          <span class="slide-lbl">Print on Demand</span>
+        </div>
+        <div class="slide landscape" data-index="6">
+          <img src="assets/screenshots/mac_items.png"     alt="Items"           loading="lazy"/>
+          <span class="slide-lbl">Items</span>
+        </div>
+        <div class="slide landscape" data-index="7">
+          <img src="assets/screenshots/mac_pod_det.png"   alt="POD Detail"      loading="lazy"/>
+          <span class="slide-lbl">POD Detail</span>
+        </div>
+        <div class="slide landscape" data-index="8">
+          <img src="assets/screenshots/mac_new_order.png" alt="New Order"       loading="lazy"/>
+          <span class="slide-lbl">New Order</span>
+        </div>
+        <div class="slide landscape" data-index="9">
+          <img src="assets/screenshots/mac_artwork.png"   alt="Artwork"         loading="lazy"/>
+          <span class="slide-lbl">Artwork</span>
+        </div>
+
+        <button class="arr arr-n" data-car="mac">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="dots" id="dots-mac">
+        <button class="dot" data-index="0"></button>
+        <button class="dot" data-index="1"></button>
+        <button class="dot" data-index="2"></button>
+        <button class="dot" data-index="3"></button>
+        <button class="dot" data-index="4"></button>
+        <button class="dot" data-index="5"></button>
+        <button class="dot" data-index="6"></button>
+        <button class="dot" data-index="7"></button>
+        <button class="dot" data-index="8"></button>
+        <button class="dot" data-index="9"></button>
+      </div>
+      <p class="swipe-hint">Swipe or use arrows · Click side cards to navigate</p>
+    </div>
+  </section>
+
+  <hr/>
+
+  <!-- ── FEATURES ── -->
+  <div class="sec reveal" id="features">
+    <div class="sec-lbl">Features</div>
+    <h2 class="sec-h">Everything you need.<br/><span>Nothing you don't.</span></h2>
+    <div class="fg">
+      <div class="fc">
+        <span class="fi">👥</span>
+        <div class="fn">User Management</div>
+        <p class="fd">View, filter, and manage all users. Assign roles and control access from one place.</p>
+      </div>
+      <div class="fc">
+        <span class="fi">🖼️</span>
+        <div class="fn">Art Order Tracking</div>
+        <p class="fd">Track custom pet art orders end to end — styles, pricing, deadlines.</p>
+      </div>
+      <div class="fc">
+        <span class="fi">📊</span>
+        <div class="fn">Live Sales Dashboard</div>
+        <p class="fd">Real-time revenue and a 3-month forecast, always up to date.</p>
+      </div>
+      <div class="fc">
+        <span class="fi">📸</span>
+        <div class="fn">Photo Attachments</div>
+        <p class="fd">Customers attach reference photos directly to their orders.</p>
+      </div>
+      <div class="fc">
+        <span class="fi">📦</span>
+        <div class="fn">Print-on-Demand</div>
+        <p class="fd">Track fulfillment speed, delivery rates, and transit status.</p>
+      </div>
+      <div class="fc">
+        <span class="fi">🔐</span>
+        <div class="fn">Secure Access</div>
+        <p class="fd">Face ID, Touch ID, and real-time sync across your Apple devices.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ── COMPATIBILITY ── -->
+  <div class="sec reveal" id="compat">
+    <div class="sec-lbl">Compatibility</div>
+    <h2 class="sec-h">iOS and macOS.<br/><span>That's it.</span></h2>
+    <div class="cg">
+      <div class="cc">
+        <span class="ci">📱</span>
+        <div class="cn">iPhone &amp; iPad</div>
+        <div class="cr">iOS / iPadOS 18.5 or later. Designed for iPad.</div>
+        <span class="ctg plain">App Store</span>
+      </div>
+      <div class="cc">
+        <span class="ci">💻</span>
+        <div class="cn">Mac</div>
+        <div class="cr">macOS 15.5 or later. Apple M1 or later.</div>
+        <span class="ctg hi">Mac App Store</span>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- ── CTA ── -->
+  <div class="cta reveal">
+    <h2>Download <em>free</em> today.</h2>
+    <p>Built by Manoj Shrees. No cost, no subscriptions.</p>
+    <div class="dl">
+      <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
+        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
+        </svg>
+        <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
+      </a>
+      <a href="https://www.admin.purrfectpal.studio/macos/PPS-admin-app.dmg" target="_blank" class="abtn mac">
+        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
+        </svg>
+        <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">Mac App Store</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <a href="https://purrfectpal.studio" target="_blank" class="f-brand">
+      <img class="f-logo"
+        src="https://www.purrfectpal.studio/assets/images/pps-logo.png"
+        alt="PPS"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <span class="f-logo-fb">PPS</span>
+      <span class="f-nm">Purrfect Pal Studio</span>
+    </a>
+    <ul class="f-links">
+      <li><a href="https://purrfectpal.studio/PrivacyPolicy" target="_blank">Privacy Policy</a></li>
+      <li><a href="https://purrfectpal.studio" target="_blank">Website</a></li>
+      <li><a href="https://apps.apple.com/au/developer/manoj-shrees/id1876385572" target="_blank">Manoj Shrees</a></li>
+    </ul>
+    <span class="f-copy">© 2026 Purrfect Pal Studio</span>
+  </footer>
+
+</div><!-- /.page -->
+
+<!-- Scripts -->
+<script src="js/main.js"></script>
+</body>
+</html>
