@@ -12,56 +12,13 @@ version: '3.8'
 
 services:
 
-  # ── Angular Apps ────────────────────────────
-
-  main-app:
-    build: ./main-app
-    container_name: main-app-c
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
-    networks:
-      - pps-network
-
-  artist-app:
-    build: ./artist-app
-    container_name: artist-app-c
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
-    networks:
-      - pps-network
-
-  # ── Static Admin Landing Page ────────────────
-
-  admin-app:
-    build: ./admin-app
-    container_name: admin-app-c
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
-    networks:
-      - pps-network
-
   # ── MySQL Database ───────────────────────────
 
   db:
     image: manojshrees/purrfectpalstudio-db:latest
     container_name: db-c
-    ports:
-      - "3306:3306"
+    expose:
+      - "3306"
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=Toor@77@MTS@77*"]
@@ -93,6 +50,8 @@ services:
     environment:
       - PPS_KEY=PurrfectPalStudio2024$%^
       - INSTANCE_ID=1
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
     volumes:
       - ./certs:/app/certs:ro
     depends_on:
@@ -116,6 +75,8 @@ services:
     environment:
       - PPS_KEY=PurrfectPalStudio2024$%^
       - INSTANCE_ID=2
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
     volumes:
       - ./certs:/app/certs:ro
     depends_on:
@@ -135,6 +96,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
     environment:
       PPS_KEY: "PurrfectPalStudio2024$%^"
     ports:
@@ -152,8 +114,6 @@ services:
       - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro
       - ./admin-app:/usr/share/nginx/html/admin-app:ro
     depends_on:
-      - main-app
-      - artist-app
       - backend-1
       - backend-2
       - db
@@ -165,7 +125,7 @@ services:
   certbot:
     image: certbot/certbot:latest
     container_name: certbot
-    restart: always
+    restart: on-failure
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/certbot:/var/www/certbot
@@ -200,6 +160,8 @@ services:
             --deploy-hook 'nginx -s reload' 2>/dev/null || true;
           sleep 12h & wait $${!};
         done"
+    depends_on:
+      - nginx
     networks:
       - pps-network
 
@@ -216,7 +178,7 @@ services:
       - MYSQL_DATABASE=purrfectpalstudiodb
       - BACKUP_CRON=0 2 * * *
       - RETENTION_DAYS=14
-      - GITHUB_TOKEN=ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_REPO=manoj-shrees/purrfect-pal-studio-db-backups
       - GITHUB_BRANCH=main
     volumes:
