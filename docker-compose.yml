@@ -116,11 +116,6 @@ services:
     environment:
       - PPS_KEY=PurrfectPalStudio2024$%^
       - INSTANCE_ID=2
-      - APNS_KEY_PATH=/app/certs/AuthKey_RTK23AMVGZ.p8
-      - APNS_KEY_ID=RTK23AMVGZ
-      - APNS_TEAM_ID=78YS9Y4X69
-      - APNS_BUNDLE_ID=com.purrfectpal.studio.admin
-      - APNS_PRODUCTION=false
     volumes:
       - ./certs:/app/certs:ro
     depends_on:
