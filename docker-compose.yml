@@ -154,7 +154,6 @@ services:
     depends_on:
       - main-app
       - artist-app
-      - admin-app
       - backend-1
       - backend-2
       - db
