@@ -8,7 +8,6 @@ version: '3.8'
 #    3. DB auto-backup to local volume (daily via cron)
 #    4. DB backup pushed to GitHub (via db-backup service)
 #    5. Auto SSL via Certbot + Let's Encrypt (auto-renews)
-#    6. env_file on backends — secrets load reliably without shell substitution
 # ─────────────────────────────────────────────
 
 services:
@@ -48,11 +47,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    env_file: .env                        # ← loads JWT_SECRET, ENCRYPTION_SECRET, COOKIE_NAME, GITHUB_TOKEN
     environment:
       - PPS_KEY=PurrfectPalStudio2024$%^
       - INSTANCE_ID=1
-      - NODE_ENV=production
     volumes:
       - ./certs:/app/certs:ro
     depends_on:
@@ -73,11 +70,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    env_file: .env                        # ← loads JWT_SECRET, ENCRYPTION_SECRET, COOKIE_NAME, GITHUB_TOKEN
     environment:
       - PPS_KEY=PurrfectPalStudio2024$%^
       - INSTANCE_ID=2
-      - NODE_ENV=production
     volumes:
       - ./certs:/app/certs:ro
     depends_on:
@@ -172,7 +167,6 @@ services:
     container_name: db-backup-c
     restart: always
     build: ./db-backup
-    env_file: .env                        # ← loads GITHUB_TOKEN cleanly
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=adminPPS
@@ -180,6 +174,7 @@ services:
       - MYSQL_DATABASE=purrfectpalstudiodb
       - BACKUP_CRON=0 2 * * *
       - RETENTION_DAYS=14
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_REPO=manoj-shrees/purrfect-pal-studio-db-backups
       - GITHUB_BRANCH=main
     volumes:
