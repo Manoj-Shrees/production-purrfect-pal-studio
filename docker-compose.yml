@@ -1,15 +1,5 @@
 version: '3.8'
 
-# ─────────────────────────────────────────────
-#  PurrfectPalStudio – Production Compose
-#  Improvements:
-#    1. restart: always + healthchecks on every service
-#    2. Two backend replicas behind Nginx upstream (no SPOF)
-#    3. DB auto-backup to local volume (daily via cron)
-#    4. DB backup pushed to GitHub (via db-backup service)
-#    5. Auto SSL via Certbot + Let's Encrypt (auto-renews)
-# ─────────────────────────────────────────────
-
 services:
 
   # ── MySQL Database ───────────────────────────
@@ -130,7 +120,7 @@ services:
     entrypoint: >
       /bin/sh -c "
         trap exit TERM;
-        if [ ! -f /etc/letsencrypt/live/purrfectpal.studio/fullchain.pem ]; then
+        if [ ! -f /etc/letsencrypt/live/www.purrfectpal.studio/fullchain.pem ]; then
           echo '[Certbot] No cert found — obtaining for all domains...';
           certbot certonly
             --webroot
@@ -175,7 +165,7 @@ services:
       - BACKUP_CRON=0 2 * * *
       - RETENTION_DAYS=14
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_REPO=manoj-shrees/purrfect-pal-studio-db-backups
+      - GITHUB_REPO=manoj-shrees/purrect-pal-studio-db-backups
       - GITHUB_BRANCH=main
     volumes:
       - ./backups:/backups
@@ -188,15 +178,11 @@ services:
   # ── Webhook Listener ─────────────────────────
 
   webhook:
-    profiles: ["no-redeploy"]
     build: ./webhook
     container_name: webhook-listener
     restart: always
     expose:
       - "3000"
-    environment:
-      - VIRTUAL_HOST=purrfectpal.studio
-      - VIRTUAL_PORT=3000
     volumes:
       - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
       - /var/run/docker.sock:/var/run/docker.sock
