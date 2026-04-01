@@ -1,14 +1,10 @@
 #!/bin/sh
-# ─────────────────────────────────────────────────────────────────────────────
-# backup.sh  —  MySQL → gzip → GitHub
-# ─────────────────────────────────────────────────────────────────────────────
 set -e
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
 log "=== Backup started ==="
 
-# ── Validate required env vars ───────────────────────────────────────────────
 for VAR in MYSQL_HOST MYSQL_USER MYSQL_PASSWORD MYSQL_DATABASE GITHUB_TOKEN GITHUB_REPO; do
   eval "val=\$$VAR"
   if [ -z "$val" ]; then
@@ -21,19 +17,15 @@ FILENAME="backup_$(date +%Y%m%d_%H%M%S).sql.gz"
 FILEPATH="/backups/$FILENAME"
 BRANCH="${GITHUB_BRANCH:-main}"
 RETENTION="${RETENTION_DAYS:-14}"
+DUMP_STDERR="/tmp/dump_stderr.log"
 
-# ── Ensure /backups is writable ───────────────────────────────────────────────
 mkdir -p /backups
 if [ ! -w /backups ]; then
   log "ERROR: /backups is not writable."
   exit 1
 fi
 
-# ── Pick the right dump binary ────────────────────────────────────────────────
-# Alpine's mysql-client package now ships mariadb-dump as the real binary.
-# mysqldump is a deprecated alias that prints a warning to stderr — on some
-# versions that warning ends up inside the gzip stream, corrupting the file.
-# Prefer mariadb-dump when it exists, fall back to mysqldump otherwise.
+# ── Pick dump binary ──────────────────────────────────────────────────────────
 if command -v mariadb-dump > /dev/null 2>&1; then
   DUMP_BIN="mariadb-dump"
 else
@@ -41,32 +33,34 @@ else
 fi
 log "Using dump binary: $DUMP_BIN"
 
-# ── Dump ─────────────────────────────────────────────────────────────────────
+# ── Dump ──────────────────────────────────────────────────────────────────────
+# stderr is captured to a temp file — NOT suppressed — so failures are logged.
+# We try --skip-ssl first (correct MariaDB flag). If the dump still produces
+# a tiny file we print the captured stderr so the exact error is visible.
 log "Running $DUMP_BIN → $FILEPATH ..."
 
-# --ssl=FALSE:
-#   The MySQL container uses a self-signed TLS certificate. Without this flag
-#   the client enforces certificate chain validation, gets "self-signed
-#   certificate in certificate chain", and exits before dumping a single byte.
-#   Both containers are on the same private Docker bridge — no MITM risk.
-#
-# 2>/dev/null on the dump binary redirects deprecation warnings so they
-# never contaminate the gzip stream.
 "$DUMP_BIN" \
   -h "$MYSQL_HOST" \
   -u "$MYSQL_USER" \
   -p"$MYSQL_PASSWORD" \
-  --ssl=FALSE \
+  --skip-ssl \
   --single-transaction \
   --no-tablespaces \
   --routines \
   --triggers \
-  "$MYSQL_DATABASE" 2>/dev/null | gzip > "$FILEPATH"
+  "$MYSQL_DATABASE" 2>"$DUMP_STDERR" | gzip > "$FILEPATH"
+
+# Always print dump stderr so any warnings/errors are visible in docker logs
+if [ -s "$DUMP_STDERR" ]; then
+  log "--- dump stderr output ---"
+  cat "$DUMP_STDERR"
+  log "--- end dump stderr ---"
+fi
 
 # ── Guard: refuse to push an empty backup ────────────────────────────────────
 FILESIZE=$(stat -c%s "$FILEPATH" 2>/dev/null || stat -f%z "$FILEPATH")
 if [ "$FILESIZE" -lt 100 ]; then
-  log "ERROR: Backup file is suspiciously small (${FILESIZE} bytes) — aborting push."
+  log "ERROR: Backup file is suspiciously small (${FILESIZE} bytes) — dump failed."
   rm -f "$FILEPATH"
   exit 1
 fi
