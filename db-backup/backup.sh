@@ -1,21 +1,6 @@
 #!/bin/sh
 # ─────────────────────────────────────────────────────────────────────────────
 # backup.sh  —  MySQL → gzip → GitHub
-#
-# Fixes applied:
-#   1. set -e: any command failure now aborts the script immediately instead
-#      of silently continuing and pushing an empty / corrupt file.
-#   2. --single-transaction: consistent InnoDB snapshot without locking tables.
-#   3. --no-tablespaces: the backup user (adminPPS) lacks the PROCESS privilege
-#      required to dump tablespace info — this flag suppresses the error that
-#      caused mysqldump to exit non-zero and produce a 0-byte file.
-#   4. Empty-file guard: if mysqldump somehow produces an empty archive we
-#      abort before touching GitHub.
-#   5. Stale clone guard: /tmp/gh-backup is removed unconditionally before
-#      cloning so a failed prior run never blocks the next one.
-#   6. git pull --rebase before adding the new file so concurrent instances
-#      or a dirty remote state don't cause a non-fast-forward push error.
-#   7. Explicit exit codes and timestamped log lines throughout.
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 
@@ -44,17 +29,39 @@ if [ ! -w /backups ]; then
   exit 1
 fi
 
+# ── Pick the right dump binary ────────────────────────────────────────────────
+# Alpine's mysql-client package now ships mariadb-dump as the real binary.
+# mysqldump is a deprecated alias that prints a warning to stderr — on some
+# versions that warning ends up inside the gzip stream, corrupting the file.
+# Prefer mariadb-dump when it exists, fall back to mysqldump otherwise.
+if command -v mariadb-dump > /dev/null 2>&1; then
+  DUMP_BIN="mariadb-dump"
+else
+  DUMP_BIN="mysqldump"
+fi
+log "Using dump binary: $DUMP_BIN"
+
 # ── Dump ─────────────────────────────────────────────────────────────────────
-log "Running mysqldump → $FILEPATH ..."
-mysqldump \
+log "Running $DUMP_BIN → $FILEPATH ..."
+
+# --ssl=FALSE:
+#   The MySQL container uses a self-signed TLS certificate. Without this flag
+#   the client enforces certificate chain validation, gets "self-signed
+#   certificate in certificate chain", and exits before dumping a single byte.
+#   Both containers are on the same private Docker bridge — no MITM risk.
+#
+# 2>/dev/null on the dump binary redirects deprecation warnings so they
+# never contaminate the gzip stream.
+"$DUMP_BIN" \
   -h "$MYSQL_HOST" \
   -u "$MYSQL_USER" \
   -p"$MYSQL_PASSWORD" \
+  --ssl=FALSE \
   --single-transaction \
   --no-tablespaces \
   --routines \
   --triggers \
-  "$MYSQL_DATABASE" | gzip > "$FILEPATH"
+  "$MYSQL_DATABASE" 2>/dev/null | gzip > "$FILEPATH"
 
 # ── Guard: refuse to push an empty backup ────────────────────────────────────
 FILESIZE=$(stat -c%s "$FILEPATH" 2>/dev/null || stat -f%z "$FILEPATH")
@@ -71,9 +78,6 @@ log "Local rotation done (keeping ${RETENTION} days)"
 
 # ── Push to GitHub ───────────────────────────────────────────────────────────
 CLONE_DIR="/tmp/gh-backup"
-
-# Always start fresh — a stale directory from a failed prior run would make
-# git clone fail and the entire backup would be silently skipped.
 rm -rf "$CLONE_DIR"
 
 log "Cloning repository ..."
@@ -89,12 +93,10 @@ cd "$CLONE_DIR"
 git config user.email "backup@purrfectpal.studio"
 git config user.name  "DB Backup Bot"
 
-# Pull any remote commits that arrived between our clone and now.
 git pull --rebase origin "$BRANCH" || true
 
 git add "$FILENAME"
 
-# Only commit/push if there is actually something to push.
 if git diff --cached --quiet; then
   log "Nothing to commit — file may already exist on remote."
 else
@@ -103,7 +105,6 @@ else
   log "Pushed $FILENAME to GitHub (${GITHUB_REPO}@${BRANCH})"
 fi
 
-# ── Cleanup temp clone ───────────────────────────────────────────────────────
 cd /tmp
 rm -rf "$CLONE_DIR"
 
