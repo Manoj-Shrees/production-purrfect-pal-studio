@@ -162,10 +162,10 @@ services:
       - MYSQL_USER=adminPPS
       - MYSQL_PASSWORD=Toor@PPS@77admin*
       - MYSQL_DATABASE=purrfectpalstudiodb
-      - BACKUP_CRON=0 2 * * *
+      - BACKUP_CRON=0 */6 * * *
       - RETENTION_DAYS=14
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_REPO=manoj-shrees/purrect-pal-studio-db-backups
+      - GITHUB_REPO=manoj-shrees/purrfect-pal-studio-db-backups
       - GITHUB_BRANCH=main
     volumes:
       - ./backups:/backups
