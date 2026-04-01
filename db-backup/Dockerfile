@@ -26,6 +26,7 @@ RUN apk add --no-cache \
     curl \
     ca-certificates \
     openssh-client \
+    netcat-openbsd \
     tini
 
 # Create the backup output directory with correct permissions

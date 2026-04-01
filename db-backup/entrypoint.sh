@@ -15,10 +15,17 @@ set -e
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] [entrypoint] $*"; }
 
-# ── Wait for MySQL to accept connections ─────────────────────────────────────
+# ── Wait for MySQL to accept TCP connections ─────────────────────────────────
+# We use a raw TCP check (nc) rather than mysqladmin ping with the backup
+# user credentials. mysqladmin ping authenticates — if the backup user
+# (adminPPS) doesn't exist yet or lacks the PROCESS privilege, the ping
+# returns an auth error even though the server is perfectly healthy, causing
+# the wait loop to spin until timeout and the container to exit with an error.
+# A TCP check on port 3306 is sufficient: once MySQL is accepting connections
+# the dump will work.
 RETRIES=30
-log "Waiting for MySQL at ${MYSQL_HOST}:3306 ..."
-until mysqladmin ping -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent 2>/dev/null; do
+log "Waiting for MySQL at ${MYSQL_HOST}:3306 (TCP) ..."
+until nc -z "$MYSQL_HOST" 3306 2>/dev/null; do
   RETRIES=$((RETRIES - 1))
   if [ "$RETRIES" -le 0 ]; then
     log "ERROR: MySQL did not become ready in time. Exiting."
@@ -27,6 +34,9 @@ until mysqladmin ping -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" --si
   log "MySQL not ready yet — retrying in 5 s (${RETRIES} attempts left) ..."
   sleep 5
 done
+# Give MySQL a couple of extra seconds to finish loading grant tables after
+# the port opens — the socket is ready before auth is fully initialised.
+sleep 3
 log "MySQL is ready."
 
 # ── Write crontab ────────────────────────────────────────────────────────────
