@@ -5,6 +5,7 @@ log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
 log "=== Backup started ==="
 
+# ── Validate required env vars ────────────────────────────────────────────────
 for VAR in MYSQL_HOST MYSQL_USER MYSQL_PASSWORD MYSQL_DATABASE GITHUB_TOKEN GITHUB_REPO; do
   eval "val=\$$VAR"
   if [ -z "$val" ]; then
@@ -25,21 +26,13 @@ if [ ! -w /backups ]; then
   exit 1
 fi
 
-# ── Pick dump binary ──────────────────────────────────────────────────────────
-if command -v mariadb-dump > /dev/null 2>&1; then
-  DUMP_BIN="mariadb-dump"
-else
-  DUMP_BIN="mysqldump"
-fi
-log "Using dump binary: $DUMP_BIN"
-
 # ── Dump ──────────────────────────────────────────────────────────────────────
-# stderr is captured to a temp file — NOT suppressed — so failures are logged.
-# We try --skip-ssl first (correct MariaDB flag). If the dump still produces
-# a tiny file we print the captured stderr so the exact error is visible.
-log "Running $DUMP_BIN → $FILEPATH ..."
+# mysqldump here is the real MySQL 8 client from debian's default-mysql-client
+# package — it supports caching_sha2_password natively.
+# --skip-ssl: both containers share a private Docker bridge, no TLS needed.
+log "Running mysqldump → $FILEPATH ..."
 
-"$DUMP_BIN" \
+mysqldump \
   -h "$MYSQL_HOST" \
   -u "$MYSQL_USER" \
   -p"$MYSQL_PASSWORD" \
@@ -50,9 +43,9 @@ log "Running $DUMP_BIN → $FILEPATH ..."
   --triggers \
   "$MYSQL_DATABASE" 2>"$DUMP_STDERR" | gzip > "$FILEPATH"
 
-# Always print dump stderr so any warnings/errors are visible in docker logs
+# Print any stderr output (warnings/errors) so they appear in docker logs
 if [ -s "$DUMP_STDERR" ]; then
-  log "--- dump stderr output ---"
+  log "--- dump stderr ---"
   cat "$DUMP_STDERR"
   log "--- end dump stderr ---"
 fi
@@ -66,11 +59,11 @@ if [ "$FILESIZE" -lt 100 ]; then
 fi
 log "Dump complete: $FILENAME (${FILESIZE} bytes)"
 
-# ── Rotate old local backups ─────────────────────────────────────────────────
+# ── Rotate old local backups ──────────────────────────────────────────────────
 find /backups -name "*.sql.gz" -mtime +"$RETENTION" -delete
 log "Local rotation done (keeping ${RETENTION} days)"
 
-# ── Push to GitHub ───────────────────────────────────────────────────────────
+# ── Push to GitHub ────────────────────────────────────────────────────────────
 CLONE_DIR="/tmp/gh-backup"
 rm -rf "$CLONE_DIR"
 

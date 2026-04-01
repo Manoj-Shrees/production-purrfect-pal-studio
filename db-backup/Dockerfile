@@ -1,44 +1,33 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Dockerfile  —  db-backup
 #
-# Fixes applied:
-#   1. Added openssh-client: git over HTTPS with a token works without it,
-#      but some Alpine git builds pull it as a soft dependency. Including it
-#      explicitly avoids subtle "could not read Username" errors on certain
-#      Alpine patch versions.
-#   2. Added ca-certificates: without this, git clone over HTTPS fails with
-#      "SSL certificate problem: unable to get local issuer certificate"
-#      because Alpine's minimal image ships with no CA bundle.
-#   3. Added tini as PID-1 init: crond expects to be able to reap zombie
-#      child processes. Without an init process, finished backup subprocesses
-#      become zombies, and after enough accumulate the OS refuses new forks —
-#      meaning backups silently stop running.
-#   4. Set SHELL so sh built-ins behave consistently inside RUN steps.
+# FIX: Alpine's mysql-client package installs MariaDB's client binaries, not
+# MySQL's. MariaDB's client does not ship caching_sha2_password.so, which is
+# the default auth plugin for MySQL 8 users. Every connection attempt fails
+# with "Plugin caching_sha2_password could not be loaded".
+#
+# Solution: use debian:bookworm-slim and install the official mysql-client
+# from apt, which is the real MySQL 8 client and includes the plugin.
 # ─────────────────────────────────────────────────────────────────────────────
 
-FROM alpine:latest
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache \
-    mysql-client \
-    dcron \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    default-mysql-client \
+    cron \
     git \
-    bash \
     curl \
     ca-certificates \
-    openssh-client \
     netcat-openbsd \
-    tini
+    tini \
+ && rm -rf /var/lib/apt/lists/*
 
-# Create the backup output directory with correct permissions
+# Create backup output directory
 RUN mkdir -p /backups && chmod 755 /backups
-
-# Create a log file crond can write to
-RUN touch /var/log/backup.log
 
 COPY backup.sh     /backup.sh
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /backup.sh /entrypoint.sh
 
-# Use tini as PID-1 so crond can reap zombie child processes
-ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/entrypoint.sh"]
