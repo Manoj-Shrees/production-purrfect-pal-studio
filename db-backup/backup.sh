@@ -1,6 +1,13 @@
 #!/bin/sh
 set -e
 
+# ── Source persisted env vars when running from cron ─────────────────────────
+# cron strips the Docker container environment entirely. entrypoint.sh writes
+# all MYSQL_* / GITHUB_* / BACKUP_* vars to /etc/backup-env at startup.
+# Sourcing it here is a no-op when the script is run manually (the vars are
+# already in the environment) and essential when run by cron (they aren't).
+[ -f /etc/backup-env ] && . /etc/backup-env
+
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
 log "=== Backup started ==="
@@ -27,9 +34,6 @@ if [ ! -w /backups ]; then
 fi
 
 # ── Dump ──────────────────────────────────────────────────────────────────────
-# mysqldump here is the real MySQL 8 client from debian's default-mysql-client
-# package — it supports caching_sha2_password natively.
-# --skip-ssl: both containers share a private Docker bridge, no TLS needed.
 log "Running mysqldump → $FILEPATH ..."
 
 mysqldump \
@@ -43,7 +47,6 @@ mysqldump \
   --triggers \
   "$MYSQL_DATABASE" 2>"$DUMP_STDERR" | gzip > "$FILEPATH"
 
-# Print any stderr output (warnings/errors) so they appear in docker logs
 if [ -s "$DUMP_STDERR" ]; then
   log "--- dump stderr ---"
   cat "$DUMP_STDERR"
