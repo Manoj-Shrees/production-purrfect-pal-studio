@@ -1,50 +1,44 @@
 #!/bin/sh
-# ─────────────────────────────────────────────────────────────────────────────
-# entrypoint.sh
-# ─────────────────────────────────────────────────────────────────────────────
 set -e
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] [entrypoint] $*"; }
 
-# ── Wait for MySQL to accept TCP connections ──────────────────────────────────
+# ── Wait for MySQL ────────────────────────────────────────────────────────────
 RETRIES=30
-log "Waiting for MySQL at ${MYSQL_HOST}:3306 (TCP) ..."
+log "Waiting for MySQL at ${MYSQL_HOST}:3306 ..."
 until nc -z "$MYSQL_HOST" 3306 2>/dev/null; do
   RETRIES=$((RETRIES - 1))
-  if [ "$RETRIES" -le 0 ]; then
-    log "ERROR: MySQL did not become ready in time. Exiting."
-    exit 1
-  fi
-  log "MySQL not ready yet — retrying in 5 s (${RETRIES} attempts left) ..."
+  [ "$RETRIES" -le 0 ] && log "ERROR: MySQL not ready. Exiting." && exit 1
+  log "Not ready — retrying in 5s (${RETRIES} left) ..."
   sleep 5
 done
 sleep 3
 log "MySQL is ready."
 
-# ── Persist env vars for cron ─────────────────────────────────────────────────
-# cron starts a clean shell with no Docker environment — every variable that
-# backup.sh needs (MYSQL_*, GITHUB_*, BACKUP_*, RETENTION_DAYS) is missing
-# when the scheduled job runs. Dumping them here means backup.sh can source
-# this file and behave identically whether run manually or via cron.
+# ── Persist env vars for cron (quote values so sourcing is safe) ──────────────
 log "Saving environment for cron ..."
-printenv | grep -E '^(MYSQL_|GITHUB_|BACKUP_|RETENTION_)' > /etc/backup-env
-chmod 600 /etc/backup-env   # readable only by root — contains credentials
+printenv | grep -E '^(MYSQL_|GITHUB_|BACKUP_|RETENTION_)' | while IFS= read -r line; do
+  key="${line%%=*}"
+  val="${line#*=}"
+  printf '%s="%s"\n' "$key" "$val"
+done > /etc/backup-env
+chmod 600 /etc/backup-env
 
 # ── Write crontab ─────────────────────────────────────────────────────────────
 CRON_EXPR="${BACKUP_CRON:-0 2 * * *}"
 log "Scheduling backup: '$CRON_EXPR'"
 
-# Source the env file before running the script so cron inherits all variables.
-# Output goes to /proc/1/fd/1 (PID 1 = tini's stdout = docker logs).
 cat > /etc/cron.d/db-backup <<EOF
 SHELL=/bin/sh
-$CRON_EXPR root . /etc/backup-env; /backup.sh >> /proc/1/fd/1 2>> /proc/1/fd/2
+$CRON_EXPR root . /etc/backup-env; /backup.sh >> /var/log/backup.log 2>&1
+
 EOF
 chmod 0644 /etc/cron.d/db-backup
 
-# ── Run an immediate backup ───────────────────────────────────────────────────
+# ── Run immediate backup ──────────────────────────────────────────────────────
 log "Running initial backup now ..."
-/backup.sh || log "WARNING: Initial backup failed — check logs above. Scheduled runs will still proceed."
+/backup.sh || log "WARNING: Initial backup failed."
 
+# ── Start cron in foreground ──────────────────────────────────────────────────
 log "Starting cron ..."
 exec cron -f
