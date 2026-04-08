@@ -1,0 +1,31 @@
+<header class="nav-outer">
+  <nav class="modern-navbar">
+
+    <!-- BRAND -->
+    <a class="navbar-brand" routerLink="/jobs">
+      <div class="logo-mark">
+        <img src="assets/images/pps-logo.png" alt="Purrfect Pal Studio" class="logo-img"/>
+      </div>
+      <span class="brand-name">Purrfect Pal Studio</span>
+      <span class="artist-badge">Artist</span>
+    </a>
+
+    <!-- Mobile hamburger -->
+    <button class="navbar-toggler" (click)="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Nav links -->
+    <div class="navbar-collapse" [class.open]="menuOpen">
+      <ul class="navbar-nav">
+        <li><a class="glass-nav-btn" (click)="openroute('/jobs')"          >Jobs</a></li>
+        <li><a class="glass-nav-btn" (click)="openroute('/past-orders')"   >Past Orders</a></li>
+        <li><a class="glass-nav-btn" (click)="openroute('/ongoing-orders')">Ongoing Orders</a></li>
+        <li><a class="glass-nav-btn" (click)="openroute('/artist-profile')">Profile</a></li>
+        <li class="nav-sep"></li>
+        <li><a class="highlight-btn" (click)="openroute('/order-tutorial')">Tutorial</a></li>
+      </ul>
+    </div>
+
+  </nav>
+</header>

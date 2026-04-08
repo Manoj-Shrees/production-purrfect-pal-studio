@@ -1,0 +1,333 @@
+<app-header></app-header>
+<app-image-cropper #cropper (cropDone)="onCropDone($event)" (cropCancel)="onCropCancel()"></app-image-cropper>
+<app-updateprofiledetail></app-updateprofiledetail>
+
+<!-- ══ UPLOAD LOADING OVERLAY ══ -->
+@if (isUploading()) {
+  <div class="upload-overlay">
+    <canvas class="particle-canvas" #particleCanvas></canvas>
+    <!-- Preloader spinner -->
+    <div class="upload-spinner-wrap">
+      <div class="upload-spinner"></div>
+      <img src="/assets/images/pps-logo.png"
+           appDisablerightclick
+           draggable="false"
+           oncontextmenu="return false;"
+           alt="PurrfectPal Logo"
+           class="upload-logo" />
+    </div>
+    <p class="upload-label">Uploading your photo<span class="ell"></span></p>
+    <p class="upload-sub">Hang tight, this just takes a moment</p>
+  </div>
+}
+
+<!-- ══ HERO CARD ══ -->
+@if (artistInfo()) {
+  <div class="hero-wrap">
+    <div class="hero-card">
+
+      <!-- Textured dark gradient band: black / electric blue / deep red -->
+      <div class="hero-band">
+        <div class="band-noise"></div>
+        <div class="band-grid"></div>
+        <div class="band-glow g1"></div>
+        <div class="band-glow g2"></div>
+        <div class="band-glow g3"></div>
+      </div>
+
+      <div class="hero-body">
+
+        <!-- Avatar -->
+        <div class="av-zone">
+          <div class="av-frame" (click)="triggerFileInput()" title="Change photo">
+            <img [src]="getSafeProfileImageUrl(profileImage())"
+                 (error)="onImageError($event)"
+                 [alt]="artistInfo().Name"
+                 class="av-img" />
+
+            <!-- Full overlay: shown on desktop hover -->
+            <div class="av-over">
+              <span class="icon-camera"></span>
+              Change Photo
+            </div>
+
+            <!-- Persistent badge: always visible, critical for mobile -->
+            <div class="av-badge">
+              <span class="icon-camera"></span>
+            </div>
+          </div>
+          <input #fileInput type="file" accept="image/jpg,image/jpeg,image/png"
+                 (change)="onFileSelected($event)" hidden />
+        </div>
+
+        <!-- Identity -->
+        <div class="hero-id">
+          <p class="eyebrow">
+            <span class="icon-user-sm"></span>
+            Artist Profile
+          </p>
+          <h1 class="hero-name">{{ artistInfo().Name }}</h1>
+          <div class="hero-meta">
+            <span class="meta-pill green">
+              <span class="icon-star-sm"></span>
+              {{ artistInfo().art_style ?? 'Artist' }}
+            </span>
+            <span class="meta-pill">
+              <span class="icon-pin-sm"></span>
+              {{ artistInfo().location ?? 'Unknown' }}
+            </span>
+            <span class="meta-pill">
+              <span class="icon-cal-sm"></span>
+              Member since {{ artistInfo().created_at | date:'yyyy' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="hero-actions">
+          <a class="btn btn-dark" href="#" data-bs-toggle="modal" data-bs-target="#updateDetailModal">
+            <span class="icon-edit"></span>
+            Edit Profile
+          </a>
+          <button class="btn btn-amber" (click)="togglePasswordForm()">
+            <span class="icon-lock"></span>
+            Change Password
+          </button>
+          <button class="btn btn-outline" (click)="logout()">
+            <span class="icon-logout"></span>
+            Logout
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STATS ══ -->
+  <div class="stats-wrap">
+    <div class="stats-row">
+      @for (stat of stats(); track stat.label) {
+        <div class="scard" [class]="stat.colorClass">
+          <div class="sicon">
+            <span [class]="stat.iconClass"></span>
+          </div>
+          <div class="stext">
+            <div class="snum">{{ stat.value }}</div>
+            <div class="slbl">{{ stat.label }}</div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ══ INFO CARDS ══ -->
+  <div class="info-wrap">
+
+    <!-- About Me -->
+    <div class="icard">
+      <div class="icard-hdr">
+        <div class="icard-hdr-icon"><span class="icon-user"></span></div>
+        <span class="icard-title">About Me</span>
+      </div>
+      <div class="icard-body">
+        <p class="about-text">{{ artistInfo().bio ?? 'No bio added yet.' }}</p>
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="icard">
+      <div class="icard-hdr">
+        <div class="icard-hdr-icon"><span class="icon-doc"></span></div>
+        <span class="icard-title">Details</span>
+      </div>
+      <div class="icard-body">
+        <div class="drows">
+          @for (row of detailRows(); track row.label) {
+            <div class="drow">
+              <div class="drow-icon"><span [class]="row.iconClass"></span></div>
+              <div class="drow-text">
+                <span class="drow-label">{{ row.label }}</span>
+                <span class="drow-val">{{ row.value }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills & Tools -->
+    <div class="icard full">
+      <div class="icard-hdr">
+        <div class="icard-hdr-icon"><span class="icon-pulse"></span></div>
+        <span class="icard-title">Skills &amp; Tools</span>
+      </div>
+      <div class="icard-body">
+        <div class="chips">
+          @for (chip of skillChips(); track chip.name) {
+            <span class="chip">
+              <span [class]="chip.iconClass"></span>
+              {{ chip.name }}
+            </span>
+          }
+          @if (!skillChips().length) {
+            <span class="chips-empty">No skills listed yet — edit your profile to add some.</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Account & Security -->
+    <div class="icard full acct-card" #pwSection>
+      <div class="icard-hdr">
+        <div class="icard-hdr-icon"><span class="icon-shield"></span></div>
+        <span class="icard-title">Account &amp; Security</span>
+      </div>
+      <div class="icard-body acct-body">
+
+        <!-- ── Change Password row ── -->
+        <div class="acct-row">
+          <div class="acct-info">
+            <span class="acct-label">Password</span>
+            <span class="acct-desc">Update your login password at any time to keep your account secure.</span>
+          </div>
+          <button class="acct-btn amber" (click)="togglePasswordForm()">
+            <span class="icon-lock"></span>
+            {{ showPasswordForm() ? 'Cancel' : 'Change Password' }}
+          </button>
+        </div>
+
+        <!-- ── Inline password form (toggled) ── -->
+        @if (showPasswordForm()) {
+          <div class="pw-form">
+            <div class="pw-fields">
+              <div class="pw-field">
+                <label class="pw-label">Current Password</label>
+                <div class="pw-input-wrap">
+                  <span class="pw-field-icon icon-lock"></span>
+                  <input
+                    [type]="showOldPw() ? 'text' : 'password'"
+                    class="pw-input pw-input-padded"
+                    [class.error]="pwError()"
+                    placeholder="Enter current password"
+                    [(ngModel)]="oldPassword"
+                    autocomplete="current-password" />
+                  <button class="pw-toggle" type="button"
+                          (click)="showOldPw.set(!showOldPw())"
+                          [title]="showOldPw() ? 'Hide password' : 'Show password'">
+                    @if (showOldPw()) {
+                      <span class="icon-eye-off"></span>
+                    } @else {
+                      <span class="icon-eye"></span>
+                    }
+                  </button>
+                </div>
+              </div>
+              <div class="pw-field">
+                <label class="pw-label">New Password</label>
+                <div class="pw-input-wrap">
+                  <span class="pw-field-icon icon-key"></span>
+                  <input
+                    [type]="showNewPw() ? 'text' : 'password'"
+                    class="pw-input pw-input-padded"
+                    [class.error]="pwError()"
+                    placeholder="Enter new password"
+                    [(ngModel)]="newPassword"
+                    autocomplete="new-password" />
+                  <button class="pw-toggle" type="button"
+                          (click)="showNewPw.set(!showNewPw())"
+                          [title]="showNewPw() ? 'Hide password' : 'Show password'">
+                    @if (showNewPw()) {
+                      <span class="icon-eye-off"></span>
+                    } @else {
+                      <span class="icon-eye"></span>
+                    }
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="pw-foot">
+              <span class="pw-error">{{ pwError() }}</span>
+              <span class="pw-success">{{ pwSuccess() }}</span>
+              <div class="pw-actions">
+                <button class="pw-cancel-btn" type="button" (click)="cancelPasswordForm()">
+                  <span class="icon-x"></span>
+                  Cancel
+                </button>
+                <button class="pw-save-btn" type="button"
+                        [disabled]="pwLoading()"
+                        (click)="updatePassword()">
+                  @if (pwLoading()) {
+                    <span class="pw-spinner"></span>
+                    Saving…
+                  } @else {
+                    <span class="icon-check-sm"></span>
+                    Update Password
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="acct-divider"></div>
+
+        <!-- ── Forgot Password row ── -->
+        <div class="acct-row">
+          <div class="acct-info">
+            <span class="acct-label">Forgot Password</span>
+            <span class="acct-desc">Can't log in? Reset your password via email — no hassle.</span>
+          </div>
+          <button class="acct-btn ghost" (click)="navigateForgotPassword()">
+            <span class="icon-mail"></span>
+            Reset via Email
+          </button>
+        </div>
+        <div class="acct-divider"></div>
+
+        <!-- ── Sign Out row ── -->
+        <div class="acct-row">
+          <div class="acct-info">
+            <span class="acct-label danger-label">Sign Out</span>
+            <span class="acct-desc">You'll be logged out of this device. Any unsaved work may be lost.</span>
+          </div>
+          <button class="acct-btn danger" (click)="logout()">
+            <span class="icon-logout"></span>
+            Logout
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Disclaimer note -->
+    <div class="note-card">
+      <div class="note-icon-wrap">
+        <span class="icon-info"></span>
+      </div>
+      <div class="note-body">
+        <strong class="note-title">Earnings Disclaimer</strong>
+        <p class="note-text">
+          All amounts shown are estimates before platform fees and applicable taxes.
+          Total Earnings reflects 50% of item prices (your artist cut).
+          Actual disbursements may differ — refer to your payment dashboard for confirmed figures.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+} @else {
+  <!-- Loading skeleton -->
+  <div class="skeleton-wrap">
+    <div class="skeleton-hero"></div>
+    <div class="skeleton-stats">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+    <div class="skeleton-cards">
+      <div class="skeleton-info"></div>
+      <div class="skeleton-info"></div>
+    </div>
+  </div>
+}

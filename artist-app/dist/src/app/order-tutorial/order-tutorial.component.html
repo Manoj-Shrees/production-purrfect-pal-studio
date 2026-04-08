@@ -1,0 +1,173 @@
+<app-header></app-header>
+
+<div class="artist-onboarding">
+
+  <!-- Hero -->
+  <div class="hero-section">
+    <div class="hero-eyebrow">Welcome, Artist</div>
+    <h1>Artist Onboarding</h1>
+    <p>Learn how to accept, manage, and complete orders at Purrfect Pal Studio.</p>
+  </div>
+
+  <!-- Video -->
+  <div class="video-wrapper">
+    <div class="ratio ratio-16x9">
+      <iframe src="https://www.youtube.com/embed/P8bfttrz9G4"
+              title="Artist Tutorial" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <h3 class="section-title">Steps to Complete an Order</h3>
+  <div class="row g-4 mb-2">
+
+    <!-- Step 1 — Amber/Gold -->
+    <div class="col-md-6 col-lg-3">
+      <div class="modern-card card-amber">
+        <div class="card-glow"></div>
+        <div class="step-number">01</div>
+        <h5>Jobs</h5>
+        <p>Go to the <strong>Jobs</strong> page to view all assigned orders based on your art style.</p>
+        <span class="status-badge pending">● Pending</span>
+      </div>
+    </div>
+
+    <!-- Step 2 — Teal/Emerald -->
+    <div class="col-md-6 col-lg-3">
+      <div class="modern-card card-teal">
+        <div class="card-glow"></div>
+        <div class="step-number">02</div>
+        <h5>Ongoing Orders</h5>
+        <p>Once accepted, the job moves to <strong>Ongoing Orders</strong>. Click <em>"View Details"</em> to begin working, message clients, and track progress.</p>
+        <span class="status-badge active">● Active</span>
+      </div>
+    </div>
+
+    <!-- Step 3 — Violet/Purple -->
+    <div class="col-md-6 col-lg-3">
+      <div class="modern-card card-violet">
+        <div class="card-glow"></div>
+        <div class="step-number">03</div>
+        <h5>Detail Page</h5>
+        <ul class="modern-list mt-2">
+          <li>Uploaded pet images</li>
+          <li>Client notes &amp; background preferences</li>
+          <li>Live chat with client</li>
+          <li>Final artwork upload form</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Step 4 — Rose/Crimson -->
+    <div class="col-md-6 col-lg-3">
+      <div class="modern-card card-rose">
+        <div class="card-glow"></div>
+        <div class="step-number">04</div>
+        <h5>Submit Final Artwork</h5>
+        <ul class="modern-list mt-2">
+          <li>300x300 branding image</li>
+          <li>High-resolution downloadable file</li>
+          <li>Pet name, breed &amp; design detail level</li>
+        </ul>
+        <p class="mt-3">Clients can request up to <strong>4 revisions</strong>. Use chat to clarify before finalizing.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="section-divider"/>
+
+  <!-- After Completion -->
+  <h3 class="section-title">After Finishing an Order</h3>
+  <div class="row g-4 mb-2">
+
+    <div class="col-md-6">
+      <div class="modern-card card-navy">
+        <div class="card-glow"></div>
+        <h5>Past Orders</h5>
+        <p>Once the client marks an order as complete, it moves to your <strong>Past Orders</strong> page. You can still view submitted files and notes, but chat will be disabled.</p>
+        <a routerLink="/past-orders" class="modern-btn mt-4">View Past Orders</a>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="modern-card card-forest">
+        <div class="card-glow"></div>
+        <h5>Artist Profile &amp; Stats</h5>
+        <p class="mb-3">Manage your personal info and track performance to build your reputation.</p>
+        <ul class="modern-list">
+          <li>View jobs completed &amp; total earnings</li>
+          <li>Upload or change profile photo</li>
+          <li>Update bio &amp; skills</li>
+        </ul>
+        <a routerLink="/artist-profile" class="modern-btn mt-4">Edit Your Profile</a>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="section-divider"/>
+
+  <!-- FAQ -->
+  <h3 class="section-title">Frequently Asked Questions</h3>
+  <div class="faq-list">
+
+    <div class="faq-item" [class.open]="faqOpen[0]">
+      <button class="faq-btn" (click)="toggleFaq(0)">
+        <span>What if I don't want to accept a job assigned to me?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-body">
+        No problem! Simply inform <strong>us</strong>. It will be removed from your dashboard and reassigned to another artist with the same style.
+      </div>
+    </div>
+
+    <div class="faq-item" [class.open]="faqOpen[1]">
+      <button class="faq-btn" (click)="toggleFaq(1)">
+        <span>Can I work on more than one job at a time?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-body">
+        Yes — only if you can complete it on time without any issues.
+      </div>
+    </div>
+
+    <div class="faq-item" [class.open]="faqOpen[2]">
+      <button class="faq-btn" (click)="toggleFaq(2)">
+        <span>What if I need more information from the client?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-body">
+        Use the chat box available on the <strong>Detail Page</strong> to directly communicate with the client. Ask for clarification or reference photos if needed.
+      </div>
+    </div>
+
+    <div class="faq-item" [class.open]="faqOpen[3]">
+      <button class="faq-btn" (click)="toggleFaq(3)">
+        <span>What are the requirements for submitting final artwork?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-body">
+        You must upload:
+        <ul class="modern-list mt-2">
+          <li>A branding image (300x300px)</li>
+          <li>A high-resolution downloadable file</li>
+          <li>Pet name, breed, and design detail level</li>
+        </ul>
+        <p class="mt-2">The submission form is on the <strong>Detail Page</strong> of the ongoing order.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" [class.open]="faqOpen[4]">
+      <button class="faq-btn" (click)="toggleFaq(4)">
+        <span>How do revisions work? How many are allowed?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-body">
+        Each client is allowed up to <strong>4 revision requests</strong>. You'll be notified through chat when a revision is requested.
+      </div>
+    </div>
+
+  </div>
+
+</div>
