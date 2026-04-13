@@ -2,13 +2,16 @@
 set -e
 
 # ── Source persisted env vars when running from cron ─────────────────────────
-# cron strips the Docker container environment entirely. entrypoint.sh writes
-# all MYSQL_* / GITHUB_* / BACKUP_* vars to /etc/backup-env at startup.
-# Sourcing it here is a no-op when the script is run manually (the vars are
-# already in the environment) and essential when run by cron (they aren't).
 [ -f /etc/backup-env ] && . /etc/backup-env
 
-log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
+LOG_FILE="/tmp/backup_run.log"
+> "$LOG_FILE"
+
+log() {
+  msg="[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+  echo "$msg"
+  echo "$msg" >> "$LOG_FILE"
+}
 
 log "=== Backup started ==="
 
@@ -24,7 +27,7 @@ done
 FILENAME="backup_$(date +%Y%m%d_%H%M%S).sql.gz"
 FILEPATH="/backups/$FILENAME"
 BRANCH="${GITHUB_BRANCH:-main}"
-RETENTION="${RETENTION_DAYS:-14}"
+RETENTION="${RETENTION_DAYS:-7}"
 DUMP_STDERR="/tmp/dump_stderr.log"
 
 mkdir -p /backups
@@ -49,6 +52,7 @@ mysqldump \
 
 if [ -s "$DUMP_STDERR" ]; then
   log "--- dump stderr ---"
+  cat "$DUMP_STDERR" >> "$LOG_FILE"
   cat "$DUMP_STDERR"
   log "--- end dump stderr ---"
 fi
@@ -61,10 +65,6 @@ if [ "$FILESIZE" -lt 100 ]; then
   exit 1
 fi
 log "Dump complete: $FILENAME (${FILESIZE} bytes)"
-
-# ── Rotate old local backups ──────────────────────────────────────────────────
-find /backups -name "*.sql.gz" -mtime +"$RETENTION" -delete
-log "Local rotation done (keeping ${RETENTION} days)"
 
 # ── Push to GitHub ────────────────────────────────────────────────────────────
 CLONE_DIR="/tmp/gh-backup"
@@ -85,17 +85,57 @@ git config user.name  "DB Backup Bot"
 
 git pull --rebase origin "$BRANCH" || true
 
-git add "$FILENAME"
+# ── Delete old backups from repo, but keep the most recent old one ────────────
+log "Pruning GitHub backups older than ${RETENTION} days (keeping last old file as safety net) ..."
+find "$CLONE_DIR" -maxdepth 1 -name "*.sql.gz" -mtime +"$RETENTION" \
+  | sort -r \
+  | tail -n +2 \
+  | while IFS= read -r old_file; do
+      log "Removing old backup from repo: $(basename "$old_file")"
+      git rm --force "$old_file"
+    done
+
+# ── Write README with full run log ────────────────────────────────────────────
+log "Writing README.md with run log ..."
+cat > "$CLONE_DIR/README.md" <<EOF
+# PurrfectPal Studio — DB Backup Log
+
+**Latest backup:** \`$FILENAME\`
+**Retention policy:** $RETENTION days (last old file always preserved as safety net)
+**Repo:** $GITHUB_REPO @ $BRANCH
+
+---
+
+## Last Run Log
+
+\`\`\`
+$(cat "$LOG_FILE")
+\`\`\`
+EOF
+
+git add "$FILENAME" README.md
 
 if git diff --cached --quiet; then
   log "Nothing to commit — file may already exist on remote."
 else
-  git commit -m "DB backup: $FILENAME"
+  git commit -m "DB backup: $FILENAME (pruned files older than ${RETENTION}d)"
   git push origin "$BRANCH"
   log "Pushed $FILENAME to GitHub (${GITHUB_REPO}@${BRANCH})"
 fi
 
 cd /tmp
 rm -rf "$CLONE_DIR"
+
+# ── Rotate old local backups (only after successful GitHub push) ──────────────
+# Keep the most recent old file as a safety net
+log "Pruning local backups older than ${RETENTION} days (keeping last old file as safety net) ..."
+find /backups -name "*.sql.gz" -mtime +"$RETENTION" \
+  | sort -r \
+  | tail -n +2 \
+  | while IFS= read -r old_file; do
+      log "Removing local old backup: $(basename "$old_file")"
+      rm -f "$old_file"
+    done
+log "Local rotation done (keeping ${RETENTION} days + 1 safety file)"
 
 log "=== Backup finished successfully ==="
