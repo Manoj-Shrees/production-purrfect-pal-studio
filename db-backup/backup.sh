@@ -88,6 +88,7 @@ git pull --rebase origin "$BRANCH" || true
 # ── Delete old backups from repo using filename date (not mtime) ──────────────
 # git clone sets mtime to NOW for all files so -mtime is unreliable.
 # Filenames are backup_YYYYMMDD_HHMMSS.sql.gz — parse the date from the name.
+# FIX: use -le instead of -lt so files dated exactly at the cutoff are included.
 log "Pruning GitHub backups older than ${RETENTION} days (keeping newest old file as safety net) ..."
 
 CUTOFF=$(date -d "-${RETENTION} days" '+%Y%m%d' 2>/dev/null || date -v-${RETENTION}d '+%Y%m%d')
@@ -100,7 +101,8 @@ for f in "$CLONE_DIR"/backup_*.sql.gz; do
   [ -f "$f" ] || continue
   fname=$(basename "$f")
   file_date=$(echo "$fname" | sed 's/backup_\([0-9]\{8\}\)_.*/\1/')
-  if [ -n "$file_date" ] && [ "$file_date" -lt "$CUTOFF" ]; then
+  # FIX: was -lt, changed to -le so files exactly at the cutoff date are deleted
+  if [ -n "$file_date" ] && [ "$file_date" -le "$CUTOFF" ]; then
     echo "$f" >> "$TO_DELETE"
   fi
 done
@@ -145,13 +147,15 @@ cd /tmp
 rm -rf "$CLONE_DIR"
 
 # ── Rotate old local backups (only after successful GitHub push) ──────────────
-# Local files have real mtimes so -mtime works correctly here
+# Local files have real mtimes so -mtime works correctly here.
+# FIX: was -mtime +"$RETENTION" which requires >7 full 24h periods (misses day-
+#      exact files). Using $((RETENTION - 1)) matches files >= RETENTION days old.
 log "Pruning local backups older than ${RETENTION} days (keeping newest old file as safety net) ..."
 
 LOCAL_DELETE="/tmp/local_files_to_delete.txt"
 > "$LOCAL_DELETE"
 
-find /backups -maxdepth 1 -name "*.sql.gz" -mtime +"$RETENTION" | sort -r > "$LOCAL_DELETE"
+find /backups -maxdepth 1 -name "*.sql.gz" -mtime +$((RETENTION - 1)) | sort -r > "$LOCAL_DELETE"
 
 tail -n +2 "$LOCAL_DELETE" | while IFS= read -r old_file; do
   log "Removing local old backup: $(basename "$old_file")"
