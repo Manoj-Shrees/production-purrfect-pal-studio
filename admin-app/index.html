@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Purrfect Pal Studio — the free admin panel for digital pet art studio managers. Available on iOS and macOS. v2.7"/>
+  <meta name="description" content="Purrfect Pal Studio — the free admin panel for digital pet art studio managers. Available on iOS and macOS."/>
   <title>Purrfect Pal Studio</title>
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
@@ -14,7 +15,7 @@
 <div class="hex-grid"></div>
 <div class="page">
 
-  <!-- ── NAV — UNCHANGED ── -->
+  <!-- ── NAV ── -->
   <nav class="nav">
     <a href="#" class="nav-brand">
       <div class="nav-logo">
@@ -45,11 +46,12 @@
         System Online — Version 2.7
       </div>
       <h1 class="hero-h">
-        <span class="glitch" data-text="PPS">Purrfect Pal Studio</span>
-        <em>Admin portal</em>
+        Purrfect Pal Studio
+        <em>Admin Portal</em>
       </h1>
       <p class="hero-sub">
-        The free admin panel for digital pet art studios — built for iOS and macOS. Track orders, revenue, artwork and print-on-demand from one command centre.
+        The free admin panel for digital pet art studios — built for iOS and macOS.
+        Track orders, revenue, artwork and print-on-demand from one command centre.
       </p>
       <div class="hero-dl" id="download">
         <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
@@ -57,7 +59,7 @@
           <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
         </a>
         <a href="assets/macos/PPS-admin-app.dmg" class="abtn mac">
-          <svg width="20" height="20" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
         </a>
       </div>
@@ -73,15 +75,15 @@
   <hr class="divider"/>
 
   <!-- ── SCREENSHOTS ── -->
-  <section class="screens-section reveal" id="screens">
+  <section class="screens-section reveal reveal-up" id="screens">
     <div class="screens-head">
       <div class="sec-pill">Screenshots</div>
-      <h2 class="sec-h">See it in action.<br/><span>iPhone &amp; iPad.</span></h2>
+      <h2 class="sec-h">See it in action.<br/><span>iPhone &amp; macOS.</span></h2>
     </div>
 
-    <div class="device-tabs">
+    <div class="device-tabs reveal reveal-fade">
       <button class="device-tab active" data-car="iphone">📱 iPhone</button>
-      <button class="device-tab" data-car="ipad">🖥 iPad</button>
+      <button class="device-tab" data-car="macos">💻 macOS</button>
     </div>
 
     <!-- iPhone Carousel -->
@@ -90,18 +92,18 @@
         <button class="arr arr-p" data-car="iphone">
           <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <div class="slide portrait" data-index="0"><img src="assets/screenshots/iPhone/IPSS1.png" alt="Screen 1" loading="lazy"/><span class="slide-lbl">Sign In</span></div>
-        <div class="slide portrait" data-index="1"><img src="assets/screenshots/iPhone/IPSS2.png" alt="Screen 2" loading="lazy"/><span class="slide-lbl">Dashboard</span></div>
-        <div class="slide portrait" data-index="2"><img src="assets/screenshots/iPhone/IPSS3.png" alt="Screen 3" loading="lazy"/><span class="slide-lbl">Orders</span></div>
-        <div class="slide portrait" data-index="3"><img src="assets/screenshots/iPhone/IPSS4.png" alt="Screen 4" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
-        <div class="slide portrait" data-index="4"><img src="assets/screenshots/iPhone/IPSS5.png" alt="Screen 5" loading="lazy"/><span class="slide-lbl">Pet Photos</span></div>
-        <div class="slide portrait" data-index="5"><img src="assets/screenshots/iPhone/IPSS6.png" alt="Screen 6" loading="lazy"/><span class="slide-lbl">Sales</span></div>
-        <div class="slide portrait" data-index="6"><img src="assets/screenshots/iPhone/IPSS7.png" alt="Screen 7" loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
-        <div class="slide portrait" data-index="7"><img src="assets/screenshots/iPhone/IPSS8.png" alt="Screen 8" loading="lazy"/><span class="slide-lbl">Catalog</span></div>
-        <div class="slide portrait" data-index="8"><img src="assets/screenshots/iPhone/IPSS9.png" alt="Screen 9" loading="lazy"/><span class="slide-lbl">Add Item</span></div>
-        <div class="slide portrait" data-index="9"><img src="assets/screenshots/iPhone/IPSS10.png" alt="Screen 10" loading="lazy"/><span class="slide-lbl">Artwork</span></div>
-        <div class="slide portrait" data-index="10"><img src="assets/screenshots/iPhone/IPSS11.png" alt="Screen 11" loading="lazy"/><span class="slide-lbl">Analytics</span></div>
-        <div class="slide portrait" data-index="11"><img src="assets/screenshots/iPhone/IPSS12.png" alt="Screen 12" loading="lazy"/><span class="slide-lbl">Overview</span></div>
+        <div class="slide portrait" data-index="0"><img src="assets/screenshots/iPhone/IPSS1.png"  alt="Sign In"      loading="lazy"/><span class="slide-lbl">Sign In</span></div>
+        <div class="slide portrait" data-index="1"><img src="assets/screenshots/iPhone/IPSS2.png"  alt="Dashboard"    loading="lazy"/><span class="slide-lbl">Dashboard</span></div>
+        <div class="slide portrait" data-index="2"><img src="assets/screenshots/iPhone/IPSS3.png"  alt="Orders"       loading="lazy"/><span class="slide-lbl">Orders</span></div>
+        <div class="slide portrait" data-index="3"><img src="assets/screenshots/iPhone/IPSS4.png"  alt="Order Detail" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
+        <div class="slide portrait" data-index="4"><img src="assets/screenshots/iPhone/IPSS5.png"  alt="Pet Photos"   loading="lazy"/><span class="slide-lbl">Pet Photos</span></div>
+        <div class="slide portrait" data-index="5"><img src="assets/screenshots/iPhone/IPSS6.png"  alt="Sales"        loading="lazy"/><span class="slide-lbl">Sales</span></div>
+        <div class="slide portrait" data-index="6"><img src="assets/screenshots/iPhone/IPSS7.png"  alt="POD"          loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
+        <div class="slide portrait" data-index="7"><img src="assets/screenshots/iPhone/IPSS8.png"  alt="Catalog"      loading="lazy"/><span class="slide-lbl">Catalog</span></div>
+        <div class="slide portrait" data-index="8"><img src="assets/screenshots/iPhone/IPSS9.png"  alt="Add Item"     loading="lazy"/><span class="slide-lbl">Add Item</span></div>
+        <div class="slide portrait" data-index="9"><img src="assets/screenshots/iPhone/IPSS10.png" alt="Artwork"      loading="lazy"/><span class="slide-lbl">Artwork</span></div>
+        <div class="slide portrait" data-index="10"><img src="assets/screenshots/iPhone/IPSS11.png" alt="Analytics"   loading="lazy"/><span class="slide-lbl">Analytics</span></div>
+        <div class="slide portrait" data-index="11"><img src="assets/screenshots/iPhone/IPSS12.png" alt="Overview"    loading="lazy"/><span class="slide-lbl">Overview</span></div>
         <button class="arr arr-n" data-car="iphone">
           <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
@@ -110,29 +112,29 @@
       <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
     </div>
 
-    <!-- iPad Carousel -->
-    <div class="car-wrap" id="car-ipad">
-      <div class="stage" id="stage-ipad">
-        <button class="arr arr-p" data-car="ipad">
+    <!-- macOS Carousel -->
+    <div class="car-wrap" id="car-macos">
+      <div class="stage" id="stage-macos">
+        <button class="arr arr-p" data-car="macos">
           <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <div class="slide landscape" data-index="0"><img src="assets/screenshots/iPad/ipadss1.png" alt="iPad 1" loading="lazy"/><span class="slide-lbl">Sign In</span></div>
-        <div class="slide landscape" data-index="1"><img src="assets/screenshots/iPad/ipadss2.png" alt="iPad 2" loading="lazy"/><span class="slide-lbl">Orders</span></div>
-        <div class="slide landscape" data-index="2"><img src="assets/screenshots/iPad/ipadss3.png" alt="iPad 3" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
-        <div class="slide landscape" data-index="3"><img src="assets/screenshots/iPad/ipadss4.png" alt="iPad 4" loading="lazy"/><span class="slide-lbl">Users</span></div>
-        <div class="slide landscape" data-index="4"><img src="assets/screenshots/iPad/ipadss5.png" alt="iPad 5" loading="lazy"/><span class="slide-lbl">Sales</span></div>
-        <div class="slide landscape" data-index="5"><img src="assets/screenshots/iPad/ipadss6.png" alt="iPad 6" loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
-        <div class="slide landscape" data-index="6"><img src="assets/screenshots/iPad/ipadss7.png" alt="iPad 7" loading="lazy"/><span class="slide-lbl">Items</span></div>
-        <div class="slide landscape" data-index="7"><img src="assets/screenshots/iPad/ipadss8.png" alt="iPad 8" loading="lazy"/><span class="slide-lbl">POD Detail</span></div>
-        <div class="slide landscape" data-index="8"><img src="assets/screenshots/iPad/ipadss9.png" alt="iPad 9" loading="lazy"/><span class="slide-lbl">New Order</span></div>
-        <div class="slide landscape" data-index="9"><img src="assets/screenshots/iPad/ipadss10.png" alt="iPad 10" loading="lazy"/><span class="slide-lbl">Artwork</span></div>
-        <div class="slide landscape" data-index="10"><img src="assets/screenshots/iPad/ipadss11.png" alt="iPad 11" loading="lazy"/><span class="slide-lbl">Analytics</span></div>
-        <div class="slide landscape" data-index="11"><img src="assets/screenshots/iPad/ipadss12.png" alt="iPad 12" loading="lazy"/><span class="slide-lbl">Overview</span></div>
-        <button class="arr arr-n" data-car="ipad">
+        <div class="slide landscape" data-index="0"><img src="assets/screenshots/macOS/ipadss1.png"  alt="Sign In"      loading="lazy"/><span class="slide-lbl">Sign In</span></div>
+        <div class="slide landscape" data-index="1"><img src="assets/screenshots/macOS/ipadss2.png"  alt="Orders"       loading="lazy"/><span class="slide-lbl">Orders</span></div>
+        <div class="slide landscape" data-index="2"><img src="assets/screenshots/macOS/ipadss3.png"  alt="Order Detail" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
+        <div class="slide landscape" data-index="3"><img src="assets/screenshots/macOS/ipadss4.png"  alt="Users"        loading="lazy"/><span class="slide-lbl">Users</span></div>
+        <div class="slide landscape" data-index="4"><img src="assets/screenshots/macOS/ipadss5.png"  alt="Sales"        loading="lazy"/><span class="slide-lbl">Sales</span></div>
+        <div class="slide landscape" data-index="5"><img src="assets/screenshots/macOS/ipadss6.png"  alt="POD"          loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
+        <div class="slide landscape" data-index="6"><img src="assets/screenshots/macOS/ipadss7.png"  alt="Items"        loading="lazy"/><span class="slide-lbl">Items</span></div>
+        <div class="slide landscape" data-index="7"><img src="assets/screenshots/macOS/ipadss8.png"  alt="POD Detail"   loading="lazy"/><span class="slide-lbl">POD Detail</span></div>
+        <div class="slide landscape" data-index="8"><img src="assets/screenshots/macOS/ipadss9.png"  alt="New Order"    loading="lazy"/><span class="slide-lbl">New Order</span></div>
+        <div class="slide landscape" data-index="9"><img src="assets/screenshots/macOS/ipadss10.png" alt="Artwork"      loading="lazy"/><span class="slide-lbl">Artwork</span></div>
+        <div class="slide landscape" data-index="10"><img src="assets/screenshots/macOS/ipadss11.png" alt="Analytics"   loading="lazy"/><span class="slide-lbl">Analytics</span></div>
+        <div class="slide landscape" data-index="11"><img src="assets/screenshots/macOS/ipadss12.png" alt="Overview"    loading="lazy"/><span class="slide-lbl">Overview</span></div>
+        <button class="arr arr-n" data-car="macos">
           <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
-      <div class="car-progress" id="prog-ipad"></div>
+      <div class="car-progress" id="prog-macos"></div>
       <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
     </div>
   </section>
@@ -140,12 +142,16 @@
   <hr class="divider"/>
 
   <!-- ── LIVE DEMO ── -->
-  <section class="demo-sec reveal" id="features">
-    <div class="sec-pill">Live Preview</div>
-    <h2 class="sec-h" style="text-align:center;margin-bottom:8px">Tap through the dashboard.<br/><span>Try it yourself.</span></h2>
-    <p style="text-align:center;font-size:.85rem;color:var(--sub);margin-bottom:28px;font-family:var(--font-hud);letter-spacing:.04em">EXPLORE EVERY SECTION OF THE ADMIN PANEL</p>
+  <section class="demo-sec" id="features">
+    <div class="sec-pill reveal reveal-fade">Live Preview</div>
+    <h2 class="sec-h reveal reveal-up" style="text-align:center;margin-bottom:8px">
+      Tap through the dashboard.<br/><span>Try it yourself.</span>
+    </h2>
+    <p class="reveal reveal-fade" style="text-align:center;font-size:.85rem;color:var(--sub);margin-bottom:28px;font-family:var(--font-hud);letter-spacing:.04em">
+      EXPLORE EVERY SECTION OF THE ADMIN PANEL
+    </p>
 
-    <div class="demo-frame hud-box">
+    <div class="demo-frame hud-box reveal reveal-scale">
       <!-- Chrome bar -->
       <div class="demo-mac-chrome">
         <div class="demo-mac-dots"><span class="mc mc-r"></span><span class="mc mc-y"></span><span class="mc mc-g"></span></div>
@@ -362,7 +368,7 @@
             </div>
           </div>
 
-          <!-- FORECAST (NEW) -->
+          <!-- FORECAST -->
           <div class="panel" id="panel-forecast">
             <div class="ph">
               <div class="ph-row"><div class="ph-title">// Revenue Forecast</div><div class="ph-action">3-Month View</div></div>
@@ -371,22 +377,19 @@
                 <div class="pstat"><span class="pstat-n c">+22%</span><span class="pstat-l">YoY Growth</span></div>
               </div>
             </div>
-            <div class="forecast-grid" id="forecast-cards">
+            <div class="forecast-grid">
               <div class="fc-card">
-                <div class="fc-month">May 2026</div>
-                <div class="fc-value up">$3,080</div>
+                <div class="fc-month">May 2026</div><div class="fc-value up">$3,080</div>
                 <div class="fc-change">↑ +8.5% projected</div>
                 <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="78%"></div></div>
               </div>
               <div class="fc-card">
-                <div class="fc-month">Jun 2026</div>
-                <div class="fc-value up">$3,290</div>
+                <div class="fc-month">Jun 2026</div><div class="fc-value up">$3,290</div>
                 <div class="fc-change">↑ +6.8% projected</div>
                 <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="83%"></div></div>
               </div>
               <div class="fc-card">
-                <div class="fc-month">Jul 2026</div>
-                <div class="fc-value up">$3,870</div>
+                <div class="fc-month">Jul 2026</div><div class="fc-value up">$3,870</div>
                 <div class="fc-change">↑ +17.6% seasonal peak</div>
                 <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="98%"></div></div>
               </div>
@@ -396,7 +399,7 @@
             </div>
           </div>
 
-          <!-- SYSTEM (NEW) -->
+          <!-- SYSTEM -->
           <div class="panel" id="panel-system">
             <div class="ph">
               <div class="ph-row"><div class="ph-title">// System Status</div><div class="ph-action">Refresh</div></div>
@@ -476,15 +479,15 @@
             </div>
           </div>
 
-        </div>
-      </div>
-    </div>
+        </div><!-- /.demo-main -->
+      </div><!-- /.demo-body -->
+    </div><!-- /.demo-frame -->
   </section>
 
   <hr class="divider"/>
 
   <!-- ── CTA ── -->
-  <div class="cta reveal">
+  <div class="cta reveal reveal-up">
     <div class="cta-rings">
       <div class="cta-ring"></div>
       <div class="cta-ring"></div>
@@ -500,14 +503,14 @@
           <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
         </a>
         <a href="assets/macos/PPS-admin-app.dmg" class="abtn mac">
-          <svg width="20" height="20" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
         </a>
       </div>
     </div>
   </div>
 
-  <!-- ── FOOTER — UNCHANGED ── -->
+  <!-- ── FOOTER ── -->
   <footer>
     <a href="https://purrfectpal.studio" target="_blank" class="f-brand">
       <img class="f-logo"
@@ -525,7 +528,7 @@
     <span class="f-copy">© 2026 Purrfect Pal Studio</span>
   </footer>
 
-</div>
-  <script src="js/main.js"></script>
+</div><!-- /.page -->
+<script src="js/main.js"></script>
 </body>
 </html>
