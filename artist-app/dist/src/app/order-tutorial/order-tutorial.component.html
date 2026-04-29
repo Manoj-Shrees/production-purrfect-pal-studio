@@ -1,0 +1,280 @@
+<app-header></app-header>
+
+<div class="onboarding-wrap">
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-label">Artist Portal</div>
+    <h1 class="hero-title">
+      <span class="hero-line">Your Creative</span>
+      <span class="hero-line accent-line">Workflow Guide</span>
+    </h1>
+    <p class="hero-sub">Everything you need to accept, manage, and deliver stunning commissions at Purrfect Pal Studio.</p>
+    <div class="hero-rule"></div>
+  </section>
+
+  <!-- ── VIDEO 1 ── -->
+  <section class="video-section">
+    <div class="video-label-row">
+      <span class="vid-tag">Tutorial 01</span>
+      <h2 class="vid-heading">Getting Started as an Artist</h2>
+    </div>
+
+    <div class="vid-shell">
+      <!-- macOS-style chrome bar -->
+      <div class="vid-chrome">
+        <div class="vid-dots">
+          <span class="vd vd-r"></span>
+          <span class="vd vd-y"></span>
+          <span class="vd vd-g"></span>
+        </div>
+        <div class="vid-url-bar">
+          <span class="vid-url-secure"></span>
+          <span class="vid-url-text">youtube.com/embed/P8bfttrz9G4</span>
+        </div>
+      </div>
+      <!-- Video inner -->
+      <div class="vid-inner">
+        <div class="ratio ratio-16x9">
+          <iframe src="https://www.youtube.com/embed/P8bfttrz9G4"
+                  title="Artist Tutorial"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen></iframe>
+        </div>
+        <!-- Corner accents -->
+        <div class="vc vc-tl"></div>
+        <div class="vc vc-tr"></div>
+        <div class="vc vc-bl"></div>
+        <div class="vc vc-br"></div>
+      </div>
+      <div class="vid-glow-bar"></div>
+    </div>
+  </section>
+
+  <!-- ── STEPS ── -->
+  <section class="steps-section">
+    <div class="section-header">
+      <span class="section-tag">Process</span>
+      <h2 class="section-heading">Four Steps to Complete an Order</h2>
+    </div>
+
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">📋</div>
+        <h3>Jobs</h3>
+        <p>Visit the <strong>Jobs</strong> page to see all orders assigned to you based on your art style. Your queue starts here.</p>
+        <div class="step-badge badge-amber">● Pending</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">🎨</div>
+        <h3>Ongoing Orders</h3>
+        <p>Accept a job and it moves to <strong>Ongoing Orders</strong>. Hit <em>"View Details"</em> to start work, message clients, and track progress.</p>
+        <div class="step-badge badge-teal">● Active</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">🔍</div>
+        <h3>Detail Page</h3>
+        <ul class="step-list">
+          <li>Uploaded pet images</li>
+          <li>Client notes &amp; background preferences</li>
+          <li>Live chat with client</li>
+          <li>Final artwork upload form</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-icon">✦</div>
+        <h3>Submit Artwork</h3>
+        <ul class="step-list">
+          <li>300×300 branding image</li>
+          <li>High-resolution downloadable file</li>
+          <li>Pet name, breed &amp; detail level</li>
+        </ul>
+        <p class="step-note">Clients may request up to <strong>4 revisions</strong>. Chat early to avoid surprises.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── DIVIDER ── -->
+  <div class="ornament-divider">
+    <span></span><span class="diamond">◆</span><span></span>
+  </div>
+
+  <!-- ── AFTER COMPLETION ── -->
+  <section class="after-section">
+    <div class="section-header">
+      <span class="section-tag">After Delivery</span>
+      <h2 class="section-heading">What Happens Next</h2>
+    </div>
+
+    <div class="after-grid">
+
+      <!-- Past Orders — redesigned -->
+      <div class="after-card card-past">
+        <div class="after-num">A</div>
+        <div class="card-pill">📁 Order Archive</div>
+        <h3>Past Orders</h3>
+        <p>Once a client marks an order complete, it's archived here. All files and notes remain viewable — chat is disabled after completion.</p>
+        <div class="stat-chips">
+          <span class="chip chip-violet">✓ Files preserved</span>
+          <span class="chip chip-cyan">🔒 Read-only archive</span>
+        </div>
+        <a routerLink="/past-orders" class="past-link-row">
+          <div class="past-link-icon">🗂</div>
+          <div class="past-link-text">
+            <div class="past-link-title">View Past Orders</div>
+            <div class="past-link-sub">Browse your completed commissions</div>
+          </div>
+          <span class="past-link-arr">›</span>
+        </a>
+      </div>
+
+      <!-- Artist Profile -->
+      <div class="after-card card-gold">
+        <div class="after-num">B</div>
+        <h3>Artist Profile &amp; Stats</h3>
+        <p class="mb-3">Build your reputation and manage your presence on the platform.</p>
+        <ul class="step-list">
+          <li>Jobs completed &amp; total earnings</li>
+          <li>Upload or change profile photo</li>
+          <li>Update bio &amp; skills</li>
+        </ul>
+        <a routerLink="/artist-profile" class="cta-btn cta-btn-outline mt-4">Edit Your Profile <span>→</span></a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── VIDEO 2 ── -->
+  <section class="video-section video-section-2">
+    <div class="video-label-row">
+      <span class="vid-tag">Tutorial 02</span>
+      <h2 class="vid-heading">How to Report if You Can't Fulfil an Order</h2>
+    </div>
+
+    <div class="vid-shell">
+      <div class="vid-chrome">
+        <div class="vid-dots">
+          <span class="vd vd-r"></span>
+          <span class="vd vd-y"></span>
+          <span class="vd vd-g"></span>
+        </div>
+        <div class="vid-url-bar">
+          <span class="vid-url-secure"></span>
+          <span class="vid-url-text">youtube.com/embed/ol9UOuPtWPo</span>
+        </div>
+      </div>
+
+      <div class="vid-inner">
+        <div class="ratio ratio-16x9">
+          <iframe src="https://www.youtube.com/embed/Z3WPCYaZSE8"
+                  title="Purrfect pal Studio - How to report to purrfect pal studio,  if you are unable to fullfil order?"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen></iframe>
+        </div>
+        <div class="vc vc-tl"></div>
+        <div class="vc vc-tr"></div>
+        <div class="vc vc-bl"></div>
+        <div class="vc vc-br"></div>
+      </div>
+      <div class="vid-glow-bar"></div>
+    </div>
+  </section>
+
+  <!-- ── DIVIDER ── -->
+  <div class="ornament-divider">
+    <span></span><span class="diamond">◆</span><span></span>
+  </div>
+
+  <!-- ── FAQ ── -->
+  <section class="faq-section">
+    <div class="section-header">
+      <span class="section-tag">FAQ</span>
+      <h2 class="section-heading">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="faq-list">
+
+      <div class="faq-item" [class.open]="faqOpen[0]">
+        <button class="faq-btn" (click)="toggleFaq(0)">
+          <span>What if I don't want to accept a job assigned to me?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          No problem — simply inform <strong>us</strong>. It will be removed from your dashboard and reassigned to another artist with the same style.
+        </div>
+      </div>
+
+      <div class="faq-item" [class.open]="faqOpen[1]">
+        <button class="faq-btn" (click)="toggleFaq(1)">
+          <span>Can I work on more than one job at a time?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          Yes — only if you can complete it on time without any issues.
+        </div>
+      </div>
+
+      <div class="faq-item" [class.open]="faqOpen[2]">
+        <button class="faq-btn" (click)="toggleFaq(2)">
+          <span>What if I need more information from the client?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          Use the chat box available on the <strong>Detail Page</strong> to communicate directly with the client. Ask for clarification or reference photos whenever needed.
+        </div>
+      </div>
+
+      <div class="faq-item" [class.open]="faqOpen[3]">
+        <button class="faq-btn" (click)="toggleFaq(3)">
+          <span>What are the requirements for submitting final artwork?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          You must upload:
+          <ul class="step-list mt-2">
+            <li>A branding image (300×300px)</li>
+            <li>A high-resolution downloadable file</li>
+            <li>Pet name, breed, and design detail level</li>
+          </ul>
+          <p class="mt-2">The submission form is on the <strong>Detail Page</strong> of the ongoing order.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" [class.open]="faqOpen[4]">
+        <button class="faq-btn" (click)="toggleFaq(4)">
+          <span>How do revisions work? How many are allowed?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          Each client is allowed up to <strong>4 revision requests</strong>. You'll be notified through chat when a revision is requested.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+ <div class="footer-note">
+  <div class="footer-note-inner">
+    <span class="footer-brand">Purrfect Pal Studio</span>
+    <span class="footer-sep">•</span>
+    <span class="footer-sub">Artist Portal</span>
+  </div>
+
+  <p class="footer-copy">
+    © 2026 Purrfect Pal Studio. All rights reserved.  
+    For support or order issues, please contact the studio admin on support@purrfectpal.studio
+  </p>
+</div>
+
+</div>

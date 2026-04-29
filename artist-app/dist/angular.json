@@ -1,0 +1,149 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "artist-panel": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": { "standalone": false },
+        "@schematics/angular:directive": { "standalone": false },
+        "@schematics/angular:pipe": { "standalone": false }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/artist-panel",
+            "allowedCommonJsDependencies": [
+              "lz-string",
+              "core-js",
+              "canvg",
+              "html2canvas",
+              "jspdf",
+              "raf",
+              "rgbcolor"
+            ],
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "sitemap.xml",
+                "input": "src/assets",
+                "output": "."
+              },
+              {
+                "glob": "robots.txt",
+                "input": "src",
+                "output": "/"
+              },
+
+              {
+                "glob": "sw.js",
+                "input": "src",
+                "output": "/"          
+              }
+              
+            ],
+            "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "src/styles.css"
+            ],
+            "scripts": [
+              "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ],
+            "browser": "src/main.ts"
+          },
+          "configurations": {
+            "production": {
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": true
+              },
+              "outputHashing": "all",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100kb",
+                  "maximumError": "100kb"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "artist-panel:build:production"
+            },
+            "development": {
+              "buildTarget": "artist-panel:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n"
+        },
+
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "polyfills": ["zone.js", "zone.js/testing"],
+            "tsConfig": "tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+
+  "cli": {
+    "analytics": false
+  },
+
+  "schematics": {
+    "@schematics/angular:component": { "type": "component" },
+    "@schematics/angular:directive": { "type": "directive" },
+    "@schematics/angular:service": { "type": "service" },
+    "@schematics/angular:guard": { "typeSeparator": "." },
+    "@schematics/angular:interceptor": { "typeSeparator": "." },
+    "@schematics/angular:module": { "typeSeparator": "." },
+    "@schematics/angular:pipe": { "typeSeparator": "." },
+    "@schematics/angular:resolver": { "typeSeparator": "." }
+  }
+}

@@ -3,30 +3,28 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Purrfect Pal Studio — the free admin panel for digital pet art studio managers. Available on iOS and macOS."/>
+  <meta name="description" content="Purrfect Pal Studio — the free admin panel for digital pet art studio managers. Available on iOS and macOS. v2.7"/>
   <title>Purrfect Pal Studio</title>
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
-
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
+<div class="hex-grid"></div>
 <div class="page">
 
-  <!-- ── NAV ── -->
-  <nav>
-    <a href="#" class="brand">
-      <img class="brand-logo"
-        src="https://www.purrfectpal.studio/assets/images/pps-logo.png"
-        alt="PPS"
-        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-      <span class="brand-fb">PPS</span>
-      <span class="brand-name">Purrfect Pal Studio</span>
+  <!-- ── NAV — UNCHANGED ── -->
+  <nav class="nav">
+    <a href="#" class="nav-brand">
+      <div class="nav-logo">
+        <img src="https://www.purrfectpal.studio/assets/images/pps-logo.png" alt="PPS"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+          style="width:100%;height:100%;object-fit:cover;border-radius:9px;display:block"/>
+        <span style="display:none;font-size:12px;font-weight:700;color:#000;font-family:var(--font-hud)">PPS</span>
+      </div>
+      <span class="nav-name">Purrfect Pal Studio</span>
+      <span class="nav-badge">v2.7</span>
     </a>
     <div class="nav-r">
       <ul class="nav-links">
@@ -40,282 +38,476 @@
 
   <!-- ── HERO ── -->
   <section class="hero">
-    <div class="pill">
-      <span class="pill-dot"></span>
-      Version 2.5 — Available Now
-    </div>
-
-    <h1>Purrfect Pal Studio<br/><em>Admin Panel</em></h1>
-
-    <p class="hero-sub">
-      The free admin panel for digital pet art studio managers and artists — on iOS and macOS.
-    </p>
-
-    <div class="dl" id="download">
-      <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
-        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
-          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
-        </svg>
-        <div class="abtn-text">
-          <span class="ts">Download on the</span>
-          <span class="tb">App Store</span>
-        </div>
-      </a>
-      <a href="assets/macos/PPS-admin-app.dmg" target="_blank" class="abtn mac">
-        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
-          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
-        </svg>
-        <div class="abtn-text">
-          <span class="ts">Download on the</span>
-          <span class="tb">Mac App Store</span>
-        </div>
-      </a>
-    </div>
-
-    <div class="stats">
-      <div class="st"><span class="st-n g">5.0 ★</span><span class="st-l">Rating</span></div>
-      <div class="st"><span class="st-n">Free</span><span class="st-l">No cost</span></div>
-      <div class="st"><span class="st-n">v2.4</span><span class="st-l">Latest</span></div>
-      <div class="st"><span class="st-n">11.8 MB</span><span class="st-l">Size</span></div>
+    <canvas id="particles"></canvas>
+    <div class="hero-inner">
+      <div class="hero-pill">
+        <span class="hero-pill-dot"></span>
+        System Online — Version 2.7
+      </div>
+      <h1 class="hero-h">
+        <span class="glitch" data-text="Manage your studio">Production Dashboard</span>
+        <em>Artworks, Artists & Orders.</em>
+      </h1>
+      <p class="hero-sub">
+        The free admin panel for digital pet art studios — built for iOS and macOS. Track orders, revenue, artwork and print-on-demand from one command centre.
+      </p>
+      <div class="hero-dl" id="download">
+        <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
+          <svg width="20" height="24" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg"><path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/></svg>
+          <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
+        </a>
+        <a href="assets/macos/PPS-admin-app.dmg" class="abtn mac">
+          <svg width="20" height="20" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hst"><span class="hst-n g">5.0 ★</span><span class="hst-l">Rating</span></div>
+        <div class="hst"><span class="hst-n">Free</span><span class="hst-l">No cost</span></div>
+        <div class="hst"><span class="hst-n">v2.7</span><span class="hst-l">Latest</span></div>
+        <div class="hst"><span class="hst-n">11.8 MB</span><span class="hst-l">Size</span></div>
+      </div>
     </div>
   </section>
 
-  <hr/>
+  <hr class="divider"/>
 
   <!-- ── SCREENSHOTS ── -->
-  <section class="sc-section reveal" id="screens">
-    <div class="sc-head">
-      <div class="sc-lbl">Screenshots</div>
-      <h2 class="sc-h">See it in action.<br/><span>iPhone &amp; Mac.</span></h2>
+  <section class="screens-section reveal" id="screens">
+    <div class="screens-head">
+      <div class="sec-pill">Screenshots</div>
+      <h2 class="sec-h">See it in action.<br/><span>iPhone &amp; iPad.</span></h2>
     </div>
 
-    <div class="sc-tabs">
-      <button class="sc-tab active" data-car="ip">📱 iPhone</button>
-      <button class="sc-tab" data-car="mac">💻 Mac</button>
+    <div class="device-tabs">
+      <button class="device-tab active" data-car="iphone">📱 iPhone</button>
+      <button class="device-tab" data-car="ipad">🖥 iPad</button>
     </div>
 
-    <!-- iPhone carousel -->
-    <div class="car-wrap show" id="car-ip">
-      <div class="stage" id="stage-ip">
-        <div class="stage-glow"></div>
-        <button class="arr arr-p" data-car="ip">
+    <!-- iPhone Carousel -->
+    <div class="car-wrap show" id="car-iphone">
+      <div class="stage" id="stage-iphone">
+        <button class="arr arr-p" data-car="iphone">
           <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-
-        <div class="slide portrait" data-index="0">
-          <img src="assets/screenshots/ip_login.png"   alt="Sign In"         loading="lazy"/>
-          <span class="slide-lbl">Sign In</span>
-        </div>
-        <div class="slide portrait" data-index="1">
-          <img src="assets/screenshots/ip_admin.png"   alt="Admin Panel"     loading="lazy"/>
-          <span class="slide-lbl">Admin Panel</span>
-        </div>
-        <div class="slide portrait" data-index="2">
-          <img src="assets/screenshots/ip_orders.png"  alt="Orders"          loading="lazy"/>
-          <span class="slide-lbl">Orders</span>
-        </div>
-        <div class="slide portrait" data-index="3">
-          <img src="assets/screenshots/ip_photos.png"  alt="Pet Photos"      loading="lazy"/>
-          <span class="slide-lbl">Pet Photos</span>
-        </div>
-        <div class="slide portrait" data-index="4">
-          <img src="assets/screenshots/ip_sales.png"   alt="Sales"           loading="lazy"/>
-          <span class="slide-lbl">Sales</span>
-        </div>
-        <div class="slide portrait" data-index="5">
-          <img src="assets/screenshots/ip_pod.png"     alt="Print on Demand" loading="lazy"/>
-          <span class="slide-lbl">Print on Demand</span>
-        </div>
-        <div class="slide portrait" data-index="6">
-          <img src="assets/screenshots/ip_catalog.png" alt="Catalog"         loading="lazy"/>
-          <span class="slide-lbl">Catalog</span>
-        </div>
-        <div class="slide portrait" data-index="7">
-          <img src="assets/screenshots/ip_add.png"     alt="Add Item"        loading="lazy"/>
-          <span class="slide-lbl">Add Item</span>
-        </div>
-        <div class="slide portrait" data-index="8">
-          <img src="assets/screenshots/ip_art.png"     alt="Artwork"         loading="lazy"/>
-          <span class="slide-lbl">Artwork</span>
-        </div>
-        <div class="slide portrait" data-index="9">
-          <img src="assets/screenshots/ip_finale.png"  alt="Overview"        loading="lazy"/>
-          <span class="slide-lbl">Overview</span>
-        </div>
-
-        <button class="arr arr-n" data-car="ip">
+        <div class="slide portrait" data-index="0"><img src="assets/screenshots/iPhone/IPSS1.png" alt="Screen 1" loading="lazy"/><span class="slide-lbl">Sign In</span></div>
+        <div class="slide portrait" data-index="1"><img src="assets/screenshots/iPhone/IPSS2.png" alt="Screen 2" loading="lazy"/><span class="slide-lbl">Dashboard</span></div>
+        <div class="slide portrait" data-index="2"><img src="assets/screenshots/iPhone/IPSS3.png" alt="Screen 3" loading="lazy"/><span class="slide-lbl">Orders</span></div>
+        <div class="slide portrait" data-index="3"><img src="assets/screenshots/iPhone/IPSS4.png" alt="Screen 4" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
+        <div class="slide portrait" data-index="4"><img src="assets/screenshots/iPhone/IPSS5.png" alt="Screen 5" loading="lazy"/><span class="slide-lbl">Pet Photos</span></div>
+        <div class="slide portrait" data-index="5"><img src="assets/screenshots/iPhone/IPSS6.png" alt="Screen 6" loading="lazy"/><span class="slide-lbl">Sales</span></div>
+        <div class="slide portrait" data-index="6"><img src="assets/screenshots/iPhone/IPSS7.png" alt="Screen 7" loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
+        <div class="slide portrait" data-index="7"><img src="assets/screenshots/iPhone/IPSS8.png" alt="Screen 8" loading="lazy"/><span class="slide-lbl">Catalog</span></div>
+        <div class="slide portrait" data-index="8"><img src="assets/screenshots/iPhone/IPSS9.png" alt="Screen 9" loading="lazy"/><span class="slide-lbl">Add Item</span></div>
+        <div class="slide portrait" data-index="9"><img src="assets/screenshots/iPhone/IPSS10.png" alt="Screen 10" loading="lazy"/><span class="slide-lbl">Artwork</span></div>
+        <div class="slide portrait" data-index="10"><img src="assets/screenshots/iPhone/IPSS11.png" alt="Screen 11" loading="lazy"/><span class="slide-lbl">Analytics</span></div>
+        <div class="slide portrait" data-index="11"><img src="assets/screenshots/iPhone/IPSS12.png" alt="Screen 12" loading="lazy"/><span class="slide-lbl">Overview</span></div>
+        <button class="arr arr-n" data-car="iphone">
           <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
-      <div class="dots" id="dots-ip">
-        <button class="dot" data-index="0"></button>
-        <button class="dot" data-index="1"></button>
-        <button class="dot" data-index="2"></button>
-        <button class="dot" data-index="3"></button>
-        <button class="dot" data-index="4"></button>
-        <button class="dot" data-index="5"></button>
-        <button class="dot" data-index="6"></button>
-        <button class="dot" data-index="7"></button>
-        <button class="dot" data-index="8"></button>
-        <button class="dot" data-index="9"></button>
-      </div>
-      <p class="swipe-hint">Swipe or use arrows · Click side cards to navigate</p>
+      <div class="car-progress" id="prog-iphone"></div>
+      <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
     </div>
 
-    <!-- Mac carousel -->
-    <div class="car-wrap" id="car-mac">
-      <div class="stage" id="stage-mac">
-        <div class="stage-glow"></div>
-        <button class="arr arr-p" data-car="mac">
+    <!-- iPad Carousel -->
+    <div class="car-wrap" id="car-ipad">
+      <div class="stage" id="stage-ipad">
+        <button class="arr arr-p" data-car="ipad">
           <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-
-        <div class="slide landscape" data-index="0">
-          <img src="assets/screenshots/mac_login.png"     alt="Sign In"         loading="lazy"/>
-          <span class="slide-lbl">Sign In</span>
-        </div>
-        <div class="slide landscape" data-index="1">
-          <img src="assets/screenshots/mac_orders.png"    alt="Orders"          loading="lazy"/>
-          <span class="slide-lbl">Orders</span>
-        </div>
-        <div class="slide landscape" data-index="2">
-          <img src="assets/screenshots/mac_order_det.png" alt="Order Detail"    loading="lazy"/>
-          <span class="slide-lbl">Order Detail</span>
-        </div>
-        <div class="slide landscape" data-index="3">
-          <img src="assets/screenshots/mac_user.png"      alt="Users"           loading="lazy"/>
-          <span class="slide-lbl">Users</span>
-        </div>
-        <div class="slide landscape" data-index="4">
-          <img src="assets/screenshots/mac_sales.png"     alt="Sales"           loading="lazy"/>
-          <span class="slide-lbl">Sales</span>
-        </div>
-        <div class="slide landscape" data-index="5">
-          <img src="assets/screenshots/mac_pod.png"       alt="Print on Demand" loading="lazy"/>
-          <span class="slide-lbl">Print on Demand</span>
-        </div>
-        <div class="slide landscape" data-index="6">
-          <img src="assets/screenshots/mac_items.png"     alt="Items"           loading="lazy"/>
-          <span class="slide-lbl">Items</span>
-        </div>
-        <div class="slide landscape" data-index="7">
-          <img src="assets/screenshots/mac_pod_det.png"   alt="POD Detail"      loading="lazy"/>
-          <span class="slide-lbl">POD Detail</span>
-        </div>
-        <div class="slide landscape" data-index="8">
-          <img src="assets/screenshots/mac_new_order.png" alt="New Order"       loading="lazy"/>
-          <span class="slide-lbl">New Order</span>
-        </div>
-        <div class="slide landscape" data-index="9">
-          <img src="assets/screenshots/mac_artwork.png"   alt="Artwork"         loading="lazy"/>
-          <span class="slide-lbl">Artwork</span>
-        </div>
-
-        <button class="arr arr-n" data-car="mac">
+        <div class="slide landscape" data-index="0"><img src="assets/screenshots/iPad/ipadss1.png" alt="iPad 1" loading="lazy"/><span class="slide-lbl">Sign In</span></div>
+        <div class="slide landscape" data-index="1"><img src="assets/screenshots/iPad/ipadss2.png" alt="iPad 2" loading="lazy"/><span class="slide-lbl">Orders</span></div>
+        <div class="slide landscape" data-index="2"><img src="assets/screenshots/iPad/ipadss3.png" alt="iPad 3" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
+        <div class="slide landscape" data-index="3"><img src="assets/screenshots/iPad/ipadss4.png" alt="iPad 4" loading="lazy"/><span class="slide-lbl">Users</span></div>
+        <div class="slide landscape" data-index="4"><img src="assets/screenshots/iPad/ipadss5.png" alt="iPad 5" loading="lazy"/><span class="slide-lbl">Sales</span></div>
+        <div class="slide landscape" data-index="5"><img src="assets/screenshots/iPad/ipadss6.png" alt="iPad 6" loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
+        <div class="slide landscape" data-index="6"><img src="assets/screenshots/iPad/ipadss7.png" alt="iPad 7" loading="lazy"/><span class="slide-lbl">Items</span></div>
+        <div class="slide landscape" data-index="7"><img src="assets/screenshots/iPad/ipadss8.png" alt="iPad 8" loading="lazy"/><span class="slide-lbl">POD Detail</span></div>
+        <div class="slide landscape" data-index="8"><img src="assets/screenshots/iPad/ipadss9.png" alt="iPad 9" loading="lazy"/><span class="slide-lbl">New Order</span></div>
+        <div class="slide landscape" data-index="9"><img src="assets/screenshots/iPad/ipadss10.png" alt="iPad 10" loading="lazy"/><span class="slide-lbl">Artwork</span></div>
+        <div class="slide landscape" data-index="10"><img src="assets/screenshots/iPad/ipadss11.png" alt="iPad 11" loading="lazy"/><span class="slide-lbl">Analytics</span></div>
+        <div class="slide landscape" data-index="11"><img src="assets/screenshots/iPad/ipadss12.png" alt="iPad 12" loading="lazy"/><span class="slide-lbl">Overview</span></div>
+        <button class="arr arr-n" data-car="ipad">
           <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
-      <div class="dots" id="dots-mac">
-        <button class="dot" data-index="0"></button>
-        <button class="dot" data-index="1"></button>
-        <button class="dot" data-index="2"></button>
-        <button class="dot" data-index="3"></button>
-        <button class="dot" data-index="4"></button>
-        <button class="dot" data-index="5"></button>
-        <button class="dot" data-index="6"></button>
-        <button class="dot" data-index="7"></button>
-        <button class="dot" data-index="8"></button>
-        <button class="dot" data-index="9"></button>
-      </div>
-      <p class="swipe-hint">Swipe or use arrows · Click side cards to navigate</p>
+      <div class="car-progress" id="prog-ipad"></div>
+      <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
     </div>
   </section>
 
-  <hr/>
+  <hr class="divider"/>
 
-  <!-- ── FEATURES ── -->
-  <div class="sec reveal" id="features">
-    <div class="sec-lbl">Features</div>
-    <h2 class="sec-h">Everything you need.<br/><span>Nothing you don't.</span></h2>
-    <div class="fg">
-      <div class="fc">
-        <span class="fi">👥</span>
-        <div class="fn">User Management</div>
-        <p class="fd">View, filter, and manage all users. Assign roles and control access from one place.</p>
+  <!-- ── LIVE DEMO ── -->
+  <section class="demo-sec reveal" id="features">
+    <div class="sec-pill">Live Preview</div>
+    <h2 class="sec-h" style="text-align:center;margin-bottom:8px">Tap through the dashboard.<br/><span>Try it yourself.</span></h2>
+    <p style="text-align:center;font-size:.85rem;color:var(--sub);margin-bottom:28px;font-family:var(--font-hud);letter-spacing:.04em">EXPLORE EVERY SECTION OF THE ADMIN PANEL</p>
+
+    <div class="demo-frame hud-box">
+      <!-- Chrome bar -->
+      <div class="demo-mac-chrome">
+        <div class="demo-mac-dots"><span class="mc mc-r"></span><span class="mc mc-y"></span><span class="mc mc-g"></span></div>
+        <div class="demo-url">purrfectpal.studio/admin</div>
+        <div class="demo-status"><span class="demo-status-dot"></span>LIVE</div>
       </div>
-      <div class="fc">
-        <span class="fi">🖼️</span>
-        <div class="fn">Art Order Tracking</div>
-        <p class="fd">Track custom pet art orders end to end — styles, pricing, deadlines.</p>
-      </div>
-      <div class="fc">
-        <span class="fi">📊</span>
-        <div class="fn">Live Sales Dashboard</div>
-        <p class="fd">Real-time revenue and a 3-month forecast, always up to date.</p>
-      </div>
-      <div class="fc">
-        <span class="fi">📸</span>
-        <div class="fn">Photo Attachments</div>
-        <p class="fd">Customers attach reference photos directly to their orders.</p>
-      </div>
-      <div class="fc">
-        <span class="fi">📦</span>
-        <div class="fn">Print-on-Demand</div>
-        <p class="fd">Track fulfillment speed, delivery rates, and transit status.</p>
-      </div>
-      <div class="fc">
-        <span class="fi">🔐</span>
-        <div class="fn">Secure Access</div>
-        <p class="fd">Face ID, Touch ID, and real-time sync across your Apple devices.</p>
+
+      <div class="demo-body">
+        <!-- Sidebar -->
+        <div class="dsb">
+          <div class="dsb-logo">
+            <div class="dsb-logo-icon">🐾</div>
+            PPS Admin
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span class="dsb-section-label">// Workspace</span>
+            <div class="dsb-nav" id="dsb-nav">
+              <button class="dsb-btn active" data-p="orders">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                Orders
+              </button>
+              <button class="dsb-btn" data-p="sales">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Sales
+              </button>
+              <button class="dsb-btn" data-p="users">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Users
+              </button>
+              <button class="dsb-btn" data-p="artwork">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Artwork
+              </button>
+              <button class="dsb-btn" data-p="pod">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                Print on Demand
+              </button>
+              <div class="dsb-sep"></div>
+              <span class="dsb-section-label">// Analytics</span>
+              <button class="dsb-btn" data-p="analytics">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Analytics
+              </button>
+              <button class="dsb-btn" data-p="forecast">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+                Forecast
+              </button>
+              <button class="dsb-btn" data-p="system">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+                System
+              </button>
+              <button class="dsb-btn" data-p="notifications">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Notifications
+                <span class="notif-badge">3</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panels -->
+        <div class="demo-main">
+
+          <!-- ORDERS -->
+          <div class="panel active" id="panel-orders">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Orders</div><div class="ph-action">+ New Order</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n">24</span><span class="pstat-l">Pending</span></div>
+                <div class="pstat"><span class="pstat-n g">12</span><span class="pstat-l">In Progress</span></div>
+                <div class="pstat"><span class="pstat-n">138</span><span class="pstat-l">Completed</span></div>
+              </div>
+            </div>
+            <div class="search-bar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Search orders…
+            </div>
+            <div class="chips">
+              <div class="chip active">All</div>
+              <div class="chip">Pending</div>
+              <div class="chip">In Progress</div>
+              <div class="chip">Completed</div>
+            </div>
+            <div class="dp-table">
+              <div class="dp-tr dp-th tr-5"><span>Customer</span><span>Pet</span><span>Style</span><span>Price</span><span>Status</span></div>
+              <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">S</span>Sarah M.</span><span>Husky 🐺</span><span>Watercolour</span><span>$75</span><span class="badge badge-prog">In Progress</span></div>
+              <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#f59e0b">J</span>James R.</span><span>Golden 🐶</span><span>Portrait</span><span>$90</span><span class="badge badge-new">New</span></div>
+              <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#10b981">A</span>Amy K.</span><span>Tabby 🐱</span><span>Cartoon</span><span>$60</span><span class="badge badge-done">Done</span></div>
+              <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#ef4444">M</span>Mike P.</span><span>Bunny 🐰</span><span>Chibi</span><span>$55</span><span class="badge badge-new">New</span></div>
+              <div class="dp-tr tr-5" style="--ri:4"><span class="dp-cust"><span class="dp-av" style="background:#8b5cf6">L</span>Luna T.</span><span>Parrot 🦜</span><span>Watercolour</span><span>$80</span><span class="badge badge-prog">In Progress</span></div>
+            </div>
+          </div>
+
+          <!-- SALES -->
+          <div class="panel" id="panel-sales">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Sales Dashboard</div><div class="ph-action">Export CSV</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">$2,840</span><span class="pstat-l">This Month</span></div>
+                <div class="pstat"><span class="pstat-n">+18%</span><span class="pstat-l">vs Last Month</span></div>
+                <div class="pstat"><span class="pstat-n">52</span><span class="pstat-l">Orders</span></div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="chart-lbl">Monthly Revenue — Last 6 Months</div>
+              <div class="bars" id="sales-bars">
+                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-0" style="--h:42%"><span class="bar-v">$1.4k</span></div></div><span class="bar-m">Nov</span></div>
+                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-1" style="--h:58%"><span class="bar-v">$1.9k</span></div></div><span class="bar-m">Dec</span></div>
+                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-2" style="--h:35%"><span class="bar-v">$1.2k</span></div></div><span class="bar-m">Jan</span></div>
+                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-3" style="--h:71%"><span class="bar-v">$2.3k</span></div></div><span class="bar-m">Feb</span></div>
+                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-4" style="--h:80%"><span class="bar-v">$2.6k</span></div></div><span class="bar-m">Mar</span></div>
+                <div class="bar-col"><div class="bar-wrap"><div class="bar active" id="bar-5" style="--h:88%"><span class="bar-v">$2.8k</span></div></div><span class="bar-m">Apr</span></div>
+              </div>
+              <div class="chart-summary">
+                <div><div class="cs-label">Average order value</div><div style="font-size:.66rem;color:var(--sub);margin-top:2px;font-family:var(--font-hud)">Across all styles this month</div></div>
+                <div class="cs-value">$54.62</div>
+              </div>
+              <div class="dp-table">
+                <div class="dp-tr dp-th tr-3"><span>Style</span><span>Orders</span><span>Revenue</span></div>
+                <div class="dp-tr tr-3" style="--ri:0"><span>Watercolour</span><span>18</span><span class="pstat-n g">$1,260</span></div>
+                <div class="dp-tr tr-3" style="--ri:1"><span>Portrait</span><span>14</span><span class="pstat-n g">$980</span></div>
+                <div class="dp-tr tr-3" style="--ri:2"><span>Chibi</span><span>11</span><span class="pstat-n g">$385</span></div>
+                <div class="dp-tr tr-3" style="--ri:3"><span>Cartoon</span><span>9</span><span class="pstat-n g">$215</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- USERS -->
+          <div class="panel" id="panel-users">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// User Management</div><div class="ph-action">+ Invite User</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">286</span><span class="pstat-l">Total Users</span></div>
+                <div class="pstat"><span class="pstat-n">14</span><span class="pstat-l">New This Week</span></div>
+                <div class="pstat"><span class="pstat-n">3</span><span class="pstat-l">Admins</span></div>
+              </div>
+            </div>
+            <div class="search-bar">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Search users…
+            </div>
+            <div class="dp-table">
+              <div class="dp-tr dp-th tr-4"><span>User</span><span>Role</span><span>Joined</span><span>Status</span></div>
+              <div class="dp-tr tr-4" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#00e599;color:#000">M</span>Manoj S.</span><span>Admin</span><span>Jan 2024</span><span class="badge badge-done">Active</span></div>
+              <div class="dp-tr tr-4" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">C</span>Clara W.</span><span>Artist</span><span>Mar 2024</span><span class="badge badge-done">Active</span></div>
+              <div class="dp-tr tr-4" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#f59e0b">T</span>Tom B.</span><span>Customer</span><span>Apr 2025</span><span class="badge badge-prog">Review</span></div>
+              <div class="dp-tr tr-4" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#10b981">N</span>Nadia R.</span><span>Artist</span><span>Jun 2024</span><span class="badge badge-done">Active</span></div>
+              <div class="dp-tr tr-4" style="--ri:4"><span class="dp-cust"><span class="dp-av" style="background:#ef4444">R</span>Ryan O.</span><span>Customer</span><span>Feb 2025</span><span class="badge badge-done">Active</span></div>
+            </div>
+          </div>
+
+          <!-- ARTWORK -->
+          <div class="panel" id="panel-artwork">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Artwork Gallery</div><div class="ph-action">Upload New</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">94</span><span class="pstat-l">Artworks</span></div>
+                <div class="pstat"><span class="pstat-n">6</span><span class="pstat-l">Styles</span></div>
+                <div class="pstat"><span class="pstat-n">4</span><span class="pstat-l">Artists</span></div>
+              </div>
+            </div>
+            <div class="chips">
+              <div class="chip active">All Styles</div>
+              <div class="chip">Watercolour</div>
+              <div class="chip">Portrait</div>
+              <div class="chip">Chibi</div>
+              <div class="chip">Cartoon</div>
+            </div>
+            <div class="art-grid">
+              <div class="art-card"><span class="art-em">🐺</span><span class="art-lbl">Husky</span><span class="art-sty">Watercolour</span></div>
+              <div class="art-card"><span class="art-em">🐶</span><span class="art-lbl">Golden</span><span class="art-sty">Portrait</span></div>
+              <div class="art-card"><span class="art-em">🐱</span><span class="art-lbl">Tabby</span><span class="art-sty">Cartoon</span></div>
+              <div class="art-card"><span class="art-em">🦜</span><span class="art-lbl">Parrot</span><span class="art-sty">Chibi</span></div>
+              <div class="art-card"><span class="art-em">🐰</span><span class="art-lbl">Bunny</span><span class="art-sty">Chibi</span></div>
+              <div class="art-card"><span class="art-em">🐠</span><span class="art-lbl">Clownfish</span><span class="art-sty">Cartoon</span></div>
+            </div>
+          </div>
+
+          <!-- POD -->
+          <div class="panel" id="panel-pod">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Print on Demand</div><div class="ph-action">Track All</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">98.2%</span><span class="pstat-l">Delivery Rate</span></div>
+                <div class="pstat"><span class="pstat-n c">3.4d</span><span class="pstat-l">Avg Transit</span></div>
+                <div class="pstat"><span class="pstat-n">18</span><span class="pstat-l">In Transit</span></div>
+              </div>
+            </div>
+            <div class="dp-table">
+              <div class="dp-tr dp-th tr-4"><span>Order ID</span><span>Product</span><span>Qty</span><span>Status</span></div>
+              <div class="dp-tr tr-4" style="--ri:0"><span>#POD-441</span><span>Mug 🫖</span><span>1</span><span class="badge badge-prog">Shipped</span></div>
+              <div class="dp-tr tr-4" style="--ri:1"><span>#POD-440</span><span>Canvas 🖼️</span><span>1</span><span class="badge badge-done">Delivered</span></div>
+              <div class="dp-tr tr-4" style="--ri:2"><span>#POD-439</span><span>Tote Bag 👜</span><span>2</span><span class="badge badge-new">Processing</span></div>
+              <div class="dp-tr tr-4" style="--ri:3"><span>#POD-438</span><span>Phone Case 📱</span><span>1</span><span class="badge badge-done">Delivered</span></div>
+              <div class="dp-tr tr-4" style="--ri:4"><span>#POD-437</span><span>Print 🖼️</span><span>1</span><span class="badge badge-prog">Shipped</span></div>
+            </div>
+          </div>
+
+          <!-- ANALYTICS -->
+          <div class="panel" id="panel-analytics">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Analytics</div><div class="ph-action">Last 30 Days</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">$2,840</span><span class="pstat-l">Revenue</span></div>
+                <div class="pstat"><span class="pstat-n">52</span><span class="pstat-l">Orders</span></div>
+                <div class="pstat"><span class="pstat-n">+18%</span><span class="pstat-l">Growth</span></div>
+              </div>
+            </div>
+            <div class="analytics-grid">
+              <div class="an-card"><div class="an-label">Conversion Rate</div><div class="an-value g">68.4%</div><div class="an-change up">↑ 4.2% vs last month</div><div class="mini-bar-row" id="mini-bars-conv"></div></div>
+              <div class="an-card"><div class="an-label">Avg Order Value</div><div class="an-value">$54.62</div><div class="an-change up">↑ $3.10 vs last month</div><div class="mini-bar-row" id="mini-bars-aov"></div></div>
+              <div class="an-card"><div class="an-label">New Customers</div><div class="an-value">14</div><div class="an-change dn">↓ 2 vs last month</div><div class="mini-bar-row" id="mini-bars-cust"></div></div>
+              <div class="an-card"><div class="an-label">Repeat Customers</div><div class="an-value g">38</div><div class="an-change up">↑ 5 vs last month</div><div class="mini-bar-row" id="mini-bars-rep"></div></div>
+            </div>
+          </div>
+
+          <!-- FORECAST (NEW) -->
+          <div class="panel" id="panel-forecast">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Revenue Forecast</div><div class="ph-action">3-Month View</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">$9,240</span><span class="pstat-l">Q2 Projected</span></div>
+                <div class="pstat"><span class="pstat-n c">+22%</span><span class="pstat-l">YoY Growth</span></div>
+              </div>
+            </div>
+            <div class="forecast-grid" id="forecast-cards">
+              <div class="fc-card">
+                <div class="fc-month">May 2026</div>
+                <div class="fc-value up">$3,080</div>
+                <div class="fc-change">↑ +8.5% projected</div>
+                <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="78%"></div></div>
+              </div>
+              <div class="fc-card">
+                <div class="fc-month">Jun 2026</div>
+                <div class="fc-value up">$3,290</div>
+                <div class="fc-change">↑ +6.8% projected</div>
+                <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="83%"></div></div>
+              </div>
+              <div class="fc-card">
+                <div class="fc-month">Jul 2026</div>
+                <div class="fc-value up">$3,870</div>
+                <div class="fc-change">↑ +17.6% seasonal peak</div>
+                <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="98%"></div></div>
+              </div>
+            </div>
+            <div style="margin-top:12px;font-size:.66rem;color:var(--sub);font-family:var(--font-hud);border:1px solid rgba(0,229,153,.1);border-radius:8px;padding:10px 14px;background:rgba(0,229,153,.03)">
+              <span style="color:var(--green)">// AI INSIGHT:</span> Peak demand expected mid-July. Consider pre-loading POD inventory and onboarding an additional artist by June to maintain delivery rates above 98%.
+            </div>
+          </div>
+
+          <!-- SYSTEM (NEW) -->
+          <div class="panel" id="panel-system">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// System Status</div><div class="ph-action">Refresh</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">99.97%</span><span class="pstat-l">Uptime</span></div>
+                <div class="pstat"><span class="pstat-n c">42ms</span><span class="pstat-l">API Latency</span></div>
+              </div>
+            </div>
+            <div class="sys-grid">
+              <div class="sys-card">
+                <div class="sys-row"><div class="sys-label">API Gateway</div><div class="sys-status ok"><span style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online</div></div>
+                <div class="sys-metric">Requests: 1,248 / min</div>
+                <div class="sys-pct-bar"><div class="sys-pct-fill" style="width:0%" data-w="62%"></div></div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-row"><div class="sys-label">Database</div><div class="sys-status ok"><span style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online</div></div>
+                <div class="sys-metric">Read: 0.8ms · Write: 1.2ms</div>
+                <div class="sys-pct-bar"><div class="sys-pct-fill" style="width:0%" data-w="28%"></div></div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-row"><div class="sys-label">CDN</div><div class="sys-status ok"><span style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online</div></div>
+                <div class="sys-metric">Hit rate: 94.2% · 18 edge nodes</div>
+                <div class="sys-pct-bar"><div class="sys-pct-fill" style="width:0%" data-w="94%"></div></div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-row"><div class="sys-label">POD Integration</div><div class="sys-status warn"><span style="width:5px;height:5px;border-radius:50%;background:#fbbf24"></span>Degraded</div></div>
+                <div class="sys-metric">Partial outage: provider API</div>
+                <div class="sys-pct-bar"><div class="sys-pct-fill warn" style="width:0%" data-w="45%"></div></div>
+              </div>
+            </div>
+            <div class="dp-table" style="margin-top:4px">
+              <div class="dp-tr dp-th tr-3"><span>Event</span><span>Time</span><span>Status</span></div>
+              <div class="dp-tr tr-3" style="--ri:0"><span>Backup completed</span><span>02:00 AEST</span><span class="badge badge-done">OK</span></div>
+              <div class="dp-tr tr-3" style="--ri:1"><span>POD API slowdown</span><span>08:42 AEST</span><span class="badge badge-new">Warn</span></div>
+              <div class="dp-tr tr-3" style="--ri:2"><span>Auto-scale triggered</span><span>11:14 AEST</span><span class="badge badge-prog">Info</span></div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS -->
+          <div class="panel" id="panel-notifications">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Notifications</div><div class="ph-action">Mark All Read</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">3</span><span class="pstat-l">Unread</span></div>
+                <div class="pstat"><span class="pstat-n">12</span><span class="pstat-l">This Week</span></div>
+              </div>
+            </div>
+            <div class="notif-list">
+              <div class="notif-item unread" style="--ni:0">
+                <div class="notif-dot"></div>
+                <div class="notif-icon green">🎨</div>
+                <div class="notif-body"><div class="notif-title">New order from Sarah M.</div><div class="notif-sub">Husky watercolour portrait — $75</div></div>
+                <div class="notif-time">2m ago</div>
+              </div>
+              <div class="notif-item unread" style="--ni:1">
+                <div class="notif-dot"></div>
+                <div class="notif-icon amber">⭐</div>
+                <div class="notif-body"><div class="notif-title">5-star review received</div><div class="notif-sub">James R. left a review on Golden Portrait</div></div>
+                <div class="notif-time">14m ago</div>
+              </div>
+              <div class="notif-item unread" style="--ni:2">
+                <div class="notif-dot"></div>
+                <div class="notif-icon blue">📦</div>
+                <div class="notif-body"><div class="notif-title">POD order #441 shipped</div><div class="notif-sub">Mug — estimated delivery in 3 days</div></div>
+                <div class="notif-time">1h ago</div>
+              </div>
+              <div class="notif-item" style="--ni:3">
+                <div class="notif-icon green">💰</div>
+                <div class="notif-body"><div class="notif-title">Monthly revenue milestone</div><div class="notif-sub">You crossed $2,500 for April</div></div>
+                <div class="notif-time">3h ago</div>
+              </div>
+              <div class="notif-item" style="--ni:4">
+                <div class="notif-icon amber">🎯</div>
+                <div class="notif-body"><div class="notif-title">Order #POD-440 delivered</div><div class="notif-sub">Canvas delivered to Amy K.</div></div>
+                <div class="notif-time">Yesterday</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <hr/>
-
-  <!-- ── COMPATIBILITY ── -->
-  <div class="sec reveal" id="compat">
-    <div class="sec-lbl">Compatibility</div>
-    <h2 class="sec-h">iOS and macOS.<br/><span>That's it.</span></h2>
-    <div class="cg">
-      <div class="cc">
-        <span class="ci">📱</span>
-        <div class="cn">iPhone &amp; iPad</div>
-        <div class="cr">iOS / iPadOS 18.5 or later. Designed for iPad.</div>
-        <span class="ctg plain">App Store</span>
-      </div>
-      <div class="cc">
-        <span class="ci">💻</span>
-        <div class="cn">Mac</div>
-        <div class="cr">macOS 15.5 or later. Apple M1 or later.</div>
-        <span class="ctg hi">Mac App Store</span>
-      </div>
-    </div>
-  </div>
-
-  <hr/>
+  <hr class="divider"/>
 
   <!-- ── CTA ── -->
   <div class="cta reveal">
-    <h2>Download <em>free</em> today.</h2>
-    <p>Built by Manoj Shrees. No cost, no subscriptions.</p>
-    <div class="dl">
-      <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
-        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
-          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
-        </svg>
-        <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
-      </a>
-      <a href="assets/macos/PPS-admin-app.dmg" target="_blank" class="abtn mac">
-        <svg width="22" height="27" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
-          <path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/>
-        </svg>
-        <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">Mac App Store</span></div>
-      </a>
+    <div class="cta-rings">
+      <div class="cta-ring"></div>
+      <div class="cta-ring"></div>
+      <div class="cta-ring"></div>
+      <div class="cta-ring"></div>
+    </div>
+    <div class="cta-inner">
+      <h2>Download <em>free</em> today.</h2>
+      <p>Built by Manoj Shrees. No cost, no subscriptions, no limits.</p>
+      <div class="hero-dl">
+        <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
+          <svg width="20" height="24" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg"><path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/></svg>
+          <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
+        </a>
+        <a href="assets/macos/PPS-admin-app.dmg" class="abtn mac">
+          <svg width="20" height="20" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- ── FOOTER ── -->
+  <!-- ── FOOTER — UNCHANGED ── -->
   <footer>
     <a href="https://purrfectpal.studio" target="_blank" class="f-brand">
       <img class="f-logo"
@@ -333,9 +525,7 @@
     <span class="f-copy">© 2026 Purrfect Pal Studio</span>
   </footer>
 
-</div><!-- /.page -->
-
-<!-- Scripts -->
-<script src="js/main.js"></script>
+</div>
+  <script src="js/main.js"></script>
 </body>
 </html>

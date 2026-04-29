@@ -1,0 +1,44 @@
+@if (visible) {
+  <div class="modal">
+    <div class="modal-content">
+      <div class="img-container" #imgContainer appDisablerightclick draggable="false"
+        oncontextmenu="return false;">
+     
+        <img #previewImg [src]="imageSrc" (load)="onImageLoad()" draggable="false"/>
+
+        <canvas #overlay appDisablerightclick draggable="false"
+        oncontextmenu="return false;"></canvas>
+        <div class="crop-area" #cropArea>
+          <div class="handle tl"></div>
+          <div class="handle tr"></div>
+          <div class="handle bl"></div>
+          <div class="handle br"></div>
+          <div class="handle tm"></div>
+          <div class="handle bm"></div>
+          <div class="handle lm"></div>
+          <div class="handle rm"></div>
+        </div>
+      </div>
+      <div class="preview-container">
+        <img #livePreview alt="Live Preview" />
+      </div>
+      <div class="floating-controls">
+        <button class="icon-btn" (click)="rotate()">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+        <button class="icon-btn" (click)="zoomIn()">
+          <i class="fa-solid fa-magnifying-glass-plus"></i>
+        </button>
+        <button class="icon-btn" (click)="zoomOut()">
+          <i class="fa-solid fa-magnifying-glass-minus"></i>
+        </button>
+        <button class="icon-btn" (click)="confirm()">
+          <i class="fa-solid fa-check"></i>
+        </button>
+        <button class="icon-btn" (click)="close()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+}
