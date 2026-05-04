@@ -1,16 +1,12 @@
 FROM nginx:alpine
 
-# Remove default nginx static assets
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy static site files
-COPY index.html /usr/share/nginx/html/
-COPY css/       /usr/share/nginx/html/css/
-COPY js/        /usr/share/nginx/html/js/
-COPY assets/    /usr/share/nginx/html/assets/
-
-# If you have the macOS .dmg in the repo, include it too:
-# COPY macos/ /usr/share/nginx/html/macos/
+# Copy static site into the admin-app subdirectory to match nginx root
+COPY index.html /usr/share/nginx/html/admin-app/
+COPY css/       /usr/share/nginx/html/admin-app/css/
+COPY js/        /usr/share/nginx/html/admin-app/js/
+COPY assets/    /usr/share/nginx/html/admin-app/assets/
 
 EXPOSE 80
 
