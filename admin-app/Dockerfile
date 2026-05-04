@@ -2,11 +2,11 @@ FROM nginx:alpine
 
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy static site into the admin-app subdirectory to match nginx root
-COPY index.html /usr/share/nginx/html/admin-app/
-COPY css/       /usr/share/nginx/html/admin-app/css/
-COPY js/        /usr/share/nginx/html/admin-app/js/
-COPY assets/    /usr/share/nginx/html/admin-app/assets/
+# Copy directly to root — matches the relative paths in index.html
+COPY index.html /usr/share/nginx/html/
+COPY css/       /usr/share/nginx/html/css/
+COPY js/        /usr/share/nginx/html/js/
+COPY assets/    /usr/share/nginx/html/assets/
 
 EXPOSE 80
 
