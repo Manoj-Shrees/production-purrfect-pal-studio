@@ -1,37 +1,68 @@
 /* ═══════════════════════════════════════════════════════
    CACHE BUSTER
-   Clears all old Service Worker caches and unregisters
-   stale SW registrations so visitors always get fresh
-   assets after a deploy.
    ═══════════════════════════════════════════════════════ */
 (function clearOldCaches() {
-  /* 1 — Unregister every stale service worker */
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(reg => reg.unregister());
     }).catch(() => {});
   }
-
-  /* 2 — Wipe every Cache Storage cache */
   if ('caches' in window) {
     caches.keys().then(keys => {
       keys.forEach(key => caches.delete(key));
     }).catch(() => {});
   }
-
-  /* 3 — Clear sessionStorage (keeps localStorage for user prefs) */
   try { sessionStorage.clear(); } catch (_) {}
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   HAMBURGER / MOBILE NAV
+   ═══════════════════════════════════════════════════════ */
+(function () {
+  const hamburger = document.getElementById('nav-hamburger');
+  const overlay   = document.getElementById('mobile-nav-overlay');
+  if (!hamburger || !overlay) return;
+
+  function openMenu() {
+    hamburger.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    hamburger.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function toggleMenu() {
+    overlay.classList.contains('open') ? closeMenu() : openMenu();
+  }
+
+  hamburger.addEventListener('click', toggleMenu);
+
+  /* Close on overlay link click */
+  overlay.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeMenu);
+  });
+
+  /* Close on outside tap */
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeMenu();
+  });
+
+  /* Close on Escape */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+  });
 })();
 
 
 /* ═══════════════════════════════════════════════════════
    IMAGE LOADER — smooth background loading with skeletons
    ═══════════════════════════════════════════════════════ */
-
 (function () {
   'use strict';
 
-  /* ── 1. PROGRESS BAR ── */
   let total = 0, done = 0;
 
   const bar = document.createElement('div');
@@ -55,7 +86,6 @@
     }
   }
 
-  /* ── 2. REVEAL one image (off-main-thread via decode()) ── */
   function revealImg(img, skel) {
     img.decode()
       .catch(() => {})
@@ -69,7 +99,6 @@
       });
   }
 
-  /* ── 3. LOAD one image ── */
   function loadImg(img) {
     const skel = img.closest('.img-wrap')
       ? img.closest('.img-wrap').querySelector('.img-skel')
@@ -78,7 +107,6 @@
 
     if (!src) { tickProgress(); return; }
 
-    /* swap data-src → src if needed */
     if (img.dataset.src) {
       img.src = img.dataset.src;
       delete img.dataset.src;
@@ -98,10 +126,9 @@
     }, { once: true });
   }
 
-  /* ── 4. INJECT skeleton into each slide ── */
   function injectSkeletons() {
     document.querySelectorAll('.slide img').forEach(img => {
-      if (img.closest('.img-wrap')) return; /* already wrapped */
+      if (img.closest('.img-wrap')) return;
 
       const wrap = document.createElement('div');
       wrap.className = 'img-wrap';
@@ -113,7 +140,6 @@
       wrap.appendChild(skel);
       wrap.appendChild(img);
 
-      /* save src as data-src so lazy logic controls loading */
       if (img.getAttribute('src') && !img.dataset.src) {
         img.dataset.src = img.getAttribute('src');
         img.removeAttribute('src');
@@ -121,7 +147,6 @@
     });
   }
 
-  /* ── 5. MAIN BOOT ── */
   function boot() {
     injectSkeletons();
 
@@ -130,7 +155,6 @@
 
     if (total === 0) { bar.remove(); return; }
 
-    /* Priority: active + adjacent slides load first */
     const priority = [
       ...document.querySelectorAll('.slide.active img, .slide.prev img, .slide.next img')
     ];
@@ -138,7 +162,6 @@
 
     priority.forEach(img => loadImg(img));
 
-    /* Remaining: defer via IntersectionObserver + requestIdleCallback */
     const remaining = allImgs.filter(img => !prioritySet.has(img));
     if (!remaining.length) return;
 
@@ -405,12 +428,20 @@ document.querySelectorAll('#dsb-nav .dsb-btn').forEach(btn => {
     btn.classList.add('active');
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     const t = document.getElementById('panel-' + btn.dataset.p);
-    if (t) t.classList.add('active');
+    if (t) {
+      t.classList.add('active');
+      /* On mobile, scroll demo-main back to top on panel change */
+      const main = document.querySelector('.demo-main');
+      if (main) main.scrollTop = 0;
+    }
     const p = btn.dataset.p;
     if (p === 'sales')     animateBars();
     if (p === 'analytics') animateMiniBar();
     if (p === 'forecast')  animateForecast();
     if (p === 'system')    animateSystem();
+
+    /* On mobile: scroll the selected tab button into view */
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   });
 });
 
