@@ -1,11 +1,180 @@
-/* ─ PARTICLE CANVAS ─ */
+/* ═══════════════════════════════════════════════════════
+   CACHE BUSTER
+   Clears all old Service Worker caches and unregisters
+   stale SW registrations so visitors always get fresh
+   assets after a deploy.
+   ═══════════════════════════════════════════════════════ */
+(function clearOldCaches() {
+  /* 1 — Unregister every stale service worker */
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(reg => reg.unregister());
+    }).catch(() => {});
+  }
+
+  /* 2 — Wipe every Cache Storage cache */
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      keys.forEach(key => caches.delete(key));
+    }).catch(() => {});
+  }
+
+  /* 3 — Clear sessionStorage (keeps localStorage for user prefs) */
+  try { sessionStorage.clear(); } catch (_) {}
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   IMAGE LOADER — smooth background loading with skeletons
+   ═══════════════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  /* ── 1. PROGRESS BAR ── */
+  let total = 0, done = 0;
+
+  const bar = document.createElement('div');
+  bar.id = 'img-load-bar';
+  bar.innerHTML = '<div id="ilb-track"><div id="ilb-fill"></div></div><span id="ilb-label">Loading images — 0%</span>';
+  document.body.appendChild(bar);
+
+  const fill  = document.getElementById('ilb-fill');
+  const label = document.getElementById('ilb-label');
+
+  function tickProgress() {
+    done++;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 100;
+    fill.style.width = pct + '%';
+    label.textContent = 'Loading images — ' + pct + '%';
+    if (done >= total) {
+      fill.style.width = '100%';
+      label.textContent = 'All images ready ✓';
+      setTimeout(() => bar.classList.add('done'), 500);
+      setTimeout(() => bar.remove(), 1200);
+    }
+  }
+
+  /* ── 2. REVEAL one image (off-main-thread via decode()) ── */
+  function revealImg(img, skel) {
+    img.decode()
+      .catch(() => {})
+      .finally(() => {
+        img.classList.add('loaded');
+        if (skel) {
+          skel.classList.add('loaded');
+          setTimeout(() => skel.remove(), 650);
+        }
+        tickProgress();
+      });
+  }
+
+  /* ── 3. LOAD one image ── */
+  function loadImg(img) {
+    const skel = img.closest('.img-wrap')
+      ? img.closest('.img-wrap').querySelector('.img-skel')
+      : null;
+    const src = img.dataset.src || img.getAttribute('src');
+
+    if (!src) { tickProgress(); return; }
+
+    /* swap data-src → src if needed */
+    if (img.dataset.src) {
+      img.src = img.dataset.src;
+      delete img.dataset.src;
+    }
+
+    if (img.complete && img.naturalWidth > 0) {
+      revealImg(img, skel);
+      return;
+    }
+
+    img.addEventListener('load', () => revealImg(img, skel), { once: true });
+    img.addEventListener('error', () => {
+      if (skel) { skel.classList.add('error'); skel.classList.add('loaded'); }
+      img.style.opacity = '.25';
+      img.style.filter  = 'blur(0) grayscale(1)';
+      tickProgress();
+    }, { once: true });
+  }
+
+  /* ── 4. INJECT skeleton into each slide ── */
+  function injectSkeletons() {
+    document.querySelectorAll('.slide img').forEach(img => {
+      if (img.closest('.img-wrap')) return; /* already wrapped */
+
+      const wrap = document.createElement('div');
+      wrap.className = 'img-wrap';
+
+      const skel = document.createElement('div');
+      skel.className = 'img-skel';
+
+      img.parentNode.insertBefore(wrap, img);
+      wrap.appendChild(skel);
+      wrap.appendChild(img);
+
+      /* save src as data-src so lazy logic controls loading */
+      if (img.getAttribute('src') && !img.dataset.src) {
+        img.dataset.src = img.getAttribute('src');
+        img.removeAttribute('src');
+      }
+    });
+  }
+
+  /* ── 5. MAIN BOOT ── */
+  function boot() {
+    injectSkeletons();
+
+    const allImgs = [...document.querySelectorAll('.slide img')];
+    total = allImgs.length;
+
+    if (total === 0) { bar.remove(); return; }
+
+    /* Priority: active + adjacent slides load first */
+    const priority = [
+      ...document.querySelectorAll('.slide.active img, .slide.prev img, .slide.next img')
+    ];
+    const prioritySet = new Set(priority);
+
+    priority.forEach(img => loadImg(img));
+
+    /* Remaining: defer via IntersectionObserver + requestIdleCallback */
+    const remaining = allImgs.filter(img => !prioritySet.has(img));
+    if (!remaining.length) return;
+
+    const section = document.getElementById('screens');
+    const obs = new IntersectionObserver((entries) => {
+      if (entries.some(e => e.isIntersecting)) {
+        obs.disconnect();
+        remaining.forEach((img, i) => {
+          const fn = () => loadImg(img);
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(fn, { timeout: 4000 });
+          } else {
+            setTimeout(fn, i * 55);
+          }
+        });
+      }
+    }, { rootMargin: '400px 0px', threshold: 0 });
+
+    if (section) obs.observe(section);
+    else remaining.forEach((img, i) => setTimeout(() => loadImg(img), i * 55));
+  }
+
+  document.addEventListener('DOMContentLoaded', boot);
+})();
+
+
+/* ═══════════════════════════════════════════════════════
+   PARTICLE CANVAS
+   ═══════════════════════════════════════════════════════ */
 (function () {
   const hero = document.querySelector('.hero');
   const cv   = document.getElementById('particles');
   if (!hero || !cv) return;
 
   const ctx = cv.getContext('2d');
-  let W, H, pts = [], rafId;
+  let W, H, pts = [];
 
   function resize() {
     W = cv.width  = hero.offsetWidth;
@@ -29,14 +198,12 @@
   function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    /* move */
     pts.forEach(p => {
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0) p.x = 100; if (p.x > 100) p.x = 0;
       if (p.y < 0) p.y = 100; if (p.y > 100) p.y = 0;
     });
 
-    /* lines */
     const MAX_DIST = 130;
     for (let i = 0; i < pts.length; i++) {
       for (let j = i + 1; j < pts.length; j++) {
@@ -55,7 +222,6 @@
       }
     }
 
-    /* dots */
     pts.forEach(p => {
       const px = p.x / 100 * W, py = p.y / 100 * H;
       ctx.beginPath();
@@ -64,21 +230,22 @@
       ctx.fill();
     });
 
-    rafId = requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
   }
 
-  resize();
-  initPts();
-  draw();
+  resize(); initPts(); draw();
 
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => { resize(); }, 120);
+    resizeTimer = setTimeout(resize, 120);
   });
 })();
 
-/* ─ CAROUSEL ENGINE ─ */
+
+/* ═══════════════════════════════════════════════════════
+   CAROUSEL ENGINE
+   ═══════════════════════════════════════════════════════ */
 const cars = {};
 
 function initCar(name, total, shape) {
@@ -95,6 +262,39 @@ function initCar(name, total, shape) {
     return 'hidden';
   }
 
+  function loadAdjacentImgs() {
+    slides.forEach(s => {
+      const o = parseInt(s.dataset.offset || '0', 10);
+      if (Math.abs(o) <= 1) {
+        const img = s.querySelector('img[data-src]');
+        if (img) {
+          const skel = img.closest('.img-wrap')
+            ? img.closest('.img-wrap').querySelector('.img-skel')
+            : null;
+          img.src = img.dataset.src;
+          delete img.dataset.src;
+
+          if (img.complete && img.naturalWidth > 0) {
+            img.classList.add('loaded');
+            if (skel) { skel.classList.add('loaded'); setTimeout(() => skel.remove(), 650); }
+          } else {
+            img.addEventListener('load', () => {
+              img.decode().catch(() => {}).finally(() => {
+                img.classList.add('loaded');
+                if (skel) { skel.classList.add('loaded'); setTimeout(() => skel.remove(), 650); }
+              });
+            }, { once: true });
+            img.addEventListener('error', () => {
+              if (skel) skel.classList.add('error');
+              img.style.opacity = '.25';
+              img.style.filter  = 'blur(0) grayscale(1)';
+            }, { once: true });
+          }
+        }
+      }
+    });
+  }
+
   function go(idx) {
     cur = ((idx % total) + total) % total;
     slides.forEach((s, i) => {
@@ -107,7 +307,6 @@ function initCar(name, total, shape) {
     progs.forEach((p, i) => {
       const wasActive = p.classList.contains('active');
       p.classList.toggle('active', i === cur);
-      /* restart fill animation by cloning the node */
       if (i === cur && !wasActive) {
         const clone = p.cloneNode(true);
         p.parentNode.replaceChild(clone, p);
@@ -115,6 +314,7 @@ function initCar(name, total, shape) {
         clone.addEventListener('click', () => { go(i); resetA(); });
       }
     });
+    loadAdjacentImgs();
   }
 
   const next   = () => go(cur + 1);
@@ -151,7 +351,6 @@ function initCar(name, total, shape) {
   cars[name] = { go, next, prev, startA, stopA };
 }
 
-/* build progress dots */
 function buildProgs(id, n) {
   const c = document.getElementById(`prog-${id}`);
   if (!c) return;
@@ -169,7 +368,10 @@ buildProgs('macos',  12);
 initCar('iphone', 12, 'portrait');
 initCar('macos',  12, 'landscape');
 
-/* ─ DEVICE TABS ─ */
+
+/* ═══════════════════════════════════════════════════════
+   DEVICE TABS
+   ═══════════════════════════════════════════════════════ */
 document.querySelectorAll('.device-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     const name = tab.dataset.car;
@@ -183,14 +385,20 @@ document.querySelectorAll('.device-tab').forEach(tab => {
   });
 });
 
-/* ─ KEYBOARD ─ */
+
+/* ═══════════════════════════════════════════════════════
+   KEYBOARD NAVIGATION
+   ═══════════════════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
   const active = document.querySelector('.device-tab.active')?.dataset.car;
   if (e.key === 'ArrowRight') { cars[active]?.next(); cars[active]?.startA(); }
   if (e.key === 'ArrowLeft')  { cars[active]?.prev(); cars[active]?.startA(); }
 });
 
-/* ─ DASHBOARD PANELS ─ */
+
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD PANELS
+   ═══════════════════════════════════════════════════════ */
 document.querySelectorAll('#dsb-nav .dsb-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('#dsb-nav .dsb-btn').forEach(b => b.classList.remove('active'));
@@ -206,7 +414,7 @@ document.querySelectorAll('#dsb-nav .dsb-btn').forEach(btn => {
   });
 });
 
-/* bar chart */
+/* Bar chart */
 const barH = ['42%', '58%', '35%', '71%', '80%', '88%'];
 function animateBars() {
   for (let i = 0; i < 6; i++) {
@@ -217,7 +425,7 @@ function animateBars() {
   }
 }
 
-/* mini bars */
+/* Mini bars */
 function animateMiniBar() {
   const sets = {
     'mini-bars-conv': [30, 55, 42, 68, 60, 72, 80],
@@ -239,7 +447,7 @@ function animateMiniBar() {
   });
 }
 
-/* forecast fills */
+/* Forecast fills */
 function animateForecast() {
   document.querySelectorAll('.fc-fill').forEach((el, i) => {
     el.style.width = '0%';
@@ -247,7 +455,7 @@ function animateForecast() {
   });
 }
 
-/* system bars */
+/* System bars */
 function animateSystem() {
   document.querySelectorAll('.sys-pct-fill').forEach((el, i) => {
     el.style.width = '0%';
@@ -255,7 +463,7 @@ function animateSystem() {
   });
 }
 
-/* chips */
+/* Chips */
 document.querySelectorAll('.chips').forEach(group => {
   group.querySelectorAll('.chip').forEach(c => {
     c.addEventListener('click', () => {
@@ -265,7 +473,25 @@ document.querySelectorAll('.chips').forEach(group => {
   });
 });
 
-/* ─ SCROLL REVEAL ─ */
+
+/* ═══════════════════════════════════════════════════════
+   SMOOTH SCROLL — all internal anchor links
+   ═══════════════════════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.pushState(null, '', '#' + id);
+  });
+});
+
+
+/* ═══════════════════════════════════════════════════════
+   SCROLL REVEAL
+   ═══════════════════════════════════════════════════════ */
 const revealObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
