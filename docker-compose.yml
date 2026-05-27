@@ -1,5 +1,5 @@
 version: '3.8'
-# Trigger redeployment for admin status overrides
+# Trigger redeployment — backend image updated 2026-05-27 (override endpoints fix)
 
 services:
 
