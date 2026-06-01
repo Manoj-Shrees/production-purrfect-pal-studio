@@ -20,7 +20,7 @@ log "Saving environment for cron ..."
 printenv | grep -E '^(MYSQL_|GITHUB_|BACKUP_|RETENTION_)' | while IFS= read -r line; do
   key="${line%%=*}"
   val="${line#*=}"
-  printf '%s="%s"\n' "$key" "$val"
+  printf 'export %s="%s"\n' "$key" "$val"
 done > /etc/backup-env
 chmod 600 /etc/backup-env
 

@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# ── Ensure a full PATH so cron's minimal environment finds all binaries ───────
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
 # ── Source persisted env vars when running from cron ─────────────────────────
 [ -f /etc/backup-env ] && . /etc/backup-env
 
@@ -102,9 +105,13 @@ for f in "$CLONE_DIR"/backup_*.sql.gz; do
   fname=$(basename "$f")
   file_date=$(echo "$fname" | sed 's/backup_\([0-9]\{8\}\)_.*/\1/')
   # FIX: was -lt, changed to -le so files exactly at the cutoff date are deleted
-  if [ -n "$file_date" ] && [ "$file_date" -le "$CUTOFF" ]; then
-    echo "$f" >> "$TO_DELETE"
-  fi
+  case "$file_date" in
+    [0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9])
+      if [ "$file_date" -le "$CUTOFF" ]; then
+        echo "$f" >> "$TO_DELETE"
+      fi
+      ;;
+  esac
 done
 
 # Sort newest-first, skip line 1 (keep it as safety net), delete the rest
