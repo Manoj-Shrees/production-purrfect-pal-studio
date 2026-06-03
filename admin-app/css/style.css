@@ -781,6 +781,18 @@ hr::after{
 .sys-pct-fill{height:100%;border-radius:2px;background:var(--green);transition:width .6s ease}
 .sys-pct-fill.warn{background:#fbbf24}
 
+/* Payout, Promo, Risk, and Perf Bars */
+.payout-bar, .promo-bar, .risk-bar, .perf-bar {
+  height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-top:6px;overflow:hidden;width:100%;
+}
+.payout-fill, .promo-fill, .risk-fill, .perf-fill {
+  height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--cyan));
+  transition:width .7s cubic-bezier(.34,1.56,.64,1);
+}
+.risk-fill.high {
+  background:linear-gradient(90deg,#ef4444,#fbbf24);
+}
+
 hr.divider{border:none;border-top:1px solid var(--line);position:relative}
 hr.divider::after{
   content:'';position:absolute;top:-1px;left:10%;right:10%;height:1px;

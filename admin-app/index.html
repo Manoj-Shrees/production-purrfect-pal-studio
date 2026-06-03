@@ -25,7 +25,7 @@
         <span style="display:none;font-size:12px;font-weight:700;color:#000;font-family:var(--font-hud)">PPS</span>
       </div>
       <span class="nav-name">Purrfect Pal Studio</span>
-      <span class="nav-badge">v2.7</span>
+      <span class="nav-badge">v3.0</span>
     </a>
     <div class="nav-r">
       <ul class="nav-links" id="nav-links">
@@ -56,7 +56,7 @@
     <div class="hero-inner">
       <div class="hero-pill">
         <span class="hero-pill-dot"></span>
-        System Online — Version 2.7
+        System Online — Version 3.0
       </div>
       <h1 class="hero-h">
         Purrfect Pal Studio
@@ -79,8 +79,8 @@
       <div class="hero-stats">
         <div class="hst"><span class="hst-n g">5.0 ★</span><span class="hst-l">Rating</span></div>
         <div class="hst"><span class="hst-n">Free</span><span class="hst-l">No cost</span></div>
-        <div class="hst"><span class="hst-n">v2.7</span><span class="hst-l">Latest</span></div>
-        <div class="hst"><span class="hst-n">11.8 MB</span><span class="hst-l">Size</span></div>
+        <div class="hst"><span class="hst-n">v3.0</span><span class="hst-l">Latest</span></div>
+        <div class="hst"><span class="hst-n">12.4 MB</span><span class="hst-l">Size</span></div>
       </div>
     </div>
   </section>
@@ -202,41 +202,59 @@
             <span class="dsb-section-label">// Workspace</span>
             <div class="dsb-nav" id="dsb-nav">
               <button class="dsb-btn active" data-p="orders">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                <span class="dsb-btn-label">Orders</span>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <span class="dsb-btn-label">Orders (POD)</span>
               </button>
               <button class="dsb-btn" data-p="sales">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                <span class="dsb-btn-label">Sales</span>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span class="dsb-btn-label">Sales &amp; Payments</span>
+              </button>
+              <button class="dsb-btn" data-p="payouts">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                <span class="dsb-btn-label">Artist Payouts</span>
               </button>
               <button class="dsb-btn" data-p="users">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <span class="dsb-btn-label">Users</span>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span class="dsb-btn-label">Users &amp; Audit</span>
               </button>
               <button class="dsb-btn" data-p="artwork">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <span class="dsb-btn-label">Artwork</span>
-              </button>
-              <button class="dsb-btn" data-p="pod">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
-                <span class="dsb-btn-label">Print on Demand</span>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span class="dsb-btn-label">Artwork Gallery</span>
               </button>
               <div class="dsb-sep"></div>
-              <span class="dsb-section-label">// Analytics</span>
+              <span class="dsb-section-label">// Operations</span>
+              <button class="dsb-btn" data-p="disputes">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span class="dsb-btn-label">Disputes &amp; Refunds</span>
+              </button>
+              <button class="dsb-btn" data-p="promo">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                <span class="dsb-btn-label">Promo Codes</span>
+              </button>
+              <button class="dsb-btn" data-p="antifraud">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span class="dsb-btn-label">Anti-Fraud &amp; Risk</span>
+              </button>
+              <div class="dsb-sep"></div>
+              <span class="dsb-section-label">// Insights</span>
+              <button class="dsb-btn" data-p="performance">
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span class="dsb-btn-label">Artist Perf.</span>
+              </button>
               <button class="dsb-btn" data-p="analytics">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                 <span class="dsb-btn-label">Analytics</span>
               </button>
               <button class="dsb-btn" data-p="forecast">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
                 <span class="dsb-btn-label">Forecast</span>
               </button>
               <button class="dsb-btn" data-p="system">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
                 <span class="dsb-btn-label">System</span>
               </button>
               <button class="dsb-btn" data-p="notifications">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 <span class="dsb-btn-label">Alerts</span>
                 <span class="notif-badge">3</span>
               </button>
@@ -250,31 +268,32 @@
           <!-- ORDERS -->
           <div class="panel active" id="panel-orders">
             <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Orders</div><div class="ph-action">+ New Order</div></div>
+              <div class="ph-row"><div class="ph-title">// Orders &amp; POD Sync</div><div class="ph-action">+ New Order</div></div>
               <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n">24</span><span class="pstat-l">Pending</span></div>
-                <div class="pstat"><span class="pstat-n g">12</span><span class="pstat-l">In Progress</span></div>
-                <div class="pstat"><span class="pstat-n">138</span><span class="pstat-l">Completed</span></div>
+                <div class="pstat"><span class="pstat-n">18</span><span class="pstat-l">Pending Design</span></div>
+                <div class="pstat"><span class="pstat-n g">8</span><span class="pstat-l">POD Processing</span></div>
+                <div class="pstat"><span class="pstat-n c">154</span><span class="pstat-l">Shipped/Delivered</span></div>
               </div>
             </div>
             <div class="search-bar">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              Search orders…
+              Search orders &amp; shipments…
             </div>
             <div class="chips">
               <div class="chip active">All</div>
-              <div class="chip">Pending</div>
-              <div class="chip">In Progress</div>
-              <div class="chip">Completed</div>
+              <div class="chip">Pending Design</div>
+              <div class="chip">POD Processing</div>
+              <div class="chip">In Transit</div>
+              <div class="chip">Delivered</div>
             </div>
             <div class="table-scroll">
               <div class="dp-table">
-                <div class="dp-tr dp-th tr-5"><span>Customer</span><span>Pet</span><span>Style</span><span>Price</span><span>Status</span></div>
-                <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">S</span>Sarah M.</span><span>Husky 🐺</span><span>Watercolour</span><span>$75</span><span class="badge badge-prog">In Progress</span></div>
-                <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#f59e0b">J</span>James R.</span><span>Golden 🐶</span><span>Portrait</span><span>$90</span><span class="badge badge-new">New</span></div>
-                <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#10b981">A</span>Amy K.</span><span>Tabby 🐱</span><span>Cartoon</span><span>$60</span><span class="badge badge-done">Done</span></div>
-                <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#ef4444">M</span>Mike P.</span><span>Bunny 🐰</span><span>Chibi</span><span>$55</span><span class="badge badge-new">New</span></div>
-                <div class="dp-tr tr-5" style="--ri:4"><span class="dp-cust"><span class="dp-av" style="background:#8b5cf6">L</span>Luna T.</span><span>Parrot 🦜</span><span>Watercolour</span><span>$80</span><span class="badge badge-prog">In Progress</span></div>
+                <div class="dp-tr dp-th tr-5"><span>Customer</span><span>Style</span><span>POD Item</span><span>Provider</span><span>Fulfillment</span></div>
+                <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">S</span>Sarah M.</span><span>Watercolour</span><span>Mug 🫖</span><span>Gelato</span><span class="badge badge-prog">Shipped (#GEL-441)</span></div>
+                <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#f59e0b">J</span>James R.</span><span>Portrait</span><span>Canvas 🖼️</span><span>Printify</span><span class="badge badge-new">Processing</span></div>
+                <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#10b981">A</span>Amy K.</span><span>Cartoon</span><span>Poster 🖼️</span><span>Gelato</span><span class="badge badge-done">Delivered</span></div>
+                <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#ef4444">M</span>Mike P.</span><span>Chibi</span><span>Tote Bag 👜</span><span>Printful</span><span class="badge badge-new">Processing</span></div>
+                <div class="dp-tr tr-5" style="--ri:4"><span class="dp-cust"><span class="dp-av" style="background:#8b5cf6">L</span>Luna T.</span><span>Watercolour</span><span>Phone Case 📱</span><span>Gelato</span><span class="badge badge-prog">Shipped (#GEL-437)</span></div>
               </div>
             </div>
           </div>
@@ -282,15 +301,15 @@
           <!-- SALES -->
           <div class="panel" id="panel-sales">
             <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Sales Dashboard</div><div class="ph-action">Export CSV</div></div>
+              <div class="ph-row"><div class="ph-title">// Sales &amp; Stripe Payments</div><div class="ph-action">Export CSV</div></div>
               <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">$2,840</span><span class="pstat-l">This Month</span></div>
-                <div class="pstat"><span class="pstat-n">+18%</span><span class="pstat-l">vs Last Month</span></div>
-                <div class="pstat"><span class="pstat-n">52</span><span class="pstat-l">Orders</span></div>
+                <div class="pstat"><span class="pstat-n g">$5,840</span><span class="pstat-l">Revenue (MTD)</span></div>
+                <div class="pstat"><span class="pstat-n">+24%</span><span class="pstat-l">vs Last Month</span></div>
+                <div class="pstat"><span class="pstat-n">99.8%</span><span class="pstat-l">Success Rate</span></div>
               </div>
             </div>
             <div class="chart-wrap">
-              <div class="chart-lbl">Monthly Revenue — Last 6 Months</div>
+              <div class="chart-lbl">Stripe Sales Revenue — Last 6 Months</div>
               <div class="bars" id="sales-bars">
                 <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-0" style="--h:42%"><span class="bar-v">$1.4k</span></div></div><span class="bar-m">Nov</span></div>
                 <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-1" style="--h:58%"><span class="bar-v">$1.9k</span></div></div><span class="bar-m">Dec</span></div>
@@ -299,44 +318,89 @@
                 <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-4" style="--h:80%"><span class="bar-v">$2.6k</span></div></div><span class="bar-m">Mar</span></div>
                 <div class="bar-col"><div class="bar-wrap"><div class="bar active" id="bar-5" style="--h:88%"><span class="bar-v">$2.8k</span></div></div><span class="bar-m">Apr</span></div>
               </div>
-              <div class="chart-summary">
-                <div><div class="cs-label">Average order value</div><div style="font-size:.66rem;color:var(--sub);margin-top:2px;font-family:var(--font-hud)">Across all styles this month</div></div>
-                <div class="cs-value">$54.62</div>
-              </div>
-              <div class="table-scroll">
+              <div class="table-scroll" style="margin-top:8px">
                 <div class="dp-table">
-                  <div class="dp-tr dp-th tr-3"><span>Style</span><span>Orders</span><span>Revenue</span></div>
-                  <div class="dp-tr tr-3" style="--ri:0"><span>Watercolour</span><span>18</span><span class="pstat-n g">$1,260</span></div>
-                  <div class="dp-tr tr-3" style="--ri:1"><span>Portrait</span><span>14</span><span class="pstat-n g">$980</span></div>
-                  <div class="dp-tr tr-3" style="--ri:2"><span>Chibi</span><span>11</span><span class="pstat-n g">$385</span></div>
-                  <div class="dp-tr tr-3" style="--ri:3"><span>Cartoon</span><span>9</span><span class="pstat-n g">$215</span></div>
+                  <div class="dp-tr dp-th tr-5"><span>Item Description</span><span>Transaction ID</span><span>Processor</span><span>Amount</span><span>Status</span></div>
+                  <div class="dp-tr tr-5" style="--ri:0"><span>Watercolour Canvas Portrait</span><span>ch_3Mv8s9</span><span>Stripe</span><span class="pstat-n g">$120.00</span><span class="badge badge-done">Succeeded</span></div>
+                  <div class="dp-tr tr-5" style="--ri:1"><span>Golden Portrait Mug</span><span>ch_3Mv8t4</span><span>Apple Pay</span><span class="pstat-n g">$45.00</span><span class="badge badge-done">Succeeded</span></div>
+                  <div class="dp-tr tr-5" style="--ri:2"><span>Cartoon Tabby Poster</span><span>ch_3Mv8u2</span><span>Google Pay</span><span class="pstat-n g">$60.00</span><span class="badge badge-done">Succeeded</span></div>
+                  <div class="dp-tr tr-5" style="--ri:3"><span>Bunny Chibi Tote Bag</span><span>ch_3Mv8v1</span><span>Stripe</span><span class="pstat-n g">$55.00</span><span class="badge badge-done">Succeeded</span></div>
+                  <div class="dp-tr tr-5" style="--ri:4"><span>Parrot Watercolour Phone Case</span><span>ch_3Mv8w9</span><span>Stripe</span><span class="pstat-n g">$80.00</span><span class="badge badge-done">Succeeded</span></div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- ARTIST PAYOUTS -->
+          <div class="panel" id="panel-payouts">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Artist Payouts</div><div class="ph-action">Initiate Payout</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">$1,120</span><span class="pstat-l">Pending Payouts</span></div>
+                <div class="pstat"><span class="pstat-n">$3,450</span><span class="pstat-l">Paid MTD</span></div>
+                <div class="pstat"><span class="pstat-n c">60%</span><span class="pstat-l">Avg Share Rate</span></div>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <div class="dp-table">
+                <div class="dp-tr dp-th tr-5"><span>Artist</span><span>Commission</span><span>Pending Bal.</span><span>Method</span><span>Status</span></div>
+                <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">C</span>Clara W.</span><span>60%</span><span>$450.00</span><span>Stripe Connect</span><span class="badge badge-done">Paid</span></div>
+                <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#10b981">N</span>Nadia R.</span><span>65%</span><span>$320.00</span><span>PayPal</span><span class="badge badge-new">Pending</span></div>
+                <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#8b5cf6">A</span>Alex M.</span><span>60%</span><span>$180.00</span><span>Wise Transfer</span><span class="badge badge-done">Paid</span></div>
+                <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#e11d48">E</span>Elena P.</span><span>60%</span><span>$170.00</span><span>Stripe Connect</span><span class="badge badge-prog">On Hold</span></div>
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <div class="chart-lbl" style="margin-bottom:6px">Payout Pool Reserve Progress</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
+                    <span>Monthly payout pool reserve cap</span>
+                    <span style="margin-left:auto">$4,570 / $10,000</span>
+                  </div>
+                  <div class="payout-bar"><div class="payout-fill" data-w="45%"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="chart-summary">
+              <div><div class="cs-label">Next Scheduled Payout Run</div><div style="font-size:.66rem;color:var(--sub);margin-top:2px;font-family:var(--font-hud)">Automated bi-weekly artist distributions</div></div>
+              <div class="cs-value" style="color:var(--cyan);text-shadow:0 0 10px rgba(0,212,255,.3)">June 15, 2026</div>
             </div>
           </div>
 
           <!-- USERS -->
           <div class="panel" id="panel-users">
             <div class="ph">
-              <div class="ph-row"><div class="ph-title">// User Management</div><div class="ph-action">+ Invite</div></div>
+              <div class="ph-row"><div class="ph-title">// User Management &amp; Audit Logs</div><div class="ph-action">+ Invite</div></div>
               <div class="ph-stats">
                 <div class="pstat"><span class="pstat-n g">286</span><span class="pstat-l">Total Users</span></div>
-                <div class="pstat"><span class="pstat-n">14</span><span class="pstat-l">New This Week</span></div>
-                <div class="pstat"><span class="pstat-n">3</span><span class="pstat-l">Admins</span></div>
+                <div class="pstat"><span class="pstat-n">3</span><span class="pstat-l">System Admins</span></div>
+                <div class="pstat"><span class="pstat-n c">12</span><span class="pstat-l">Active Sessions</span></div>
               </div>
             </div>
-            <div class="search-bar">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              Search users…
+            <div class="chips">
+              <div class="chip active">User Directory</div>
+              <div class="chip">Audit Logs</div>
             </div>
+            <!-- User Table -->
             <div class="table-scroll">
               <div class="dp-table">
                 <div class="dp-tr dp-th tr-4"><span>User</span><span>Role</span><span>Joined</span><span>Status</span></div>
                 <div class="dp-tr tr-4" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#00e599;color:#000">M</span>Manoj S.</span><span>Admin</span><span>Jan 2024</span><span class="badge badge-done">Active</span></div>
                 <div class="dp-tr tr-4" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">C</span>Clara W.</span><span>Artist</span><span>Mar 2024</span><span class="badge badge-done">Active</span></div>
                 <div class="dp-tr tr-4" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#f59e0b">T</span>Tom B.</span><span>Customer</span><span>Apr 2025</span><span class="badge badge-prog">Review</span></div>
-                <div class="dp-tr tr-4" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#10b981">N</span>Nadia R.</span><span>Artist</span><span>Jun 2024</span><span class="badge badge-done">Active</span></div>
-                <div class="dp-tr tr-4" style="--ri:4"><span class="dp-cust"><span class="dp-av" style="background:#ef4444">R</span>Ryan O.</span><span>Customer</span><span>Feb 2025</span><span class="badge badge-done">Active</span></div>
+              </div>
+            </div>
+            <!-- Audit Logs section -->
+            <div style="margin-top:6px">
+              <div class="chart-lbl" style="margin-bottom:6px">// Real-Time Security Audit Logs</div>
+              <div class="table-scroll">
+                <div class="dp-table" style="font-size:.68rem">
+                  <div class="dp-tr dp-th tr-4"><span>Actor</span><span>Action Performed</span><span>IP / Host</span><span>Timestamp</span></div>
+                  <div class="dp-tr tr-4" style="--ri:0"><span>Manoj S.</span><span>Approved refund ch_3Mv8s9</span><span>120.18.23.44</span><span>2m ago</span></div>
+                  <div class="dp-tr tr-4" style="--ri:1"><span>System Bot</span><span>Synced order #POD-441 Gelato API</span><span>-</span><span>15m ago</span></div>
+                  <div class="dp-tr tr-4" style="--ri:2"><span>Clara W.</span><span>Uploaded PNG artwork for #441</span><span>192.168.1.10</span><span>1h ago</span></div>
+                </div>
               </div>
             </div>
           </div>
@@ -368,24 +432,126 @@
             </div>
           </div>
 
-          <!-- POD -->
-          <div class="panel" id="panel-pod">
+          <!-- DISPUTES & REFUNDS -->
+          <div class="panel" id="panel-disputes">
             <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Print on Demand</div><div class="ph-action">Track All</div></div>
+              <div class="ph-row"><div class="ph-title">// Disputes &amp; Refunds</div><div class="ph-action">Sync Stripe</div></div>
               <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">98.2%</span><span class="pstat-l">Delivery Rate</span></div>
-                <div class="pstat"><span class="pstat-n c">3.4d</span><span class="pstat-l">Avg Transit</span></div>
-                <div class="pstat"><span class="pstat-n">18</span><span class="pstat-l">In Transit</span></div>
+                <div class="pstat"><span class="pstat-n" style="color:#ef4444;text-shadow:0 0 8px rgba(239,68,68,.3)">1</span><span class="pstat-l">Active Dispute</span></div>
+                <div class="pstat"><span class="pstat-n">1.2%</span><span class="pstat-l">Refund Rate</span></div>
+                <div class="pstat"><span class="pstat-n g">$75.00</span><span class="pstat-l">Disputed Amount</span></div>
               </div>
             </div>
             <div class="table-scroll">
               <div class="dp-table">
-                <div class="dp-tr dp-th tr-4"><span>Order ID</span><span>Product</span><span>Qty</span><span>Status</span></div>
-                <div class="dp-tr tr-4" style="--ri:0"><span>#POD-441</span><span>Mug 🫖</span><span>1</span><span class="badge badge-prog">Shipped</span></div>
-                <div class="dp-tr tr-4" style="--ri:1"><span>#POD-440</span><span>Canvas 🖼️</span><span>1</span><span class="badge badge-done">Delivered</span></div>
-                <div class="dp-tr tr-4" style="--ri:2"><span>#POD-439</span><span>Tote Bag 👜</span><span>2</span><span class="badge badge-new">Processing</span></div>
-                <div class="dp-tr tr-4" style="--ri:3"><span>#POD-438</span><span>Phone Case 📱</span><span>1</span><span class="badge badge-done">Delivered</span></div>
-                <div class="dp-tr tr-4" style="--ri:4"><span>#POD-437</span><span>Print 🖼️</span><span>1</span><span class="badge badge-prog">Shipped</span></div>
+                <div class="dp-tr dp-th tr-5"><span>Tx ID</span><span>Customer</span><span>Reason</span><span>Amount</span><span>Status</span></div>
+                <div class="dp-tr tr-5" style="--ri:0"><span>ch_3Mv8s9</span><span>Sarah M.</span><span>Print quality bleed</span><span>$75.00</span><span class="badge badge-new" style="background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.2)">Disputed (Stripe)</span></div>
+                <div class="dp-tr tr-5" style="--ri:1"><span>ch_3Mv8t4</span><span>James R.</span><span>Accidental double order</span><span>$90.00</span><span class="badge badge-done">Refunded</span></div>
+                <div class="dp-tr tr-5" style="--ri:2"><span>ch_3Mv8u2</span><span>Amy K.</span><span>Damaged print frame</span><span>$45.00</span><span class="badge badge-done">Refunded (Manual)</span></div>
+              </div>
+            </div>
+            <div style="margin-top:12px;font-size:.66rem;color:var(--sub);font-family:var(--font-hud);border:1px solid rgba(239,68,68,.15);border-radius:8px;padding:10px 14px;background:rgba(239,68,68,.03)">
+              <span style="color:#ef4444">// STRIPE ALIGNMENT:</span> Dispute `ch_3Mv8s9` requires response by June 10, 2026. Submit high-res design proof and tracking history to challenge.
+            </div>
+          </div>
+
+          <!-- PROMO CODES -->
+          <div class="panel" id="panel-promo">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Promo Codes &amp; Coupons</div><div class="ph-action">+ Create Code</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">4</span><span class="pstat-l">Active Codes</span></div>
+                <div class="pstat"><span class="pstat-n">184</span><span class="pstat-l">Redemptions</span></div>
+                <div class="pstat"><span class="pstat-n c">$854.50</span><span class="pstat-l">Total Discounted</span></div>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <div class="dp-table">
+                <div class="dp-tr dp-th tr-5"><span>Code</span><span>Discount</span><span>Usage</span><span>Limit / Cap</span><span>Status</span></div>
+                <div class="dp-tr tr-5" style="--ri:0"><span>PURRFECT10</span><span>10% OFF</span><span>98 used</span><span>Unlimited</span><span class="badge badge-done">Active</span></div>
+                <div class="dp-tr tr-5" style="--ri:1"><span>PETLOVE20</span><span>20% OFF</span><span>45 used</span><span>100 Max</span><span class="badge badge-done">Active</span></div>
+                <div class="dp-tr tr-5" style="--ri:2"><span>WELCOME5</span><span>$5.00 FLAT</span><span>32 used</span><span>Unlimited</span><span class="badge badge-done">Active</span></div>
+                <div class="dp-tr tr-5" style="--ri:3"><span>SPRINGART</span><span>15% OFF</span><span>9 used</span><span>Expired</span><span class="badge badge-prog" style="background:rgba(122,122,138,.1);color:var(--sub);border-color:rgba(122,122,138,.2)">Expired</span></div>
+              </div>
+            </div>
+            <div class="promo-metrics" style="margin-top:12px">
+              <div class="chart-lbl" style="margin-bottom:6px">Campaign Usage Cap Fill</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div>
+                  <div style="display:flex;justify-content:between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
+                    <span>PETLOVE20 Campaign Progress</span>
+                    <span style="margin-left:auto">45% (45 / 100)</span>
+                  </div>
+                  <div class="promo-bar"><div class="promo-fill" data-w="45%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ANTI FRAUD -->
+          <div class="panel" id="panel-antifraud">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Anti-Fraud &amp; Risk Control</div><div class="ph-action">Scan Queue</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">Low</span><span class="pstat-l">Global Risk</span></div>
+                <div class="pstat"><span class="pstat-n">24</span><span class="pstat-l">Blocked IPs</span></div>
+                <div class="pstat"><span class="pstat-n" style="color:#fbbf24">1</span><span class="pstat-l">Review Flagged</span></div>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <div class="dp-table">
+                <div class="dp-tr dp-th tr-5"><span>Tx / IP</span><span>Location</span><span>Risk Score</span><span>Flags</span><span>Action</span></div>
+                <div class="dp-tr tr-5" style="--ri:0"><span>185.190.140.10</span><span>St. Petersburg (VPN)</span><span class="pstat-n" style="color:#ef4444">88 / 100</span><span>Proxy / VPN block</span><span class="badge badge-new" style="background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.2)">Auto-Blocked</span></div>
+                <div class="dp-tr tr-5" style="--ri:1"><span>94.23.48.12</span><span>Sydney, AU</span><span class="pstat-n g">12 / 100</span><span>Card Match</span><span class="badge badge-done">Approved</span></div>
+                <div class="dp-tr tr-5" style="--ri:2"><span>195.22.122.50</span><span>Unknown Proxy</span><span class="pstat-n" style="color:#fbbf24">65 / 100</span><span>Card mismatch</span><span class="badge badge-prog" style="background:rgba(251,191,36,.1);color:#fbbf24;border-color:rgba(251,191,36,.2)">Hold for Review</span></div>
+              </div>
+            </div>
+            <div class="risk-meter-section" style="margin-top:8px">
+              <div class="chart-lbl" style="margin-bottom:6px">Risk Vector Breakdown</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div style="background:rgba(255,255,255,.02);border:1px solid rgba(0,229,153,.05);border-radius:8px;padding:10px">
+                  <div style="font-size:.6rem;font-family:var(--font-hud);color:var(--sub)">Velocity Testing Limit</div>
+                  <div class="pstat-n g" style="margin:4px 0">Normal</div>
+                  <div class="risk-bar"><div class="risk-fill" data-w="15%"></div></div>
+                </div>
+                <div style="background:rgba(255,255,255,.02);border:1px solid rgba(0,229,153,.05);border-radius:8px;padding:10px">
+                  <div style="font-size:.6rem;font-family:var(--font-hud);color:var(--sub)">Proxy Attack Score</div>
+                  <div class="pstat-n" style="color:#fbbf24;margin:4px 0">Moderate Alert</div>
+                  <div class="risk-bar"><div class="risk-fill high" data-w="65%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ARTIST PERFORMANCE -->
+          <div class="panel" id="panel-performance">
+            <div class="ph">
+              <div class="ph-row"><div class="ph-title">// Artist Performance Tracker</div><div class="ph-action">Export Report</div></div>
+              <div class="ph-stats">
+                <div class="pstat"><span class="pstat-n g">24.2h</span><span class="pstat-l">Avg Turnaround</span></div>
+                <div class="pstat"><span class="pstat-n">2.8%</span><span class="pstat-l">Revision Rate</span></div>
+                <div class="pstat"><span class="pstat-n g">4.9 ★</span><span class="pstat-l">Avg CSAT Rating</span></div>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <div class="dp-table">
+                <div class="dp-tr dp-th tr-5"><span>Artist</span><span>Queue</span><span>Avg Time</span><span>Rev. Rate</span><span>CSAT Rating</span></div>
+                <div class="dp-tr tr-5" style="--ri:0"><span>Clara W.</span><span>2 active</span><span>22 hours</span><span>1.8%</span><span class="pstat-n g">4.9 ★</span></div>
+                <div class="dp-tr tr-5" style="--ri:1"><span>Nadia R.</span><span>3 active</span><span>28 hours</span><span>3.2%</span><span class="pstat-n g">4.8 ★</span></div>
+                <div class="dp-tr tr-5" style="--ri:2"><span>Alex M.</span><span>1 active</span><span>19 hours</span><span>0.8%</span><span class="pstat-n g">5.0 ★</span></div>
+                <div class="dp-tr tr-5" style="--ri:3"><span>Elena P.</span><span>4 active</span><span>34 hours</span><span>5.4%</span><span class="pstat-n g">4.7 ★</span></div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="chart-lbl" style="margin-bottom:6px">Capacity Load Levels</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div>
+                  <div style="display:flex;justify-content:between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
+                    <span>Studio Overall Capacity Fill</span>
+                    <span style="margin-left:auto">72%</span>
+                  </div>
+                  <div class="perf-bar"><div class="perf-fill" data-w="72%"></div></div>
+                </div>
               </div>
             </div>
           </div>

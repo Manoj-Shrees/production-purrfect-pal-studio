@@ -435,10 +435,14 @@ document.querySelectorAll('#dsb-nav .dsb-btn').forEach(btn => {
       if (main) main.scrollTop = 0;
     }
     const p = btn.dataset.p;
-    if (p === 'sales')     animateBars();
-    if (p === 'analytics') animateMiniBar();
-    if (p === 'forecast')  animateForecast();
-    if (p === 'system')    animateSystem();
+    if (p === 'sales')       animateBars();
+    if (p === 'analytics')   animateMiniBar();
+    if (p === 'forecast')    animateForecast();
+    if (p === 'system')      animateSystem();
+    if (p === 'payouts')     animatePayouts();
+    if (p === 'promo')       animatePromo();
+    if (p === 'antifraud')   animateAntiFraud();
+    if (p === 'performance') animatePerformance();
 
     /* On mobile: scroll the selected tab button into view */
     btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -491,6 +495,38 @@ function animateSystem() {
   document.querySelectorAll('.sys-pct-fill').forEach((el, i) => {
     el.style.width = '0%';
     setTimeout(() => { el.style.width = el.dataset.w; }, i * 100 + 50);
+  });
+}
+
+/* Artist payouts fills */
+function animatePayouts() {
+  document.querySelectorAll('.payout-fill').forEach((el, i) => {
+    el.style.width = '0%';
+    setTimeout(() => { el.style.width = el.dataset.w; }, i * 90 + 50);
+  });
+}
+
+/* Promo usage fills */
+function animatePromo() {
+  document.querySelectorAll('.promo-fill').forEach((el, i) => {
+    el.style.width = '0%';
+    setTimeout(() => { el.style.width = el.dataset.w; }, i * 80 + 50);
+  });
+}
+
+/* Anti-Fraud risk gauge fills */
+function animateAntiFraud() {
+  document.querySelectorAll('.risk-fill').forEach((el, i) => {
+    el.style.width = '0%';
+    setTimeout(() => { el.style.width = el.dataset.w; }, i * 100 + 50);
+  });
+}
+
+/* Artist performance fill bars */
+function animatePerformance() {
+  document.querySelectorAll('.perf-fill').forEach((el, i) => {
+    el.style.width = '0%';
+    setTimeout(() => { el.style.width = el.dataset.w; }, i * 80 + 50);
   });
 }
 
