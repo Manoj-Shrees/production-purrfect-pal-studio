@@ -386,10 +386,10 @@ function buildProgs(id, n) {
   }
 }
 
-buildProgs('iphone', 12);
-buildProgs('macos',  12);
-initCar('iphone', 12, 'portrait');
-initCar('macos',  12, 'landscape');
+buildProgs('iphone', 10);
+buildProgs('macos',  10);
+initCar('iphone', 10, 'portrait');
+initCar('macos',  10, 'landscape');
 
 
 /* ═══════════════════════════════════════════════════════
