@@ -9,7 +9,3 @@ backups/
 
 # Node
 node_modules/
-
-# Build outputs (kept out of repo, volume-served)
-main-app/dist/
-artist-app/dist/
