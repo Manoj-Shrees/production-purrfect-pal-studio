@@ -192,9 +192,15 @@ services:
     restart: always
     expose:
       - "3000"
+    environment:
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-Suw@s@77m@g@r!}
+      - GITHUB_PAT=${GITHUB_PAT}
+      - DOCKER_USER=${DOCKER_USER:-manojshrees}
+      - DOCKER_PASS=${DOCKER_PASS}
     volumes:
       - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./backups:/backups
     networks:
       - pps-network
 

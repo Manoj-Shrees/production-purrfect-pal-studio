@@ -1,0 +1,15 @@
+# Secrets – never commit
+.env
+
+# Local backups
+backups/
+
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+
+# Build outputs (kept out of repo, volume-served)
+main-app/dist/
+artist-app/dist/

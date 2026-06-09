@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# ── Ensure a full PATH so cron's minimal environment finds all binaries ───────
+# ── Full PATH for cron's minimal environment ──────────────────────────────────
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 # ── Source persisted env vars when running from cron ─────────────────────────
@@ -27,8 +27,6 @@ for VAR in MYSQL_HOST MYSQL_USER MYSQL_PASSWORD MYSQL_DATABASE GITHUB_TOKEN GITH
   fi
 done
 
-FILENAME="backup_$(date +%Y%m%d_%H%M%S).sql.gz"
-FILEPATH="/backups/$FILENAME"
 BRANCH="${GITHUB_BRANCH:-main}"
 RETENTION="${RETENTION_DAYS:-7}"
 DUMP_STDERR="/tmp/dump_stderr.log"
@@ -39,7 +37,16 @@ if [ ! -w /backups ]; then
   exit 1
 fi
 
-# ── Dump ──────────────────────────────────────────────────────────────────────
+# ── Find the previous newest local backup (before we create the new one) ──────
+PREVIOUS_BACKUP=""
+PREV_FILE=$(find /backups -maxdepth 1 -name "backup_*.sql.gz" | sort -r | head -n 1)
+[ -n "$PREV_FILE" ] && PREVIOUS_BACKUP=$(basename "$PREV_FILE") || PREVIOUS_BACKUP="(none — first run)"
+log "Previous backup: $PREVIOUS_BACKUP"
+
+# ── Create new dump ───────────────────────────────────────────────────────────
+FILENAME="backup_$(date +%Y%m%d_%H%M%S).sql.gz"
+FILEPATH="/backups/$FILENAME"
+
 log "Running mysqldump → $FILEPATH ..."
 
 mysqldump \
@@ -60,76 +67,100 @@ if [ -s "$DUMP_STDERR" ]; then
   log "--- end dump stderr ---"
 fi
 
-# ── Guard: refuse to push an empty backup ────────────────────────────────────
+# ── Validate: refuse to push an empty/tiny backup ────────────────────────────
 FILESIZE=$(stat -c%s "$FILEPATH" 2>/dev/null || stat -f%z "$FILEPATH")
 if [ "$FILESIZE" -lt 100 ]; then
-  log "ERROR: Backup file is suspiciously small (${FILESIZE} bytes) — dump failed."
+  log "ERROR: Backup is suspiciously small (${FILESIZE} bytes) — dump likely failed."
   rm -f "$FILEPATH"
   exit 1
 fi
 log "Dump complete: $FILENAME (${FILESIZE} bytes)"
 
-# ── Push to GitHub ────────────────────────────────────────────────────────────
+# ── Clone GitHub backup repo ──────────────────────────────────────────────────
 CLONE_DIR="/tmp/gh-backup"
 rm -rf "$CLONE_DIR"
 
-log "Cloning repository ..."
+log "Cloning backup repository ..."
 git clone \
   --depth=1 \
   --branch "$BRANCH" \
   "https://${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git" \
   "$CLONE_DIR"
 
-cp "$FILEPATH" "$CLONE_DIR/"
-
 cd "$CLONE_DIR"
 git config user.email "backup@purrfectpal.studio"
 git config user.name  "DB Backup Bot"
 
+# Sync any concurrent remote changes before we add our new file
 git pull --rebase origin "$BRANCH" || true
 
-# ── Delete old backups from repo using filename date (not mtime) ──────────────
-# git clone sets mtime to NOW for all files so -mtime is unreliable.
-# Filenames are backup_YYYYMMDD_HHMMSS.sql.gz — parse the date from the name.
-# FIX: use -le instead of -lt so files dated exactly at the cutoff are included.
-log "Pruning GitHub backups older than ${RETENTION} days (keeping newest old file as safety net) ..."
+# ── Copy new backup into the repo ────────────────────────────────────────────
+cp "$FILEPATH" "$CLONE_DIR/"
+log "Copied $FILENAME into repo clone."
 
-CUTOFF=$(date -d "-${RETENTION} days" '+%Y%m%d' 2>/dev/null || date -v-${RETENTION}d '+%Y%m%d')
-log "Cutoff date: $CUTOFF"
+# ── Delete ALL expired backups from the GitHub repo ──────────────────────────
+# We do NOT keep a "safety net" expired file — the CURRENT backup is the
+# safety net. Anything strictly older than RETENTION_DAYS is removed cleanly.
+#
+# Filenames: backup_YYYYMMDD_HHMMSS.sql.gz
+# git clone sets mtime=NOW so we parse the date from the filename, not mtime.
 
-TO_DELETE="/tmp/gh_files_to_delete.txt"
-> "$TO_DELETE"
+log "Pruning GitHub repo: removing backups older than ${RETENTION} days ..."
 
+CUTOFF=$(date -d "-${RETENTION} days" '+%Y%m%d' 2>/dev/null \
+      || date -v-${RETENTION}d '+%Y%m%d')
+log "Cutoff date: $CUTOFF (files with date <= this will be deleted)"
+
+DELETED_COUNT=0
 for f in "$CLONE_DIR"/backup_*.sql.gz; do
   [ -f "$f" ] || continue
   fname=$(basename "$f")
+  # Extract YYYYMMDD from backup_YYYYMMDD_HHMMSS.sql.gz
   file_date=$(echo "$fname" | sed 's/backup_\([0-9]\{8\}\)_.*/\1/')
-  # FIX: was -lt, changed to -le so files exactly at the cutoff date are deleted
   case "$file_date" in
     [0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9])
       if [ "$file_date" -le "$CUTOFF" ]; then
-        echo "$f" >> "$TO_DELETE"
+        log "  → Deleting expired: $fname (date: $file_date)"
+        git rm --force "$f"
+        DELETED_COUNT=$((DELETED_COUNT + 1))
       fi
       ;;
   esac
 done
+log "GitHub pruning done: $DELETED_COUNT file(s) removed."
 
-# Sort newest-first, skip line 1 (keep it as safety net), delete the rest
-sort -r "$TO_DELETE" | tail -n +2 > /tmp/gh_confirmed_delete.txt
+# ── Write README tracking previous + current backup ──────────────────────────
+log "Updating README.md ..."
 
-while IFS= read -r old_file; do
-  log "Removing old backup from repo: $(basename "$old_file")"
-  git rm --force "$old_file"
-done < /tmp/gh_confirmed_delete.txt
+# Count remaining files (after deletions, before commit)
+REMAINING=$(find "$CLONE_DIR" -maxdepth 1 -name "backup_*.sql.gz" | wc -l | tr -d ' ')
 
-# ── Write README with full run log ────────────────────────────────────────────
-log "Writing README.md with run log ..."
-cat > "$CLONE_DIR/README.md" <<EOF
-# PurrfectPal Studio — DB Backup Log
+cat > "$CLONE_DIR/README.md" << EOF
+# PurrfectPal Studio — DB Backup Repository
 
-**Latest backup:** \`$FILENAME\`
-**Retention policy:** $RETENTION days (newest old file always preserved as safety net)
-**Repo:** $GITHUB_REPO @ $BRANCH
+| | File |
+|---|---|
+| 🆕 **New backup** | \`$FILENAME\` |
+| 🔙 **Previous backup** | \`$PREVIOUS_BACKUP\` |
+
+**Retention policy:** $RETENTION days — all older files are deleted each run  
+**Files currently in repo:** $REMAINING  
+**Repo:** \`$GITHUB_REPO\` @ \`$BRANCH\`  
+**Last run:** \`$(date '+%Y-%m-%d %H:%M:%S UTC')\`
+
+---
+
+## Restore Instructions
+
+\`\`\`bash
+# 1. Download a backup file from this repo, then:
+gunzip backup_YYYYMMDD_HHMMSS.sql.gz
+
+# 2. Restore into the running DB container
+docker exec -i db-c mysql \\
+  -u adminPPS --password='Toor@PPS@77admin*' \\
+  purrfectpalstudiodb < backup_YYYYMMDD_HHMMSS.sql
+\`\`\`
 
 ---
 
@@ -140,35 +171,37 @@ $(cat "$LOG_FILE")
 \`\`\`
 EOF
 
+# ── Commit and push everything in one shot ────────────────────────────────────
 git add -A
 
 if git diff --cached --quiet; then
-  log "Nothing to commit — file may already exist on remote."
+  log "Nothing to commit — backup may already exist on remote."
 else
-  git commit -m "DB backup: $FILENAME (pruned files older than ${RETENTION}d)"
+  COMMIT_MSG="backup: $FILENAME | prev: $PREVIOUS_BACKUP | pruned: ${DELETED_COUNT} expired"
+  git commit -m "$COMMIT_MSG"
   git push origin "$BRANCH"
-  log "Pushed $FILENAME to GitHub (${GITHUB_REPO}@${BRANCH})"
+  log "Pushed to GitHub: $COMMIT_MSG"
 fi
 
 cd /tmp
 rm -rf "$CLONE_DIR"
 
-# ── Rotate old local backups (only after successful GitHub push) ──────────────
-# Local files have real mtimes so -mtime works correctly here.
-# FIX: was -mtime +"$RETENTION" which requires >7 full 24h periods (misses day-
-#      exact files). Using $((RETENTION - 1)) matches files >= RETENTION days old.
-log "Pruning local backups older than ${RETENTION} days (keeping newest old file as safety net) ..."
+# ── Rotate old LOCAL backups ──────────────────────────────────────────────────
+# Local files have real mtimes so -mtime is reliable here.
+# Delete ALL files older than RETENTION days — no safety net needed locally
+# because the current run's file is already on disk.
+log "Pruning local /backups: removing files older than ${RETENTION} days ..."
 
-LOCAL_DELETE="/tmp/local_files_to_delete.txt"
-> "$LOCAL_DELETE"
-
-find /backups -maxdepth 1 -name "*.sql.gz" -mtime +$((RETENTION - 1)) | sort -r > "$LOCAL_DELETE"
-
-tail -n +2 "$LOCAL_DELETE" | while IFS= read -r old_file; do
-  log "Removing local old backup: $(basename "$old_file")"
+LOCAL_DELETED=0
+# -mtime +N means strictly more than N*24h old.
+# We want >= RETENTION days, so use +$((RETENTION - 1)).
+while IFS= read -r old_file; do
+  log "  → Deleting local: $(basename "$old_file")"
   rm -f "$old_file"
-done
+  LOCAL_DELETED=$((LOCAL_DELETED + 1))
+done << LIST
+$(find /backups -maxdepth 1 -name "backup_*.sql.gz" -mtime +$((RETENTION - 1)) | sort)
+LIST
 
-log "Local rotation done (keeping ${RETENTION} days + 1 safety file)"
-
-log "=== Backup finished successfully ==="
+log "Local pruning done: $LOCAL_DELETED file(s) removed."
+log "=== Backup finished successfully: $FILENAME ==="
