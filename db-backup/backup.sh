@@ -39,15 +39,16 @@ fi
 
 # ── Find the previous newest local backup (before we create the new one) ──────
 PREVIOUS_BACKUP=""
-PREV_FILE=$(find /backups -maxdepth 1 -name "backup_*.sql.gz" | sort -r | head -n 1)
-[ -n "$PREV_FILE" ] && PREVIOUS_BACKUP=$(basename "$PREV_FILE") || PREVIOUS_BACKUP="(none — first run)"
+PREV_FILE=$(find /backups -maxdepth 1 -name "pps_full_backup_*.tar.gz.part_aa" | sort -r | head -n 1)
+[ -n "$PREV_FILE" ] && PREVIOUS_BACKUP=$(basename "$PREV_FILE" .part_aa) || PREVIOUS_BACKUP="(none — first run)"
 log "Previous backup: $PREVIOUS_BACKUP"
 
-# ── Create new dump ───────────────────────────────────────────────────────────
-FILENAME="backup_$(date +%Y%m%d_%H%M%S).sql.gz"
+# ── Create new dump & archive uploads ─────────────────────────────────────────
+FILENAME="pps_full_backup_$(date +%Y%m%d_%H%M%S).tar.gz"
 FILEPATH="/backups/$FILENAME"
+tempDbPath="/tmp/db_dump_$(date +%Y%m%d_%H%M%S).sql"
 
-log "Running mysqldump → $FILEPATH ..."
+log "Running mysqldump → $tempDbPath ..."
 
 mysqldump \
   -h "$MYSQL_HOST" \
@@ -58,7 +59,7 @@ mysqldump \
   --no-tablespaces \
   --routines \
   --triggers \
-  "$MYSQL_DATABASE" 2>"$DUMP_STDERR" | gzip > "$FILEPATH"
+  "$MYSQL_DATABASE" > "$tempDbPath" 2>"$DUMP_STDERR"
 
 if [ -s "$DUMP_STDERR" ]; then
   log "--- dump stderr ---"
@@ -67,14 +68,32 @@ if [ -s "$DUMP_STDERR" ]; then
   log "--- end dump stderr ---"
 fi
 
-# ── Validate: refuse to push an empty/tiny backup ────────────────────────────
-FILESIZE=$(stat -c%s "$FILEPATH" 2>/dev/null || stat -f%z "$FILEPATH")
-if [ "$FILESIZE" -lt 100 ]; then
-  log "ERROR: Backup is suspiciously small (${FILESIZE} bytes) — dump likely failed."
-  rm -f "$FILEPATH"
+log "Archiving database dump + uploads and splitting into 100MB chunks..."
+
+if [ ! -d "/app/uploadedfiles" ]; then
+  log "ERROR: /app/uploadedfiles directory is missing or volume not mounted."
+  rm -f "$tempDbPath"
   exit 1
 fi
-log "Dump complete: $FILENAME (${FILESIZE} bytes)"
+
+tar -czf - -C /app uploadedfiles -C /tmp "$(basename "$tempDbPath")" | split -b 100M - "$FILEPATH.part_"
+
+rm -f "$tempDbPath"
+
+# ── Validate: refuse to push an empty/tiny backup ────────────────────────────
+FILESIZE=0
+for f in "$FILEPATH".part_*; do
+  [ -f "$f" ] || continue
+  sz=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f")
+  FILESIZE=$((FILESIZE + sz))
+done
+
+if [ "$FILESIZE" -lt 100 ]; then
+  log "ERROR: Backup is suspiciously small (${FILESIZE} bytes) — dump/archive likely failed."
+  rm -f "$FILEPATH".part_*
+  exit 1
+fi
+log "Dump and Archive complete: $FILENAME (${FILESIZE} bytes)"
 
 # ── Clone GitHub backup repo ──────────────────────────────────────────────────
 CLONE_DIR="/tmp/gh-backup"
@@ -95,16 +114,10 @@ git config user.name  "DB Backup Bot"
 git pull --rebase origin "$BRANCH" || true
 
 # ── Copy new backup into the repo ────────────────────────────────────────────
-cp "$FILEPATH" "$CLONE_DIR/"
-log "Copied $FILENAME into repo clone."
+cp "$FILEPATH".part_* "$CLONE_DIR/"
+log "Copied $FILENAME chunks into repo clone."
 
 # ── Delete ALL expired backups from the GitHub repo ──────────────────────────
-# We do NOT keep a "safety net" expired file — the CURRENT backup is the
-# safety net. Anything strictly older than RETENTION_DAYS is removed cleanly.
-#
-# Filenames: backup_YYYYMMDD_HHMMSS.sql.gz
-# git clone sets mtime=NOW so we parse the date from the filename, not mtime.
-
 log "Pruning GitHub repo: removing backups older than ${RETENTION} days ..."
 
 CUTOFF=$(date -d "-${RETENTION} days" '+%Y%m%d' 2>/dev/null \
@@ -112,16 +125,16 @@ CUTOFF=$(date -d "-${RETENTION} days" '+%Y%m%d' 2>/dev/null \
 log "Cutoff date: $CUTOFF (files with date <= this will be deleted)"
 
 DELETED_COUNT=0
-for f in "$CLONE_DIR"/backup_*.sql.gz; do
+for f in "$CLONE_DIR"/pps_full_backup_*.tar.gz.part_aa; do
   [ -f "$f" ] || continue
-  fname=$(basename "$f")
-  # Extract YYYYMMDD from backup_YYYYMMDD_HHMMSS.sql.gz
-  file_date=$(echo "$fname" | sed 's/backup_\([0-9]\{8\}\)_.*/\1/')
+  fname=$(basename "$f" .part_aa)
+  # Extract YYYYMMDD from pps_full_backup_YYYYMMDD_HHMMSS.tar.gz
+  file_date=$(echo "$fname" | sed 's/pps_full_backup_\([0-9]\{8\}\)_.*/\1/')
   case "$file_date" in
     [0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9])
       if [ "$file_date" -le "$CUTOFF" ]; then
         log "  → Deleting expired: $fname (date: $file_date)"
-        git rm --force "$f"
+        git rm --force "$CLONE_DIR/${fname}".part_*
         DELETED_COUNT=$((DELETED_COUNT + 1))
       fi
       ;;
@@ -132,11 +145,11 @@ log "GitHub pruning done: $DELETED_COUNT file(s) removed."
 # ── Write README tracking previous + current backup ──────────────────────────
 log "Updating README.md ..."
 
-# Count remaining files (after deletions, before commit)
-REMAINING=$(find "$CLONE_DIR" -maxdepth 1 -name "backup_*.sql.gz" | wc -l | tr -d ' ')
+# Count remaining files
+REMAINING=$(find "$CLONE_DIR" -maxdepth 1 -name "pps_full_backup_*.tar.gz.part_aa" | wc -l | tr -d ' ')
 
 cat > "$CLONE_DIR/README.md" << EOF
-# PurrfectPal Studio — DB Backup Repository
+# PurrfectPal Studio — Full System Backup Repository
 
 | | File |
 |---|---|
@@ -153,13 +166,20 @@ cat > "$CLONE_DIR/README.md" << EOF
 ## Restore Instructions
 
 \`\`\`bash
-# 1. Download a backup file from this repo, then:
-gunzip backup_YYYYMMDD_HHMMSS.sql.gz
+# 1. Download backup chunks from this repo, then combine them:
+cat ${FILENAME}.part_* > ${FILENAME}
 
-# 2. Restore into the running DB container
+# 2. Extract the archive:
+mkdir -p /tmp/restore_extract
+tar -xzf ${FILENAME} -C /tmp/restore_extract
+
+# 3. Restore database into running DB container:
 docker exec -i db-c mysql \\
   -u adminPPS --password='Toor@PPS@77admin*' \\
-  purrfectpalstudiodb < backup_YYYYMMDD_HHMMSS.sql
+  purrfectpalstudiodb < /tmp/restore_extract/db_dump_*.sql
+
+# 4. Copy uploaded files back to uploads volume:
+cp -R /tmp/restore_extract/uploadedfiles/* /app/uploadedfiles/
 \`\`\`
 
 ---
@@ -174,10 +194,10 @@ EOF
 # ── Commit and push everything in one shot ────────────────────────────────────
 git add -A
 
-if git diff --cached --quiet; then
+if git diff --quiet && git diff --cached --quiet; then
   log "Nothing to commit — backup may already exist on remote."
 else
-  COMMIT_MSG="backup: $FILENAME | prev: $PREVIOUS_BACKUP | pruned: ${DELETED_COUNT} expired"
+  COMMIT_MSG="full-backup: $FILENAME | prev: $PREVIOUS_BACKUP | pruned: ${DELETED_COUNT} expired"
   git commit -m "$COMMIT_MSG"
   git push origin "$BRANCH"
   log "Pushed to GitHub: $COMMIT_MSG"
@@ -187,20 +207,19 @@ cd /tmp
 rm -rf "$CLONE_DIR"
 
 # ── Rotate old LOCAL backups ──────────────────────────────────────────────────
-# Local files have real mtimes so -mtime is reliable here.
-# Delete ALL files older than RETENTION days — no safety net needed locally
-# because the current run's file is already on disk.
 log "Pruning local /backups: removing files older than ${RETENTION} days ..."
 
 LOCAL_DELETED=0
-# -mtime +N means strictly more than N*24h old.
-# We want >= RETENTION days, so use +$((RETENTION - 1)).
 while IFS= read -r old_file; do
-  log "  → Deleting local: $(basename "$old_file")"
-  rm -f "$old_file"
-  LOCAL_DELETED=$((LOCAL_DELETED + 1))
+  [ -n "$old_file" ] || continue
+  base_prefix=$(echo "$old_file" | sed 's/\.part_[a-z]\{2\}$//')
+  if [ -f "$old_file" ]; then
+    log "  → Deleting local: $(basename "$old_file")"
+    rm -f "${base_prefix}".part_*
+    LOCAL_DELETED=$((LOCAL_DELETED + 1))
+  fi
 done << LIST
-$(find /backups -maxdepth 1 -name "backup_*.sql.gz" -mtime +$((RETENTION - 1)) | sort)
+$(find /backups -maxdepth 1 -name "pps_full_backup_*.tar.gz.part_aa" -mtime +$((RETENTION - 1)) | sort)
 LIST
 
 log "Local pruning done: $LOCAL_DELETED file(s) removed."
