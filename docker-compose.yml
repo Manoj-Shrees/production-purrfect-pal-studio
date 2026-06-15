@@ -124,7 +124,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - CERTBOT_EMAIL=suwasmgr77@gmail.com
-    entrypoint: >
+    entrypoint: |
       /bin/sh -c "
         trap exit TERM;
 
