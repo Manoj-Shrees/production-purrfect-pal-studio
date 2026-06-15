@@ -21,9 +21,6 @@ services:
       - mysql_data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
       - pps-network
 
@@ -139,15 +136,15 @@ services:
     restart: always
     build: ./db-backup
     environment:
-      - MYSQL_HOST=db
+      - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - BACKUP_CRON=0 */6 * * *
-      - RETENTION_DAYS=14
+      - BACKUP_CRON=${BACKUP_CRON}
+      - RETENTION_DAYS=${RETENTION_DAYS}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_REPO=manoj-shrees/purrfect-pal-studio-db-backups
-      - GITHUB_BRANCH=main
+      - GITHUB_REPO=${GITHUB_REPO}
+      - GITHUB_BRANCH=${GITHUB_BRANCH}
     volumes:
       - ./backups:/backups
       - uploads_data:/app/uploadedfiles:ro
