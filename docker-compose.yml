@@ -44,6 +44,7 @@ services:
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles
+      - private_contracts_data:/app/private_contracts
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       db:
@@ -69,6 +70,7 @@ services:
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles
+      - private_contracts_data:/app/private_contracts
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       db:
@@ -177,6 +179,7 @@ services:
 volumes:
   mysql_data:
   uploads_data:
+  private_contracts_data:
 
 networks:
   pps-network:
