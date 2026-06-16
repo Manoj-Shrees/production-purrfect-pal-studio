@@ -1,5 +1,5 @@
 version: '3.8'
-# Trigger redeployment for contract sign image fixes and sandbox permissions
+# Trigger redeployment for contract table initialization
 
 services:
 
