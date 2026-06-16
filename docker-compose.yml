@@ -41,6 +41,7 @@ services:
     environment:
       - PPS_KEY=${PPS_KEY}
       - INSTANCE_ID=1
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles
@@ -67,6 +68,7 @@ services:
     environment:
       - PPS_KEY=${PPS_KEY}
       - INSTANCE_ID=2
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles

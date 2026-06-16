@@ -93,7 +93,7 @@ BACKUP_BYTES=$(stat -c%s "$BACKUP_SQL" 2>/dev/null || stat -f%z "$BACKUP_SQL") &
 echo "[deploy] DB dump size: $BACKUP_BYTES bytes" && \\
 [ "$BACKUP_BYTES" -gt 1000 ] || (echo "[deploy] ERROR: DB backup is empty — aborting deploy!" && rm -f "$BACKUP_SQL" && exit 1) && \\
 gzip "$BACKUP_SQL" && \\
-echo "[deploy] DB backup saved: ${BACKUP_SQL}.gz" && \\
+echo "[deploy] DB backup saved: \${BACKUP_SQL}.gz" && \\
 
 echo "[deploy] ── Step 2: Volume snapshot ───────────────────────────────" && \\
 VOLUME_NAME=production-purrfect-pal-studio_mysql_data && \\
