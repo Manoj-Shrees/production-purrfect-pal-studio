@@ -21,6 +21,8 @@ if [ ! -f /etc/letsencrypt/live/purrfectpal.studio/fullchain.pem ]; then
     -d www.admin.purrfectpal.studio \
     -d artist.purrfectpal.studio \
     -d www.artist.purrfectpal.studio \
+    -d promotions.purrfectpal.studio \
+    -d www.promotions.purrfectpal.studio \
     && /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh \
     || echo '[Certbot] Initial cert fetch failed — check nginx is serving /.well-known/acme-challenge/'
 else
