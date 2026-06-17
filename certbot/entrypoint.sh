@@ -15,7 +15,6 @@ certbot certonly \
   --no-eff-email \
   --non-interactive \
   --expand \
-  --keep-until-expiring \
   -d purrfectpal.studio \
   -d www.purrfectpal.studio \
   -d admin.purrfectpal.studio \
