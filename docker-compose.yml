@@ -99,7 +99,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/api_proxy.conf:/etc/nginx/api_proxy.conf:ro
       - ./nginx/proxy_params:/etc/nginx/proxy_params:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
