@@ -237,9 +237,12 @@ function runDeploy() {
 
 // ── HTTP server ───────────────────────────────────────────────────────────────
 http.createServer((req, res) => {
+  // Normalize the URL path by stripping query parameters and trailing slashes
+  const urlPath = req.url.split('?')[0].replace(/\/$/, '') || '/';
+  console.log(`[deploy] 📥 Incoming request: ${req.method} ${req.url} (resolved path: ${urlPath})`);
 
   // ── POST /deploy — Webhook trigger (GitHub or direct API) ───────────────────
-  if (req.method === 'POST' && req.url === '/deploy') {
+  if (req.method === 'POST' && urlPath === '/deploy') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', () => {
@@ -278,7 +281,7 @@ http.createServer((req, res) => {
     });
 
   // ── GET /deploy-stream — SSE logging endpoint ──────────────────────────────
-  } else if (req.method === 'GET' && req.url === '/deploy-stream') {
+  } else if (req.method === 'GET' && urlPath === '/deploy-stream') {
 
     const authHeader = req.headers['x-hub-signature-256'];
     const testHmac = crypto.createHmac('sha256', SECRET).update('admin-stream').digest('hex');
@@ -328,12 +331,94 @@ http.createServer((req, res) => {
     });
 
   // ── GET /deploy-status ─────────────────────────────────────────────────────
-  } else if (req.method === 'GET' && req.url === '/deploy-status') {
+  } else if (req.method === 'GET' && urlPath === '/deploy-status') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ inProgress: deployInProgress }));
 
+  // ── GET /active-slot ───────────────────────────────────────────────────────
+  } else if (req.method === 'GET' && urlPath === '/active-slot') {
+    const fs = require('fs');
+    const CONF_PATH = '/app/production-purrfect-pal-studio/nginx/conf.d/active_backend.conf';
+    try {
+      if (!fs.existsSync(CONF_PATH)) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: true, active: 'backend-1' }));
+      }
+      const content = fs.readFileSync(CONF_PATH, 'utf8');
+      const backend2Active = /^\s*server\s+backend-2:8080;/m.test(content) && !/^\s*#\s*server\s+backend-2:8080;/m.test(content);
+      const activeSlot = backend2Active ? 'backend-2' : 'backend-1';
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, active: activeSlot }));
+    } catch (err) {
+      console.error('[deploy] Error reading active slot:', err.message);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: err.message }));
+    }
+
+  // ── POST /switch-slot ──────────────────────────────────────────────────────
+  } else if (req.method === 'POST' && urlPath === '/switch-slot') {
+    const fs = require('fs');
+    const { exec } = require('child_process');
+    const CONF_PATH = '/app/production-purrfect-pal-studio/nginx/conf.d/active_backend.conf';
+    try {
+      let content = '';
+      if (fs.existsSync(CONF_PATH)) {
+        content = fs.readFileSync(CONF_PATH, 'utf8');
+      }
+      const backend2Active = /^\s*server\s+backend-2:8080;/m.test(content) && !/^\s*#\s*server\s+backend-2:8080;/m.test(content);
+      const currentSlot = backend2Active ? 'backend-2' : 'backend-1';
+      const newSlot = currentSlot === 'backend-1' ? 'backend-2' : 'backend-1';
+      
+      let newConfig = '';
+      if (newSlot === 'backend-1') {
+        newConfig = `# Active upstream configuration — blue slot
+upstream backend {
+    server backend-1:8080;
+    # server backend-2:8080;
+    keepalive 32;
+}
+`;
+      } else {
+        newConfig = `# Active upstream configuration — green slot
+upstream backend {
+    # server backend-1:8080;
+    server backend-2:8080;
+    keepalive 32;
+}
+`;
+      }
+      fs.writeFileSync(CONF_PATH, newConfig, 'utf8');
+      
+      // Reload Nginx — try docker exec first (requires docker.sock mount),
+      // fall back to docker kill -s HUP which also works when socket is available.
+      const reloadCmd = `docker exec nginx-proxy nginx -s reload 2>&1 || docker kill -s HUP nginx-proxy 2>&1`;
+      exec(reloadCmd, { timeout: 15000 }, (err, stdout, stderr) => {
+        const combinedOut = [stdout, stderr].filter(Boolean).join(' ').trim();
+        if (err) {
+          const detail = combinedOut || err.message;
+          console.error('[deploy] Failed to reload Nginx:', detail);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({
+            success: false,
+            error: `Nginx reload failed: ${detail}. Check that the webhook container has access to /var/run/docker.sock and nginx-proxy is the correct container name.`
+          }));
+        }
+        console.log('[deploy] Nginx reloaded successfully. Output:', combinedOut || '(none)');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          active: newSlot,
+          message: `Successfully redirected client traffic to ${newSlot}`
+        }));
+      });
+    } catch (err) {
+      console.error('[deploy] Error switching active slot:', err.message);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: err.message }));
+    }
+
   // ── GET /health ────────────────────────────────────────────────────────────
-  } else if (req.method === 'GET' && req.url === '/health') {
+  } else if (req.method === 'GET' && urlPath === '/health') {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('OK');
 
