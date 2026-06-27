@@ -72,7 +72,31 @@ function shouldIgnorePush(payload) {
     ];
     if (allFiles.some(f => !f.startsWith('.webhook/'))) return false;
   }
-  return true;
+}
+
+function loadEnvFile(filePath) {
+  const fs = require('fs');
+  try {
+    if (!fs.existsSync(filePath)) return {};
+    const content = fs.readFileSync(filePath, 'utf8');
+    const env = {};
+    content.split('\n').forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const idx = trimmed.indexOf('=');
+      if (idx === -1) return;
+      const key = trimmed.substring(0, idx).trim();
+      let val = trimmed.substring(idx + 1).trim();
+      if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+        val = val.substring(1, val.length - 1);
+      }
+      env[key] = val;
+    });
+    return env;
+  } catch (err) {
+    console.error('[deploy] Error loading env file:', err.message);
+    return {};
+  }
 }
 
 // ── Build the deploy shell script arguments ───────────────────────────────────
@@ -86,8 +110,12 @@ function shouldIgnorePush(payload) {
 //  6. Restart ONLY non-db services so mysql_data volume is never recreated.
 //
 function buildDeployScript() {
-  const dockerLogin = DOCKER_PASS
-    ? `echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin`
+  const localEnv = loadEnvFile('/app/production-purrfect-pal-studio/.env');
+  const dockerUser = localEnv.DOCKER_USER || DOCKER_USER;
+  const dockerPass = localEnv.DOCKER_PASS || DOCKER_PASS;
+
+  const dockerLogin = dockerPass
+    ? `echo "${dockerPass}" | docker login -u "${dockerUser}" --password-stdin`
     : `echo "[deploy] Skipping docker login (no DOCKER_PASS set)"`;
 
   const repoUrl = GH_PAT
@@ -416,6 +444,64 @@ upstream backend {
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: false, error: err.message }));
     }
+
+  // ── POST /docker-login ─────────────────────────────────────────────────────
+  } else if (req.method === 'POST' && urlPath === '/docker-login') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      if (!verifySignature(req, body)) {
+        res.writeHead(401);
+        return res.end('Unauthorized');
+      }
+      try {
+        const { username, secret } = JSON.parse(body || '{}');
+        if (!username || !secret) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ success: false, error: 'Username and secret are required' }));
+        }
+
+        const fs = require('fs');
+        const envPath = '/app/production-purrfect-pal-studio/.env';
+        let envContent = '';
+        if (fs.existsSync(envPath)) {
+          envContent = fs.readFileSync(envPath, 'utf8');
+        }
+
+        let lines = envContent.split('\n');
+        let userSet = false;
+        let passSet = false;
+
+        lines = lines.map(line => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('DOCKER_USER=')) {
+            userSet = true;
+            return `DOCKER_USER=${username}`;
+          }
+          if (trimmed.startsWith('DOCKER_PASS=')) {
+            passSet = true;
+            return `DOCKER_PASS=${secret}`;
+          }
+          return line;
+        });
+
+        if (!userSet) {
+          lines.push(`DOCKER_USER=${username}`);
+        }
+        if (!passSet) {
+          lines.push(`DOCKER_PASS=${secret}`);
+        }
+
+        fs.writeFileSync(envPath, lines.join('\n'), 'utf8');
+        console.log('[deploy] Docker credentials updated in .env successfully.');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, message: 'Docker credentials updated successfully' }));
+      } catch (err) {
+        console.error('[deploy] Error updating docker login:', err.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
 
   // ── GET /health ────────────────────────────────────────────────────────────
   } else if (req.method === 'GET' && urlPath === '/health') {
