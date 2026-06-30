@@ -102,8 +102,8 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/api_proxy.conf:/etc/nginx/api_proxy.conf:ro
       - ./nginx/proxy_params:/etc/nginx/proxy_params:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /var/www/certbot:/var/www/certbot:ro
+      - ./letsencrypt:/etc/letsencrypt:ro
+      - ./certbot_www:/var/www/certbot:ro
       - ./certs:/etc/ssl/certs:ro
       - ./main-app/dist:/usr/share/nginx/html/main-app:ro
       - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro
@@ -124,8 +124,8 @@ services:
     container_name: certbot
     restart: unless-stopped
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/www/certbot:/var/www/certbot
+      - ./letsencrypt:/etc/letsencrypt
+      - ./certbot_www:/var/www/certbot
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - CERTBOT_EMAIL=${CERTBOT_EMAIL}
@@ -173,7 +173,7 @@ services:
       - DOCKER_USER=${DOCKER_USER}
       - DOCKER_PASS=${DOCKER_PASS}
     volumes:
-      - /root/production-purrfect-pal-studio:/app/production-purrfect-pal-studio
+      - .:/app/production-purrfect-pal-studio
       - /var/run/docker.sock:/var/run/docker.sock
       - ./backups:/backups
     networks:
