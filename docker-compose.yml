@@ -29,6 +29,9 @@ services:
   backend-1:
     image: manojshrees/purrfectpalstudio-backend:latest
     container_name: backend-c-1
+    privileged: true
+    security_opt:
+      - label:disable
     restart: always
     expose:
       - "8080"
@@ -56,6 +59,9 @@ services:
   backend-2:
     image: manojshrees/purrfectpalstudio-backend:latest
     container_name: backend-c-2
+    privileged: true
+    security_opt:
+      - label:disable
     restart: always
     expose:
       - "8080"
@@ -122,6 +128,9 @@ services:
   certbot:
     build: ./certbot
     container_name: certbot
+    privileged: true
+    security_opt:
+      - label:disable
     restart: unless-stopped
     volumes:
       - ./letsencrypt:/etc/letsencrypt
@@ -164,6 +173,9 @@ services:
   webhook:
     build: ./webhook
     container_name: webhook-listener
+    privileged: true
+    security_opt:
+      - label:disable
     restart: always
     expose:
       - "3000"
