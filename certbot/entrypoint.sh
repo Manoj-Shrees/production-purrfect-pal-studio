@@ -183,31 +183,37 @@ while :; do
 
   echo "[Certbot] Running renewal check..."
 
-  # Re-check cert state
+  # Check if the cert at canonical path is real AND has at least 30 days (2592000s) remaining
   if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
-     && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 86400 2>/dev/null; then
-    # Valid cert — just run normal renewal
-    certbot renew --quiet \
-      --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh \
-      || echo "[Certbot] Renew attempt done (may be too early to renew)."
+     && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null; then
+    echo "[Certbot] Certificate is real and valid for at least 30 days. No renewal needed."
   else
-    # Cert is missing, dummy, or expiring — try to get/rescue a real one
-    echo "[Certbot] Cert missing or not real — attempting to obtain..."
-    if ! link_best_numbered_cert; then
-      if do_certbot; then
-        if [ ! -f "$CERT_DIR/fullchain.pem" ] || ! is_real_cert "$CERT_DIR/fullchain.pem"; then
-          link_best_numbered_cert || true
-        fi
+    echo "[Certbot] Certificate is missing, a dummy, or expiring within 30 days. Attempting renewal/obtain..."
+    
+    # Try to rescue a valid numbered cert first
+    if link_best_numbered_cert; then
+      # Double check if the rescued cert is valid for at least 30 days
+      if openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null; then
+        echo "[Certbot] Rescued cert is valid for at least 30 days. Skipping renewal."
         reload_nginx
-      else
-        echo "[Certbot] ❌ Still failed (rate-limited?). Will retry in 12h."
-        if [ ! -f "$CERT_DIR/fullchain.pem" ]; then
-          write_dummy
-          reload_nginx
-        fi
+        continue
       fi
-    else
+    fi
+
+    # Run do_certbot to obtain a new/renewed cert
+    if do_certbot; then
+      # If certbot succeeded but didn't write to the canonical path, check for numbered folders
+      if [ ! -f "$CERT_DIR/fullchain.pem" ] || ! is_real_cert "$CERT_DIR/fullchain.pem"; then
+        link_best_numbered_cert || true
+      fi
       reload_nginx
+      echo "[Certbot] ✅ Certificate successfully renewed."
+    else
+      echo "[Certbot] ❌ Renewal/obtain failed. Keeping existing/dummy certificate."
+      if [ ! -f "$CERT_DIR/fullchain.pem" ]; then
+        write_dummy
+        reload_nginx
+      fi
     fi
   fi
 done
