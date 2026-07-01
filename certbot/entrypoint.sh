@@ -26,29 +26,19 @@ if [ -f "$RENEWAL_CONF" ]; then
     rm -rf /etc/letsencrypt/archive/purrfectpal.studio
   fi
 fi
-# 3. Ensure dummy certificates exist so Nginx can start up successfully
+# 3. Ensure dummy certificates exist so Nginx can start up successfully.
+# We generate them with "-days 1" (expires in 1 day). Because it expires in less
+# than 30 days, Certbot's normal renewal check will see it as expiring and
+# automatically replace it with a real Let's Encrypt certificate.
+# This prevents deleting files from disk, which avoids Nginx boot crashes.
 CERT_DIR="/etc/letsencrypt/live/purrfectpal.studio"
 if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
   echo "[Certbot] Certificate files not found. Generating dummy self-signed certificate..."
   mkdir -p "$CERT_DIR"
-  openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
+  openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
     -keyout "$CERT_DIR/privkey.pem" \
     -out "$CERT_DIR/fullchain.pem" \
     -subj "/CN=purrfectpal.studio"
-fi
-
-# Wait a brief moment to ensure Nginx has booted up using the certificates
-sleep 5
-
-# 4. Check if the certificate is a dummy (self-signed).
-# If it is self-signed, delete it from disk so Certbot is forced to obtain a real one.
-# Nginx has already loaded it in memory, so it won't crash when the files are deleted.
-if [ -f "$CERT_DIR/fullchain.pem" ]; then
-  if ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -issuer | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"; then
-    echo "[Certbot] Dummy certificate detected. Removing it so Certbot requests a real one..."
-    rm -rf "$CERT_DIR"
-    rm -rf /etc/letsencrypt/archive/purrfectpal.studio
-  fi
 fi
 
 echo '[Certbot] Ensuring certificate covers all current domains...'
