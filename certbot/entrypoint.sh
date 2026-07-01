@@ -27,11 +27,10 @@ if [ -f "$RENEWAL_CONF" ]; then
   fi
 fi
 # 3. Ensure dummy certificates exist so Nginx can start up successfully.
-# We generate them with "-days 1" (expires in 1 day). Because it expires in less
-# than 30 days, Certbot's normal renewal check will see it as expiring and
-# automatically replace it with a real Let's Encrypt certificate.
-# This prevents deleting files from disk, which avoids Nginx boot crashes.
+# We generate them with "-days 1" (expires in 1 day) so Nginx can boot.
+# If we generate them, we set GENERATED_DUMMY=true to force-renew and replace them.
 CERT_DIR="/etc/letsencrypt/live/purrfectpal.studio"
+GENERATED_DUMMY=false
 if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
   echo "[Certbot] Certificate files not found. Generating dummy self-signed certificate..."
   mkdir -p "$CERT_DIR"
@@ -39,26 +38,48 @@ if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
     -keyout "$CERT_DIR/privkey.pem" \
     -out "$CERT_DIR/fullchain.pem" \
     -subj "/CN=purrfectpal.studio"
+  GENERATED_DUMMY=true
 fi
 
 echo '[Certbot] Ensuring certificate covers all current domains...'
-certbot certonly \
-  --webroot \
-  --webroot-path=/var/www/certbot \
-  --email suwasmgr77@gmail.com \
-  --agree-tos \
-  --no-eff-email \
-  --non-interactive \
-  --expand \
-  -d purrfectpal.studio \
-  -d www.purrfectpal.studio \
-  -d admin.purrfectpal.studio \
-  -d www.admin.purrfectpal.studio \
-  -d artist.purrfectpal.studio \
-  -d www.artist.purrfectpal.studio \
-  -d promotions.purrfectpal.studio \
-  -d www.promotions.purrfectpal.studio \
-  || echo '[Certbot] Cert obtain/expand failed — check nginx is serving /.well-known/acme-challenge/'
+if [ "$GENERATED_DUMMY" = true ]; then
+  echo "[Certbot] Force-renewing to replace the temporary dummy certificate..."
+  certbot certonly \
+    --webroot \
+    --webroot-path=/var/www/certbot \
+    --email suwasmgr77@gmail.com \
+    --agree-tos \
+    --no-eff-email \
+    --non-interactive \
+    --force-renewal \
+    -d purrfectpal.studio \
+    -d www.purrfectpal.studio \
+    -d admin.purrfectpal.studio \
+    -d www.admin.purrfectpal.studio \
+    -d artist.purrfectpal.studio \
+    -d www.artist.purrfectpal.studio \
+    -d promotions.purrfectpal.studio \
+    -d www.promotions.purrfectpal.studio \
+    || echo '[Certbot] Cert obtain/expand failed — check nginx is serving /.well-known/acme-challenge/'
+else
+  certbot certonly \
+    --webroot \
+    --webroot-path=/var/www/certbot \
+    --email suwasmgr77@gmail.com \
+    --agree-tos \
+    --no-eff-email \
+    --non-interactive \
+    --expand \
+    -d purrfectpal.studio \
+    -d www.purrfectpal.studio \
+    -d admin.purrfectpal.studio \
+    -d www.admin.purrfectpal.studio \
+    -d artist.purrfectpal.studio \
+    -d www.artist.purrfectpal.studio \
+    -d promotions.purrfectpal.studio \
+    -d www.promotions.purrfectpal.studio \
+    || echo '[Certbot] Cert obtain/expand failed — check nginx is serving /.well-known/acme-challenge/'
+fi
 
 while :; do
   certbot renew --quiet || true
