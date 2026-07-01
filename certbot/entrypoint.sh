@@ -41,6 +41,15 @@ if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
   GENERATED_DUMMY=true
 fi
 
+# Also check if the certificate currently on disk is a self-signed dummy.
+# If it is self-signed, we want to force-renew it to get a real one.
+if [ -f "$CERT_DIR/fullchain.pem" ]; then
+  if ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -issuer | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"; then
+    echo "[Certbot] Existing certificate is a self-signed dummy. Setting GENERATED_DUMMY=true to force-renew..."
+    GENERATED_DUMMY=true
+  fi
+fi
+
 echo '[Certbot] Ensuring certificate covers all current domains...'
 if [ "$GENERATED_DUMMY" = true ]; then
   echo "[Certbot] Force-renewing to replace the temporary dummy certificate..."
