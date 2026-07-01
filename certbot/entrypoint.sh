@@ -1,39 +1,53 @@
 #!/bin/sh
 # ─────────────────────────────────────────────────────────────────────────────
-# Certbot entrypoint  — crash-safe boot sequence
+# Certbot entrypoint — crash-safe, numbered-dir-safe
 #
-# Key design:
-#   • Dummy cert is written FIRST so Nginx can always start.
-#   • When certbot needs to obtain a real cert it deletes the dummy from DISK,
-#     but Nginx is already running with it loaded in memory — it keeps serving
-#     HTTP on port 80 (and the ACME challenge path) until the deploy hook
-#     reloads it with the real cert.
-#   • If certbot FAILS, the dummy is immediately re-written and Nginx is
-#     reloaded so it never stays cert-less.  The next 12h sleep retries.
+# Root cause this fixes:
+#   Certbot creates purrfectpal.studio-0001, -0002, ... when old numbered dirs
+#   still exist in /etc/letsencrypt/live|archive.  Nginx always reads from
+#   purrfectpal.studio/ (no suffix), so a numbered cert is never loaded.
+#
+# Strategy:
+#   • Purge ALL purrfectpal.studio* dirs (live, archive) AND renewal confs
+#     before every certbot run → certbot always names the lineage cleanly.
+#   • Keep dummy cert on disk until certbot SUCCEEDS.  If certbot fails,
+#     re-write dummy and reload Nginx so it never stays cert-less.
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 trap exit TERM
 
-CERT_DIR="/etc/letsencrypt/live/purrfectpal.studio"
+DOMAIN="purrfectpal.studio"
+CERT_DIR="/etc/letsencrypt/live/${DOMAIN}"
 NGINX_CONTAINER="nginx-proxy"
 
-# ── helper: write a 1-day self-signed dummy cert ──────────────────────────────
+# ── helpers ───────────────────────────────────────────────────────────────────
+
 write_dummy() {
   echo "[Certbot] Writing self-signed dummy certificate..."
   mkdir -p "$CERT_DIR"
   openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
     -keyout "$CERT_DIR/privkey.pem" \
     -out    "$CERT_DIR/fullchain.pem" \
-    -subj   "/CN=purrfectpal.studio"
+    -subj   "/CN=${DOMAIN}"
   echo "[Certbot] Dummy cert written."
 }
 
-# ── helper: reload nginx gracefully ──────────────────────────────────────────
 reload_nginx() {
   echo "[Certbot] Reloading Nginx..."
-  docker kill --signal=SIGHUP "$NGINX_CONTAINER" 2>/dev/null \
-    || docker exec "$NGINX_CONTAINER" nginx -s reload 2>/dev/null \
-    || echo "[Certbot] ⚠️  Could not reload Nginx (not fatal)."
+  docker exec "$NGINX_CONTAINER" nginx -s reload 2>/dev/null \
+    || docker kill --signal=SIGHUP "$NGINX_CONTAINER" 2>/dev/null \
+    || echo "[Certbot] ⚠️  Nginx reload skipped (container may still be starting)."
+}
+
+# Purge ALL numbered leftovers so certbot always creates the clean lineage name
+purge_all_lineages() {
+  echo "[Certbot] Purging all purrfectpal.studio* lineages..."
+  rm -rf /etc/letsencrypt/live/${DOMAIN}
+  rm -rf /etc/letsencrypt/live/${DOMAIN}-*
+  rm -rf /etc/letsencrypt/archive/${DOMAIN}
+  rm -rf /etc/letsencrypt/archive/${DOMAIN}-*
+  rm -f  /etc/letsencrypt/renewal/${DOMAIN}.conf
+  rm -f  /etc/letsencrypt/renewal/${DOMAIN}-*.conf
 }
 
 # ── install deploy hook ───────────────────────────────────────────────────────
@@ -46,112 +60,125 @@ ACCOUNTS_DIR="/etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory"
 if [ -d "$ACCOUNTS_DIR" ]; then
   ACCOUNT_COUNT=$(find "$ACCOUNTS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
   if [ "$ACCOUNT_COUNT" -gt 1 ]; then
-    echo "[Certbot] Multiple ACME accounts ($ACCOUNT_COUNT) — pruning..."
+    echo "[Certbot] Multiple ACME accounts ($ACCOUNT_COUNT) — pruning extras..."
     rm -rf "$ACCOUNTS_DIR"/*
   fi
 fi
 
-# ── 2. Clean up broken renewal config ────────────────────────────────────────
-RENEWAL_CONF="/etc/letsencrypt/renewal/purrfectpal.studio.conf"
+# ── 2. Detect broken renewal config ──────────────────────────────────────────
+RENEWAL_CONF="/etc/letsencrypt/renewal/${DOMAIN}.conf"
 if [ -f "$RENEWAL_CONF" ]; then
   if grep -q "{}" "$RENEWAL_CONF" || [ ! -s "$RENEWAL_CONF" ] || ! grep -q "archive_dir" "$RENEWAL_CONF"; then
-    echo "[Certbot] Broken renewal config — purging..."
-    rm -f "$RENEWAL_CONF"
-    rm -rf /etc/letsencrypt/live/purrfectpal.studio
-    rm -rf /etc/letsencrypt/archive/purrfectpal.studio
+    echo "[Certbot] Broken renewal config detected — purging..."
+    purge_all_lineages
   fi
 fi
 
-# ── 3. Ensure a cert (real or dummy) always exists ───────────────────────────
-GENERATED_DUMMY=false
+# ── 3. Determine cert state ───────────────────────────────────────────────────
+NEED_REAL_CERT=false
 
 if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
+  echo "[Certbot] No cert found — writing dummy so Nginx can start..."
   write_dummy
-  GENERATED_DUMMY=true
+  NEED_REAL_CERT=true
+elif ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -issuer 2>/dev/null \
+     | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"; then
+  echo "[Certbot] Cert on disk is self-signed dummy — will obtain real cert."
+  NEED_REAL_CERT=true
 fi
 
-# Is the cert on disk a self-signed dummy?
-if [ "$GENERATED_DUMMY" = false ] && [ -f "$CERT_DIR/fullchain.pem" ]; then
-  if ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -issuer 2>/dev/null \
-       | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"; then
-    echo "[Certbot] Cert on disk is self-signed dummy — will force-renew."
-    GENERATED_DUMMY=true
-  fi
-fi
-
-# ── 4. Wait for Nginx HTTP to be ready ───────────────────────────────────────
-echo "[Certbot] Waiting for Nginx to serve on port 80..."
+# ── 4. Wait for Nginx HTTP on port 80 ────────────────────────────────────────
+echo "[Certbot] Waiting for Nginx port 80..."
 WAIT=0
 until wget -q --spider "http://${NGINX_CONTAINER}/" 2>/dev/null \
-   || wget -q --spider "http://localhost:80/" 2>/dev/null \
+   || wget -q --spider "http://localhost/" 2>/dev/null \
    || [ "$WAIT" -ge 90 ]; do
   sleep 3
   WAIT=$((WAIT + 3))
 done
+echo "[Certbot] Nginx wait finished (${WAIT}s elapsed)."
 
-if [ "$WAIT" -ge 90 ]; then
-  echo "[Certbot] ⚠️  Nginx not reachable after 90s — attempting certbot anyway."
-else
-  echo "[Certbot] Nginx is up (${WAIT}s). Proceeding with certificate request..."
-fi
-
-# ── 5. Certbot args (shared between force-renew and expand) ──────────────────
-run_certbot() {
-  MODE="$1"   # --force-renewal or --expand
-
-  # Remove stale dummy from disk — Nginx is already running in memory with it,
-  # so it keeps serving port 80 (ACME challenge) until reloaded by deploy hook.
-  rm -rf "$CERT_DIR"
-  rm -rf /etc/letsencrypt/archive/purrfectpal.studio
-  rm -f  "$RENEWAL_CONF"
+# ── 5. Obtain real certificate ────────────────────────────────────────────────
+do_certbot() {
+  # Purge ALL numbered lineages so certbot uses the clean "purrfectpal.studio" name
+  purge_all_lineages
 
   certbot certonly \
-    --cert-name purrfectpal.studio \
+    --cert-name "${DOMAIN}" \
     --webroot \
     --webroot-path=/var/www/certbot \
     --email suwasmgr77@gmail.com \
     --agree-tos \
     --no-eff-email \
     --non-interactive \
-    "$MODE" \
-    -d purrfectpal.studio \
-    -d www.purrfectpal.studio \
-    -d admin.purrfectpal.studio \
-    -d www.admin.purrfectpal.studio \
-    -d artist.purrfectpal.studio \
-    -d www.artist.purrfectpal.studio \
-    -d promotions.purrfectpal.studio \
-    -d www.promotions.purrfectpal.studio
+    --force-renewal \
+    -d "${DOMAIN}" \
+    -d "www.${DOMAIN}" \
+    -d "admin.${DOMAIN}" \
+    -d "www.admin.${DOMAIN}" \
+    -d "artist.${DOMAIN}" \
+    -d "www.artist.${DOMAIN}" \
+    -d "promotions.${DOMAIN}" \
+    -d "www.promotions.${DOMAIN}"
 }
 
-# ── 6. Obtain / expand real certificate ──────────────────────────────────────
-if [ "$GENERATED_DUMMY" = true ]; then
-  echo "[Certbot] Force-renewing to get real certificate..."
-  if run_certbot --force-renewal; then
-    echo "[Certbot] ✅ Real certificate obtained. Nginx will reload via deploy hook."
+if [ "$NEED_REAL_CERT" = true ]; then
+  echo "[Certbot] Obtaining real Let's Encrypt certificate..."
+
+  if do_certbot; then
+    echo "[Certbot] ✅ Real certificate obtained!"
+    # Verify the cert landed in the right place (no numbered suffix)
+    if [ -f "$CERT_DIR/fullchain.pem" ]; then
+      echo "[Certbot] ✅ Certificate is at the correct path: $CERT_DIR"
+      reload_nginx
+    else
+      # Certbot used a numbered suffix — find it and symlink
+      ACTUAL=$(find /etc/letsencrypt/live -maxdepth 1 -name "${DOMAIN}-*" -type d 2>/dev/null | head -1)
+      if [ -n "$ACTUAL" ]; then
+        echo "[Certbot] ⚠️  Cert landed in $ACTUAL — creating symlink to $CERT_DIR..."
+        # Remove whatever is there and create symlink
+        rm -rf "$CERT_DIR"
+        ln -sf "$ACTUAL" "$CERT_DIR"
+        reload_nginx
+      else
+        echo "[Certbot] ❌ Cannot find cert directory! Re-writing dummy..."
+        write_dummy
+        reload_nginx
+      fi
+    fi
   else
-    echo "[Certbot] ❌ Certificate obtain FAILED. Re-creating dummy so Nginx stays up..."
+    echo "[Certbot] ❌ Certificate obtain FAILED — re-writing dummy so Nginx stays up..."
     write_dummy
     reload_nginx
-    echo "[Certbot] Dummy restored. Will retry in 12h."
+    echo "[Certbot] Will retry in 12h."
   fi
-else
-  echo "[Certbot] Expanding existing certificate if needed..."
-  if run_certbot --expand; then
-    echo "[Certbot] ✅ Certificate expanded/renewed."
+fi
+
+# ── 6. Renewal loop ───────────────────────────────────────────────────────────
+echo "[Certbot] Entering renewal loop (every 12h)..."
+while :; do
+  # Before each renewal, also purge numbered leftovers if renewal conf is broken
+  if [ -f "$RENEWAL_CONF" ]; then
+    if ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout 2>/dev/null; then
+      echo "[Certbot] Renewal: cert missing or corrupt — re-obtaining..."
+      NEED_REAL_CERT=true
+      if do_certbot; then
+        reload_nginx
+      else
+        write_dummy
+        reload_nginx
+      fi
+    else
+      certbot renew --quiet || true
+    fi
   else
-    echo "[Certbot] ⚠️  Expand failed — existing cert unchanged, continuing."
-    # Re-write dummy just to be safe if archive was partially deleted
-    if [ ! -f "$CERT_DIR/fullchain.pem" ]; then
+    echo "[Certbot] Renewal: no renewal conf found — re-obtaining..."
+    if do_certbot; then
+      reload_nginx
+    else
       write_dummy
       reload_nginx
     fi
   fi
-fi
-
-# ── 7. Renewal loop (every 12h) ───────────────────────────────────────────────
-echo "[Certbot] Entering 12h renewal loop..."
-while :; do
-  certbot renew --quiet || true
   sleep 12h & wait $!
 done
