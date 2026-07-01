@@ -37,6 +37,20 @@ if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
     -subj "/CN=purrfectpal.studio"
 fi
 
+# Wait a brief moment to ensure Nginx has booted up using the certificates
+sleep 5
+
+# 4. Check if the certificate is a dummy (self-signed).
+# If it is self-signed, delete it from disk so Certbot is forced to obtain a real one.
+# Nginx has already loaded it in memory, so it won't crash when the files are deleted.
+if [ -f "$CERT_DIR/fullchain.pem" ]; then
+  if ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -issuer | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"; then
+    echo "[Certbot] Dummy certificate detected. Removing it so Certbot requests a real one..."
+    rm -rf "$CERT_DIR"
+    rm -rf /etc/letsencrypt/archive/purrfectpal.studio
+  fi
+fi
+
 echo '[Certbot] Ensuring certificate covers all current domains...'
 certbot certonly \
   --webroot \
