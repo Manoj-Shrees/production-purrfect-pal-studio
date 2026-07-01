@@ -1,17 +1,14 @@
 #!/bin/sh
 # ─────────────────────────────────────────────────────────────────────────────
-# Certbot entrypoint — crash-safe, numbered-dir-safe
+# Certbot entrypoint — rate-limit-safe, crash-safe
 #
-# Root cause this fixes:
-#   Certbot creates purrfectpal.studio-0001, -0002, ... when old numbered dirs
-#   still exist in /etc/letsencrypt/live|archive.  Nginx always reads from
-#   purrfectpal.studio/ (no suffix), so a numbered cert is never loaded.
-#
-# Strategy:
-#   • Purge ALL purrfectpal.studio* dirs (live, archive) AND renewal confs
-#     before every certbot run → certbot always names the lineage cleanly.
-#   • Keep dummy cert on disk until certbot SUCCEEDS.  If certbot fails,
-#     re-write dummy and reload Nginx so it never stays cert-less.
+# LESSONS LEARNED (do not revert):
+#  1. Never --force-renewal unless cert is genuinely missing/dummy/expired.
+#     Repeated force-renewals exhaust the Let's Encrypt 5-cert/7-day limit.
+#  2. Never purge valid numbered lineages (purrfectpal.studio-0001, -0002, …).
+#     Certbot stores good certs there; purging wastes the rate-limit allowance.
+#  3. If certbot lands a cert in a numbered dir, symlink it — don't re-issue.
+#  4. On failure, always restore the dummy so Nginx never stays cert-less.
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 trap exit TERM
@@ -20,10 +17,21 @@ DOMAIN="purrfectpal.studio"
 CERT_DIR="/etc/letsencrypt/live/${DOMAIN}"
 NGINX_CONTAINER="nginx-proxy"
 
+CERTBOT_DOMAINS="
+  -d ${DOMAIN}
+  -d www.${DOMAIN}
+  -d admin.${DOMAIN}
+  -d www.admin.${DOMAIN}
+  -d artist.${DOMAIN}
+  -d www.artist.${DOMAIN}
+  -d promotions.${DOMAIN}
+  -d www.promotions.${DOMAIN}
+"
+
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 write_dummy() {
-  echo "[Certbot] Writing self-signed dummy certificate..."
+  echo "[Certbot] Writing self-signed dummy certificate to $CERT_DIR ..."
   mkdir -p "$CERT_DIR"
   openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
     -keyout "$CERT_DIR/privkey.pem" \
@@ -36,18 +44,38 @@ reload_nginx() {
   echo "[Certbot] Reloading Nginx..."
   docker exec "$NGINX_CONTAINER" nginx -s reload 2>/dev/null \
     || docker kill --signal=SIGHUP "$NGINX_CONTAINER" 2>/dev/null \
-    || echo "[Certbot] ⚠️  Nginx reload skipped (container may still be starting)."
+    || echo "[Certbot] ⚠️  Nginx reload skipped (may still be starting)."
 }
 
-# Purge ALL numbered leftovers so certbot always creates the clean lineage name
-purge_all_lineages() {
-  echo "[Certbot] Purging all purrfectpal.studio* lineages..."
-  rm -rf /etc/letsencrypt/live/${DOMAIN}
-  rm -rf /etc/letsencrypt/live/${DOMAIN}-*
-  rm -rf /etc/letsencrypt/archive/${DOMAIN}
-  rm -rf /etc/letsencrypt/archive/${DOMAIN}-*
-  rm -f  /etc/letsencrypt/renewal/${DOMAIN}.conf
-  rm -f  /etc/letsencrypt/renewal/${DOMAIN}-*.conf
+# Is the cert at a given path a real Let's Encrypt cert (not self-signed)?
+is_real_cert() {
+  openssl x509 -in "$1" -noout -issuer 2>/dev/null \
+    | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"
+}
+
+# Find the best valid numbered lineage and symlink it to the canonical path.
+# Returns 0 if a valid cert was found and linked, 1 otherwise.
+link_best_numbered_cert() {
+  BEST=""
+  # Walk all numbered dirs and pick the one whose cert is real + not expired
+  for DIR in /etc/letsencrypt/live/${DOMAIN}-*/; do
+    [ -d "$DIR" ] || continue
+    CERT="$DIR/fullchain.pem"
+    [ -f "$CERT" ] || continue
+    if is_real_cert "$CERT" && openssl x509 -in "$CERT" -noout -checkend 86400 2>/dev/null; then
+      BEST="$DIR"
+      break
+    fi
+  done
+
+  if [ -n "$BEST" ]; then
+    echo "[Certbot] Found valid cert in $BEST — symlinking to $CERT_DIR ..."
+    rm -rf "$CERT_DIR"
+    ln -sfn "$BEST" "$CERT_DIR"
+    echo "[Certbot] ✅ Symlink created: $CERT_DIR → $BEST"
+    return 0
+  fi
+  return 1
 }
 
 # ── install deploy hook ───────────────────────────────────────────────────────
@@ -61,38 +89,40 @@ if [ -d "$ACCOUNTS_DIR" ]; then
   ACCOUNT_COUNT=$(find "$ACCOUNTS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
   if [ "$ACCOUNT_COUNT" -gt 1 ]; then
     echo "[Certbot] Multiple ACME accounts ($ACCOUNT_COUNT) — pruning extras..."
-    rm -rf "$ACCOUNTS_DIR"/*
+    KEEP=$(find "$ACCOUNTS_DIR" -mindepth 1 -maxdepth 1 -type d | head -1)
+    find "$ACCOUNTS_DIR" -mindepth 1 -maxdepth 1 -type d | grep -v "^$KEEP$" | xargs rm -rf 2>/dev/null || true
   fi
 fi
 
-# ── 2. Detect broken renewal config ──────────────────────────────────────────
-RENEWAL_CONF="/etc/letsencrypt/renewal/${DOMAIN}.conf"
-if [ -f "$RENEWAL_CONF" ]; then
-  if grep -q "{}" "$RENEWAL_CONF" || [ ! -s "$RENEWAL_CONF" ] || ! grep -q "archive_dir" "$RENEWAL_CONF"; then
-    echo "[Certbot] Broken renewal config detected — purging..."
-    purge_all_lineages
-  fi
-fi
-
-# ── 3. Determine cert state ───────────────────────────────────────────────────
+# ── 2. Determine cert state ───────────────────────────────────────────────────
+# Priority:
+#   A. Real LE cert at canonical path → nothing to do
+#   B. Real LE cert in a numbered dir → symlink it
+#   C. No cert / dummy cert → need to obtain
 NEED_REAL_CERT=false
 
-if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
-  echo "[Certbot] No cert found — writing dummy so Nginx can start..."
-  write_dummy
-  NEED_REAL_CERT=true
-elif ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -issuer 2>/dev/null \
-     | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"; then
-  echo "[Certbot] Cert on disk is self-signed dummy — will obtain real cert."
-  NEED_REAL_CERT=true
+if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
+   && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 86400 2>/dev/null; then
+  echo "[Certbot] ✅ Valid LE cert already at $CERT_DIR — no action needed."
+else
+  echo "[Certbot] No valid cert at canonical path."
+
+  # Try to rescue a numbered cert before writing dummy or calling certbot
+  if link_best_numbered_cert; then
+    echo "[Certbot] ✅ Rescued existing numbered cert — no new issuance needed."
+    reload_nginx
+  else
+    echo "[Certbot] No valid numbered cert found either."
+    # Ensure at least a dummy exists so Nginx can start
+    if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
+      write_dummy
+    fi
+    NEED_REAL_CERT=true
+  fi
 fi
 
-# ── 4. Wait for Nginx TCP port 80 to be open ─────────────────────────────────
-# Use nc (netcat) TCP check — NOT wget/curl.
-# wget follows the HTTP→HTTPS 301 redirect, hits the self-signed dummy cert,
-# gets an SSL error and exits non-zero even when Nginx is up.
-# nc just checks the TCP connection, regardless of HTTP status or SSL.
-echo "[Certbot] Waiting for Nginx to accept TCP connections on port 80..."
+# ── 3. Wait for Nginx TCP port 80 ────────────────────────────────────────────
+echo "[Certbot] Waiting for Nginx TCP port 80..."
 WAIT=0
 until nc -z "${NGINX_CONTAINER}" 80 2>/dev/null \
    || nc -z "localhost" 80 2>/dev/null \
@@ -101,16 +131,22 @@ until nc -z "${NGINX_CONTAINER}" 80 2>/dev/null \
   WAIT=$((WAIT + 2))
 done
 if [ "$WAIT" -ge 90 ]; then
-  echo "[Certbot] ⚠️  Nginx port 80 not open after 90s — attempting certbot anyway."
+  echo "[Certbot] ⚠️  Nginx not reachable after 90s — continuing anyway."
 else
-  echo "[Certbot] ✅ Nginx port 80 is open (${WAIT}s). Proceeding with certificate..."
+  echo "[Certbot] ✅ Nginx is up (${WAIT}s)."
 fi
 
-# ── 5. Obtain real certificate ────────────────────────────────────────────────
+# ── 4. Obtain real certificate (only when needed) ─────────────────────────────
 do_certbot() {
-  # Purge ALL numbered lineages so certbot uses the clean "purrfectpal.studio" name
-  purge_all_lineages
+  # Only purge broken/dummy files at the canonical path — NEVER numbered dirs
+  if [ -f "$CERT_DIR/fullchain.pem" ] && ! is_real_cert "$CERT_DIR/fullchain.pem"; then
+    echo "[Certbot] Removing dummy from canonical path before certbot run..."
+    rm -rf "$CERT_DIR"
+    # Also remove any broken renewal conf for the canonical name
+    rm -f "/etc/letsencrypt/renewal/${DOMAIN}.conf"
+  fi
 
+  # shellcheck disable=SC2086
   certbot certonly \
     --cert-name "${DOMAIN}" \
     --webroot \
@@ -119,74 +155,64 @@ do_certbot() {
     --agree-tos \
     --no-eff-email \
     --non-interactive \
-    --force-renewal \
-    -d "${DOMAIN}" \
-    -d "www.${DOMAIN}" \
-    -d "admin.${DOMAIN}" \
-    -d "www.admin.${DOMAIN}" \
-    -d "artist.${DOMAIN}" \
-    -d "www.artist.${DOMAIN}" \
-    -d "promotions.${DOMAIN}" \
-    -d "www.promotions.${DOMAIN}"
+    --keep-until-expiring \
+    $CERTBOT_DOMAINS
 }
 
 if [ "$NEED_REAL_CERT" = true ]; then
-  echo "[Certbot] Obtaining real Let's Encrypt certificate..."
-
+  echo "[Certbot] Requesting real Let's Encrypt certificate..."
   if do_certbot; then
-    echo "[Certbot] ✅ Real certificate obtained!"
-    # Verify the cert landed in the right place (no numbered suffix)
-    if [ -f "$CERT_DIR/fullchain.pem" ]; then
-      echo "[Certbot] ✅ Certificate is at the correct path: $CERT_DIR"
-      reload_nginx
-    else
-      # Certbot used a numbered suffix — find it and symlink
-      ACTUAL=$(find /etc/letsencrypt/live -maxdepth 1 -name "${DOMAIN}-*" -type d 2>/dev/null | head -1)
-      if [ -n "$ACTUAL" ]; then
-        echo "[Certbot] ⚠️  Cert landed in $ACTUAL — creating symlink to $CERT_DIR..."
-        # Remove whatever is there and create symlink
-        rm -rf "$CERT_DIR"
-        ln -sf "$ACTUAL" "$CERT_DIR"
-        reload_nginx
-      else
-        echo "[Certbot] ❌ Cannot find cert directory! Re-writing dummy..."
+    # Certbot might have used a numbered name — check and symlink if so
+    if [ ! -f "$CERT_DIR/fullchain.pem" ] || ! is_real_cert "$CERT_DIR/fullchain.pem"; then
+      if ! link_best_numbered_cert; then
+        echo "[Certbot] ❌ Could not find cert after certbot run. Keeping dummy."
         write_dummy
-        reload_nginx
       fi
     fi
-  else
-    echo "[Certbot] ❌ Certificate obtain FAILED — re-writing dummy so Nginx stays up..."
-    write_dummy
     reload_nginx
+    echo "[Certbot] ✅ Certificate in place."
+  else
+    echo "[Certbot] ❌ Certbot failed (possibly rate-limited). Keeping dummy cert."
+    if [ ! -f "$CERT_DIR/fullchain.pem" ]; then
+      write_dummy
+      reload_nginx
+    fi
     echo "[Certbot] Will retry in 12h."
   fi
 fi
 
-# ── 6. Renewal loop ───────────────────────────────────────────────────────────
+# ── 5. Renewal loop (every 12h) ───────────────────────────────────────────────
 echo "[Certbot] Entering renewal loop (every 12h)..."
 while :; do
-  # Before each renewal, also purge numbered leftovers if renewal conf is broken
-  if [ -f "$RENEWAL_CONF" ]; then
-    if ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout 2>/dev/null; then
-      echo "[Certbot] Renewal: cert missing or corrupt — re-obtaining..."
-      NEED_REAL_CERT=true
+  sleep 12h & wait $!
+
+  echo "[Certbot] Running renewal check..."
+
+  # Re-check cert state
+  if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
+     && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 86400 2>/dev/null; then
+    # Valid cert — just run normal renewal
+    certbot renew --quiet \
+      --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh \
+      || echo "[Certbot] Renew attempt done (may be too early to renew)."
+  else
+    # Cert is missing, dummy, or expiring — try to get/rescue a real one
+    echo "[Certbot] Cert missing or not real — attempting to obtain..."
+    if ! link_best_numbered_cert; then
       if do_certbot; then
+        if [ ! -f "$CERT_DIR/fullchain.pem" ] || ! is_real_cert "$CERT_DIR/fullchain.pem"; then
+          link_best_numbered_cert || true
+        fi
         reload_nginx
       else
-        write_dummy
-        reload_nginx
+        echo "[Certbot] ❌ Still failed (rate-limited?). Will retry in 12h."
+        if [ ! -f "$CERT_DIR/fullchain.pem" ]; then
+          write_dummy
+          reload_nginx
+        fi
       fi
     else
-      certbot renew --quiet || true
-    fi
-  else
-    echo "[Certbot] Renewal: no renewal conf found — re-obtaining..."
-    if do_certbot; then
-      reload_nginx
-    else
-      write_dummy
       reload_nginx
     fi
   fi
-  sleep 12h & wait $!
 done
