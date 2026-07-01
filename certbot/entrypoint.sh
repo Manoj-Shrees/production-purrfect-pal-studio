@@ -87,16 +87,24 @@ elif ! openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -issuer 2>/dev/null \
   NEED_REAL_CERT=true
 fi
 
-# ── 4. Wait for Nginx HTTP on port 80 ────────────────────────────────────────
-echo "[Certbot] Waiting for Nginx port 80..."
+# ── 4. Wait for Nginx TCP port 80 to be open ─────────────────────────────────
+# Use nc (netcat) TCP check — NOT wget/curl.
+# wget follows the HTTP→HTTPS 301 redirect, hits the self-signed dummy cert,
+# gets an SSL error and exits non-zero even when Nginx is up.
+# nc just checks the TCP connection, regardless of HTTP status or SSL.
+echo "[Certbot] Waiting for Nginx to accept TCP connections on port 80..."
 WAIT=0
-until wget -q --spider "http://${NGINX_CONTAINER}/" 2>/dev/null \
-   || wget -q --spider "http://localhost/" 2>/dev/null \
+until nc -z "${NGINX_CONTAINER}" 80 2>/dev/null \
+   || nc -z "localhost" 80 2>/dev/null \
    || [ "$WAIT" -ge 90 ]; do
-  sleep 3
-  WAIT=$((WAIT + 3))
+  sleep 2
+  WAIT=$((WAIT + 2))
 done
-echo "[Certbot] Nginx wait finished (${WAIT}s elapsed)."
+if [ "$WAIT" -ge 90 ]; then
+  echo "[Certbot] ⚠️  Nginx port 80 not open after 90s — attempting certbot anyway."
+else
+  echo "[Certbot] ✅ Nginx port 80 is open (${WAIT}s). Proceeding with certificate..."
+fi
 
 # ── 5. Obtain real certificate ────────────────────────────────────────────────
 do_certbot() {
