@@ -59,19 +59,30 @@ function verifySignature(req, body) {
 // ── Decide whether to skip deploy (GitHub push events only) ──────────────────
 function shouldIgnorePush(payload) {
   if (!payload.commits || !Array.isArray(payload.commits)) return false;
+  
+  let allSkipped = true;
   for (const commit of payload.commits) {
     const msg = commit.message.toLowerCase();
     if (msg.includes('[skip-deploy]')) {
-      console.log('[deploy] Skipping: [skip-deploy] in commit message.');
-      return true;
+      continue;
     }
     const allFiles = [
       ...(commit.added || []),
       ...(commit.modified || []),
       ...(commit.removed || []),
     ];
-    if (allFiles.some(f => !f.startsWith('.webhook/'))) return false;
+    // If any file is modified outside 'webhook/', we cannot skip the deploy
+    if (allFiles.some(f => !f.startsWith('webhook/'))) {
+      allSkipped = false;
+      break;
+    }
   }
+  
+  if (allSkipped) {
+    console.log('[deploy] Skipping: all modified files are in webhook/ or commit is marked [skip-deploy]');
+    return true;
+  }
+  return false;
 }
 
 function loadEnvFile(filePath) {

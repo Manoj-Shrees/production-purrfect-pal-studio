@@ -10,10 +10,9 @@
 # from apt, which is the real MySQL 8 client and includes the plugin.
 # ─────────────────────────────────────────────────────────────────────────────
 
-FROM debian:bookworm-slim
+FROM mysql:8.0-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    default-mysql-client \
     cron \
     git \
     curl \
