@@ -6,6 +6,27 @@ mkdir -p /etc/letsencrypt/renewal-hooks/deploy
 cp /deploy-hook.sh /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
 chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
 
+# 1. Clean up duplicate accounts to prevent Certbot from prompting interactively
+ACCOUNTS_DIR="/etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory"
+if [ -d "$ACCOUNTS_DIR" ]; then
+  ACCOUNT_COUNT=$(find "$ACCOUNTS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
+  if [ "$ACCOUNT_COUNT" -gt 1 ]; then
+    echo "[Certbot] Multiple accounts detected ($ACCOUNT_COUNT). Cleaning up to prevent interactive prompts..."
+    rm -rf "$ACCOUNTS_DIR"/*
+  fi
+fi
+
+# 2. Clean up broken renewal configuration
+RENEWAL_CONF="/etc/letsencrypt/renewal/purrfectpal.studio.conf"
+if [ -f "$RENEWAL_CONF" ]; then
+  if grep -q "{}" "$RENEWAL_CONF" || [ ! -s "$RENEWAL_CONF" ] || ! grep -q "archive_dir" "$RENEWAL_CONF"; then
+    echo "[Certbot] Broken renewal configuration detected. Cleaning up purrfectpal.studio cert files..."
+    rm -f "$RENEWAL_CONF"
+    rm -rf /etc/letsencrypt/live/purrfectpal.studio
+    rm -rf /etc/letsencrypt/archive/purrfectpal.studio
+  fi
+fi
+
 echo '[Certbot] Ensuring certificate covers all current domains...'
 certbot certonly \
   --webroot \
