@@ -10,9 +10,12 @@
 # from apt, which is the real MySQL 8 client and includes the plugin.
 # ─────────────────────────────────────────────────────────────────────────────
 
-FROM mysql:8.0-slim
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    mysql-client \
     cron \
     git \
     curl \
