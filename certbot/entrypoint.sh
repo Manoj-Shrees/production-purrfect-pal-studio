@@ -137,9 +137,12 @@ do_certbot() {
   if [ -f "$CERT_DIR/fullchain.pem" ] && ! is_real_cert "$CERT_DIR/fullchain.pem"; then
     echo "[Certbot] Removing dummy from canonical path before certbot run..."
     rm -rf "$CERT_DIR"
-    # Also remove any broken renewal conf for the canonical name
-    rm -f "/etc/letsencrypt/renewal/${DOMAIN}.conf"
   fi
+  
+  # Always clear stale/broken renewal and archive folders to prevent "archive directory exists" failures
+  echo "[Certbot] Cleaning stale archive and configuration files for ${DOMAIN}..."
+  rm -rf "/etc/letsencrypt/archive/${DOMAIN}"
+  rm -f "/etc/letsencrypt/renewal/${DOMAIN}.conf"
 
   # shellcheck disable=SC2086
   certbot certonly \
