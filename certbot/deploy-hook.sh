@@ -7,6 +7,6 @@ set -e
 
 echo "[Certbot Deploy Hook] Certificate renewed — reloading Nginx..."
 
-docker exec nginx-proxy nginx -s reload
+docker exec nginx-proxy nginx -s reload || echo "[Certbot Deploy Hook] Warning: Nginx reload skipped. Nginx might be offline or starting up."
 
-echo "[Certbot Deploy Hook] Nginx reloaded successfully."
+echo "[Certbot Deploy Hook] Nginx reload command sent."

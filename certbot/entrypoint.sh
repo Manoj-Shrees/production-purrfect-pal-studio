@@ -44,7 +44,6 @@ certbot certonly \
   -d www.artist.purrfectpal.studio \
   -d promotions.purrfectpal.studio \
   -d www.promotions.purrfectpal.studio \
-  && /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh \
   || echo '[Certbot] Cert obtain/expand failed — check nginx is serving /.well-known/acme-challenge/'
 
 while :; do
