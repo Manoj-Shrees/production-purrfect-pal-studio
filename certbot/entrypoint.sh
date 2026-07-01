@@ -53,7 +53,12 @@ fi
 echo '[Certbot] Ensuring certificate covers all current domains...'
 if [ "$GENERATED_DUMMY" = true ]; then
   echo "[Certbot] Force-renewing to replace the temporary dummy certificate..."
+  # Purge the dummy files first so Certbot can cleanly create its symlinks under live/purrfectpal.studio
+  rm -rf "$CERT_DIR"
+  rm -rf /etc/letsencrypt/archive/purrfectpal.studio
+  
   certbot certonly \
+    --cert-name purrfectpal.studio \
     --webroot \
     --webroot-path=/var/www/certbot \
     --email suwasmgr77@gmail.com \
@@ -72,6 +77,7 @@ if [ "$GENERATED_DUMMY" = true ]; then
     || echo '[Certbot] Cert obtain/expand failed — check nginx is serving /.well-known/acme-challenge/'
 else
   certbot certonly \
+    --cert-name purrfectpal.studio \
     --webroot \
     --webroot-path=/var/www/certbot \
     --email suwasmgr77@gmail.com \
