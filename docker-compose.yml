@@ -138,8 +138,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - CERTBOT_EMAIL=${CERTBOT_EMAIL}
-    depends_on:
-      - nginx
     networks:
       - pps-network
 

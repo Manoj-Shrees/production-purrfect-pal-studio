@@ -26,6 +26,16 @@ if [ -f "$RENEWAL_CONF" ]; then
     rm -rf /etc/letsencrypt/archive/purrfectpal.studio
   fi
 fi
+# 3. Ensure dummy certificates exist so Nginx can start up successfully
+CERT_DIR="/etc/letsencrypt/live/purrfectpal.studio"
+if [ ! -f "$CERT_DIR/fullchain.pem" ] || [ ! -f "$CERT_DIR/privkey.pem" ]; then
+  echo "[Certbot] Certificate files not found. Generating dummy self-signed certificate..."
+  mkdir -p "$CERT_DIR"
+  openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
+    -keyout "$CERT_DIR/privkey.pem" \
+    -out "$CERT_DIR/fullchain.pem" \
+    -subj "/CN=purrfectpal.studio"
+fi
 
 echo '[Certbot] Ensuring certificate covers all current domains...'
 certbot certonly \
