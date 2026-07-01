@@ -20,6 +20,8 @@ NGINX_CONTAINER="nginx-proxy"
 CERTBOT_DOMAINS="
   -d ${DOMAIN}
   -d admin.${DOMAIN}
+  -d artist.${DOMAIN}
+  -d www.artist.${DOMAIN}
   -d promotions.${DOMAIN}
 "
 
