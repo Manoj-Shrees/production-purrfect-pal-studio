@@ -53,16 +53,49 @@ is_real_cert() {
     | grep -q -E "Let's Encrypt|ISRG|R3|R10|R11|E1|E2|DST Root"
 }
 
+# Extracts all DNS alternative names from the certificate, one per line
+get_cert_domains() {
+  openssl x509 -in "$1" -text -noout \
+    | grep -A 1 "Subject Alternative Name:" \
+    | grep "DNS:" \
+    | sed 's/DNS://g' \
+    | tr -d ' ' \
+    | tr ',' '\n'
+}
+
+# Extracts expected domains from the CERTBOT_DOMAINS variable
+get_expected_domains() {
+  echo "$CERTBOT_DOMAINS" | tr -s ' ' '\n' | grep -v '^-d' | grep -v '^$'
+}
+
+# Checks if the cert covers all domains in the expected list
+cert_covers_all_domains() {
+  local cert="$1"
+  [ -f "$cert" ] || return 1
+  
+  local cert_domains
+  cert_domains=$(get_cert_domains "$cert")
+  
+  for expected in $(get_expected_domains); do
+    if ! echo "$cert_domains" | grep -qFx "$expected"; then
+      echo "[Certbot] Domain '$expected' is missing from the certificate."
+      return 1
+    fi
+  done
+  return 0
+}
+
 # Find the best valid numbered lineage and symlink it to the canonical path.
 # Returns 0 if a valid cert was found and linked, 1 otherwise.
 link_best_numbered_cert() {
   BEST=""
-  # Walk all numbered dirs and pick the one whose cert is real + not expired
+  # Walk all numbered dirs and pick the one whose cert is real + not expired and covers all domains
   for DIR in /etc/letsencrypt/live/${DOMAIN}-*/; do
     [ -d "$DIR" ] || continue
     CERT="$DIR/fullchain.pem"
     [ -f "$CERT" ] || continue
-    if is_real_cert "$CERT" && openssl x509 -in "$CERT" -noout -checkend 86400 2>/dev/null; then
+    if is_real_cert "$CERT" && openssl x509 -in "$CERT" -noout -checkend 86400 2>/dev/null \
+       && cert_covers_all_domains "$CERT"; then
       BEST="$DIR"
       break
     fi
@@ -102,8 +135,9 @@ fi
 NEED_REAL_CERT=false
 
 if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
-   && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 86400 2>/dev/null; then
-  echo "[Certbot] ✅ Valid LE cert already at $CERT_DIR — no action needed."
+   && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 86400 2>/dev/null \
+   && cert_covers_all_domains "$CERT_DIR/fullchain.pem"; then
+  echo "[Certbot] ✅ Valid LE cert covering all domains already at $CERT_DIR — no action needed."
 else
   echo "[Certbot] No valid cert at canonical path."
 
@@ -191,17 +225,19 @@ while :; do
 
   echo "[Certbot] Running renewal check..."
 
-  # Check if the cert at canonical path is real AND has at least 30 days (2592000s) remaining
+  # Check if the cert at canonical path is real, valid for at least 30 days, and covers all domains
   if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
-     && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null; then
-    echo "[Certbot] Certificate is real and valid for at least 30 days. No renewal needed."
+     && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null \
+     && cert_covers_all_domains "$CERT_DIR/fullchain.pem"; then
+    echo "[Certbot] Certificate is real, valid for at least 30 days, and covers all domains. No renewal needed."
   else
-    echo "[Certbot] Certificate is missing, a dummy, or expiring within 30 days. Attempting renewal/obtain..."
+    echo "[Certbot] Certificate is missing, a dummy, or expiring/incomplete. Attempting renewal/obtain..."
     
     # Try to rescue a valid numbered cert first
     if link_best_numbered_cert; then
-      # Double check if the rescued cert is valid for at least 30 days
-      if openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null; then
+      # Double check if the rescued cert is valid for at least 30 days and covers all domains
+      if openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null \
+         && cert_covers_all_domains "$CERT_DIR/fullchain.pem"; then
         echo "[Certbot] Rescued cert is valid for at least 30 days. Skipping renewal."
         reload_nginx
         continue
