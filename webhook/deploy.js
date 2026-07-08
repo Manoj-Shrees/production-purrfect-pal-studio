@@ -168,7 +168,11 @@ git remote set-url origin "${repoUrl}"
 git fetch origin main
 git reset --hard origin/main
 
-echo "[deploy] ── Step 4: Pull Docker images ────────────────────────────"
+echo "[deploy] ── Step 4: Ensure Nginx SSL certificates are bootstrapped ─"
+chmod +x ./init-certs.sh
+./init-certs.sh
+
+echo "[deploy] ── Step 5: Pull Docker images ────────────────────────────"
 ${dockerLogin}
 docker-compose pull
 
