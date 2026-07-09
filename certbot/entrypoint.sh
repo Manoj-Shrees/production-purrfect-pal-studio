@@ -94,7 +94,7 @@ link_best_numbered_cert() {
     [ -d "$DIR" ] || continue
     CERT="$DIR/fullchain.pem"
     [ -f "$CERT" ] || continue
-    if is_real_cert "$CERT" && openssl x509 -in "$CERT" -noout -checkend 86400 2>/dev/null \
+    if is_real_cert "$CERT" && openssl x509 -in "$CERT" -noout -checkend 2592000 2>/dev/null \
        && cert_covers_all_domains "$CERT"; then
       BEST="$DIR"
       break
@@ -132,10 +132,13 @@ fi
 #   A. Real LE cert at canonical path → nothing to do
 #   B. Real LE cert in a numbered dir → symlink it
 #   C. No cert / dummy cert → need to obtain
+#
+# NOTE: Adjusted to 30 days (2592000 seconds) so that we auto-renew/obtain a cert
+# if the active one has less than 30 days left.
 NEED_REAL_CERT=false
 
 if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
-   && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 86400 2>/dev/null \
+   && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null \
    && cert_covers_all_domains "$CERT_DIR/fullchain.pem"; then
   echo "[Certbot] ✅ Valid LE cert covering all domains already at $CERT_DIR — no action needed."
 else

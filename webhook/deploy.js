@@ -174,11 +174,10 @@ chmod +x ./init-certs.sh
 
 echo "[deploy] ── Step 5: Pull Docker images ────────────────────────────"
 ${dockerLogin}
-docker-compose pull
+docker compose pull
 
 echo "[deploy] ── Step 5: Restart services (DB preserved) ───────────────"
-docker-compose up -d \\
-  --force-recreate \\
+docker compose up -d \\
   --remove-orphans \\
   --no-recreate db
 
