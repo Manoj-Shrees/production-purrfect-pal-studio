@@ -50,9 +50,13 @@ function verifySignature(req, body) {
   const signature = req.headers['x-hub-signature-256'];
   if (!signature) return false;
   const hmac = crypto.createHmac('sha256', SECRET).update(body).digest('hex');
+  const expected = `sha256=${hmac}`;
+  if (signature.length !== expected.length) {
+    return false;
+  }
   return crypto.timingSafeEqual(
     Buffer.from(signature),
-    Buffer.from(`sha256=${hmac}`)
+    Buffer.from(expected)
   );
 }
 
@@ -127,7 +131,7 @@ function buildDeployScript() {
 
   const dockerLogin = dockerPass
     ? `echo "${dockerPass}" | docker login -u "${dockerUser}" --password-stdin`
-    : `echo "[deploy] Skipping docker login (no DOCKER_PASS set)"`;
+    : `docker logout || true`;
 
   const repoUrl = GH_PAT
     ? `https://${GH_PAT}@github.com/Manoj-Shrees/production-purrfect-pal-studio.git`

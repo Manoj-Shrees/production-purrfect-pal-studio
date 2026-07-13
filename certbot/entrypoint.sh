@@ -94,7 +94,7 @@ link_best_numbered_cert() {
     [ -d "$DIR" ] || continue
     CERT="$DIR/fullchain.pem"
     [ -f "$CERT" ] || continue
-    if is_real_cert "$CERT" && openssl x509 -in "$CERT" -noout -checkend 2592000 2>/dev/null \
+    if is_real_cert "$CERT" && openssl x509 -in "$CERT" -noout -checkend 604800 2>/dev/null \
        && cert_covers_all_domains "$CERT"; then
       BEST="$DIR"
       break
@@ -133,12 +133,12 @@ fi
 #   B. Real LE cert in a numbered dir → symlink it
 #   C. No cert / dummy cert → need to obtain
 #
-# NOTE: Adjusted to 30 days (2592000 seconds) so that we auto-renew/obtain a cert
-# if the active one has less than 30 days left.
+# NOTE: Adjusted to 7 days (604800 seconds) so that we auto-renew/obtain a cert
+# if the active one has less than 7 days left.
 NEED_REAL_CERT=false
 
 if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
-   && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null \
+   && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 604800 2>/dev/null \
    && cert_covers_all_domains "$CERT_DIR/fullchain.pem"; then
   echo "[Certbot] ✅ Valid LE cert covering all domains already at $CERT_DIR — no action needed."
 else
@@ -228,20 +228,20 @@ while :; do
 
   echo "[Certbot] Running renewal check..."
 
-  # Check if the cert at canonical path is real, valid for at least 30 days, and covers all domains
+  # Check if the cert at canonical path is real, valid for at least 7 days, and covers all domains
   if [ -f "$CERT_DIR/fullchain.pem" ] && is_real_cert "$CERT_DIR/fullchain.pem" \
-     && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null \
+     && openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 604800 2>/dev/null \
      && cert_covers_all_domains "$CERT_DIR/fullchain.pem"; then
-    echo "[Certbot] Certificate is real, valid for at least 30 days, and covers all domains. No renewal needed."
+    echo "[Certbot] Certificate is real, valid for at least 7 days, and covers all domains. No renewal needed."
   else
     echo "[Certbot] Certificate is missing, a dummy, or expiring/incomplete. Attempting renewal/obtain..."
     
     # Try to rescue a valid numbered cert first
     if link_best_numbered_cert; then
-      # Double check if the rescued cert is valid for at least 30 days and covers all domains
-      if openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 2592000 2>/dev/null \
+      # Double check if the rescued cert is valid for at least 7 days and covers all domains
+      if openssl x509 -in "$CERT_DIR/fullchain.pem" -noout -checkend 604800 2>/dev/null \
          && cert_covers_all_domains "$CERT_DIR/fullchain.pem"; then
-        echo "[Certbot] Rescued cert is valid for at least 30 days. Skipping renewal."
+        echo "[Certbot] Rescued cert is valid for at least 7 days. Skipping renewal."
         reload_nginx
         continue
       fi

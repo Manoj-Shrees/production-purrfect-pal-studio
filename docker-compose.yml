@@ -45,6 +45,8 @@ services:
       - PPS_KEY=${PPS_KEY}
       - INSTANCE_ID=1
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles
@@ -75,6 +77,8 @@ services:
       - PPS_KEY=${PPS_KEY}
       - INSTANCE_ID=2
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles
