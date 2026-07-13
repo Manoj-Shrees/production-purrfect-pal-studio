@@ -181,9 +181,37 @@ ${dockerLogin}
 docker compose pull
 
 echo "[deploy] ── Step 5: Restart services (DB preserved) ───────────────"
-docker compose up -d \\
-  --remove-orphans \\
-  --no-recreate db
+# First: ensure db is running, never recreate it (preserves mysql_data volume)
+docker compose up -d --no-recreate db
+
+# Then: force-recreate all other services so they pick up latest .env + images
+docker compose up -d --force-recreate --no-deps backend-1 backend-2 nginx webhook
+
+# Brief wait for backends to become healthy before running diagnostics
+sleep 8
+
+echo "[deploy] ── Step 6: Run SMTP diagnostics inside container ─────────"
+docker exec backend-c-1 node -e "
+import('nodemailer').then(async nodemailer => {
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+  try {
+    console.log('Verifying SMTP connection...');
+    console.log('EMAIL_USER:', process.env.EMAIL_USER ? '***set***' : '(empty)');
+    await transporter.verify();
+    console.log('✅ SMTP Connection verified successfully');
+  } catch (err) {
+    console.error('❌ SMTP verification failed:', err.message);
+  }
+}).catch(console.error);
+" > /app/production-purrfect-pal-studio/admin-app/smtp-diagnostics.txt 2>&1 || true
 
 echo "[deploy] ── Deploy complete ─────────────────────────────────────────"
 `.trim();
@@ -379,7 +407,7 @@ http.createServer((req, res) => {
   // ── GET /deploy-status ─────────────────────────────────────────────────────
   } else if (req.method === 'GET' && urlPath === '/deploy-status') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ inProgress: deployInProgress }));
+    res.end(JSON.stringify({ inProgress: deployInProgress, logs: deployLogsHistory }));
 
   // ── GET /active-slot ───────────────────────────────────────────────────────
   } else if (req.method === 'GET' && urlPath === '/active-slot') {
