@@ -15,9 +15,15 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 
-echo "[diagnostics] Listing all .env keys from server..."
+echo "[env-fix] Ensuring EMAIL_USER and EMAIL_PASS are in .env..."
 mkdir -p ./admin-app
-cat .env | sed 's/=.*/=******/' > ./admin-app/smtp-diagnostics.txt 2>&1 || echo "Cat .env failed" > ./admin-app/smtp-diagnostics.txt
+if ! grep -q '^EMAIL_USER=' .env 2>/dev/null; then
+  printf '\n# ── Email / SMTP ──────────────────────────────\nEMAIL_USER=info@purrfectpal.studio\nEMAIL_PASS=Suwas@77magAr!\n' >> .env
+  echo "[env-fix] EMAIL_USER and EMAIL_PASS appended to .env"
+else
+  echo "[env-fix] EMAIL_USER already present"
+fi
+echo "[env-fix] Done" > ./admin-app/smtp-diagnostics.txt
 
 CERT_DIR="./letsencrypt/live/purrfectpal.studio"
 
