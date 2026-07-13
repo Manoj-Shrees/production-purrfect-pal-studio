@@ -158,7 +158,7 @@ gzip "$BACKUP_SQL"
 echo "[deploy] DB backup saved: $BACKUP_SQL.gz"
 
 echo "[deploy] ── Step 2: Volume snapshot ───────────────────────────────"
-VOLUME_NAME=production-purrfect-pal-studio_mysql_data
+VOLUME_NAME=$(docker volume ls -q --filter name=mysql_data | head -n 1 || echo "production-purrfect-pal-studio_mysql_data")
 docker run --rm \\
   -v "$VOLUME_NAME":/volume:ro \\
   -v ${BACKUP_DIR}:/backup \\
