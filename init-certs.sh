@@ -15,28 +15,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 
-echo "[diagnostics] Running SMTP diagnostics inside backend-c-1..."
+echo "[diagnostics] Checking container environment variables..."
 mkdir -p ./admin-app
-docker exec backend-c-1 node -e "
-import('nodemailer').then(async nodemailer => {
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-  try {
-    console.log('Verifying SMTP connection to smtp.hostinger.com:465...');
-    await transporter.verify();
-    console.log('✅ SMTP Connection verified successfully');
-  } catch (err) {
-    console.error('❌ SMTP verification failed:', err.message);
-  }
-}).catch(console.error);
-" > ./admin-app/smtp-diagnostics.txt 2>&1 || echo "Docker exec failed" > ./admin-app/smtp-diagnostics.txt
+docker exec backend-c-1 env > ./admin-app/smtp-diagnostics.txt 2>&1 || echo "Docker exec failed" > ./admin-app/smtp-diagnostics.txt
 
 CERT_DIR="./letsencrypt/live/purrfectpal.studio"
 
