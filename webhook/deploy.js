@@ -313,8 +313,19 @@ function runDeploy() {
   });
 }
 
+// ── Keep-alive heartbeat interval to prevent TCP socket drop / socket hang up ──
+setInterval(() => {
+  if (activeStreams.length > 0) {
+    for (const res of activeStreams) {
+      try {
+        res.write(': heartbeat\n\n');
+      } catch (_) {}
+    }
+  }
+}, 5000);
+
 // ── HTTP server ───────────────────────────────────────────────────────────────
-http.createServer((req, res) => {
+const server = http.createServer((req, res) => {
   // Normalize the URL path by stripping query parameters and trailing slashes
   const urlPath = req.url.split('?')[0].replace(/\/$/, '') || '/';
   console.log(`[deploy] 📥 Incoming request: ${req.method} ${req.url} (resolved path: ${urlPath})`);
@@ -508,44 +519,62 @@ upstream backend {
         const { username, secret } = JSON.parse(body || '{}');
         if (!username || !secret) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({ success: false, error: 'Username and secret are required' }));
+          return res.end(JSON.stringify({ success: false, error: 'Username and secret (password/PAT) are required' }));
         }
 
-        const fs = require('fs');
-        const envPath = '/app/production-purrfect-pal-studio/.env';
-        let envContent = '';
-        if (fs.existsSync(envPath)) {
-          envContent = fs.readFileSync(envPath, 'utf8');
-        }
+        // Perform live Docker login verification
+        const { exec } = require('child_process');
+        const loginCmd = `echo "${secret.replace(/"/g, '\\"')}" | docker login -u "${username.replace(/"/g, '\\"')}" --password-stdin 2>&1`;
 
-        let lines = envContent.split('\n');
-        let userSet = false;
-        let passSet = false;
+        exec(loginCmd, { timeout: 15000 }, (err, stdout, stderr) => {
+          const output = [stdout, stderr].filter(Boolean).join(' ').trim();
+          if (err || output.includes('Error') || output.includes('incorrect') || output.includes('unauthorized')) {
+            console.error('[deploy] Docker login verification failed:', output || err?.message);
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({
+              success: false,
+              error: `Docker Hub authentication failed: ${output || 'Invalid username or password'}`
+            }));
+          }
 
-        lines = lines.map(line => {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('DOCKER_USER=')) {
-            userSet = true;
-            return `DOCKER_USER=${username}`;
+          console.log('[deploy] Docker login verified successfully with Docker Registry.');
+
+          const fs = require('fs');
+          const envPath = '/app/production-purrfect-pal-studio/.env';
+          let envContent = '';
+          if (fs.existsSync(envPath)) {
+            envContent = fs.readFileSync(envPath, 'utf8');
           }
-          if (trimmed.startsWith('DOCKER_PASS=')) {
-            passSet = true;
-            return `DOCKER_PASS=${secret}`;
-          }
-          return line;
+
+          let lines = envContent.split('\n');
+          let userSet = false;
+          let passSet = false;
+
+          lines = lines.map(line => {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('DOCKER_USER=')) {
+              userSet = true;
+              return `DOCKER_USER=${username}`;
+            }
+            if (trimmed.startsWith('DOCKER_PASS=')) {
+              passSet = true;
+              return `DOCKER_PASS=${secret}`;
+            }
+            return line;
+          });
+
+          if (!userSet) lines.push(`DOCKER_USER=${username}`);
+          if (!passSet) lines.push(`DOCKER_PASS=${secret}`);
+
+          fs.writeFileSync(envPath, lines.join('\n'), 'utf8');
+          console.log('[deploy] Valid Docker credentials saved to .env.');
+
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: true,
+            message: 'Docker Hub credentials verified and saved successfully!'
+          }));
         });
-
-        if (!userSet) {
-          lines.push(`DOCKER_USER=${username}`);
-        }
-        if (!passSet) {
-          lines.push(`DOCKER_PASS=${secret}`);
-        }
-
-        fs.writeFileSync(envPath, lines.join('\n'), 'utf8');
-        console.log('[deploy] Docker credentials updated in .env successfully.');
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, message: 'Docker credentials updated successfully' }));
       } catch (err) {
         console.error('[deploy] Error updating docker login:', err.message);
         res.writeHead(500, { 'Content-Type': 'application/json' });
