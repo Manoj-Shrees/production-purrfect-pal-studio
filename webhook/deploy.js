@@ -184,13 +184,15 @@ echo "[deploy] ── Step 5: Restart services (DB preserved) ──────
 # First: ensure db is running, never recreate it (preserves mysql_data volume)
 docker compose up -d --no-recreate db
 
-# Then: force-recreate all other services so they pick up latest .env + images
-docker compose up -d --force-recreate --no-deps backend-1 backend-2 nginx webhook
+# Then: force-recreate backend + nginx ONLY (NOT webhook - can't kill ourselves)
+# The webhook container reads deploy.js live from the mounted volume, so no restart needed.
+docker compose up -d --force-recreate --no-deps backend-1 backend-2 nginx
 
-# Brief wait for backends to become healthy before running diagnostics
-sleep 8
+# Wait for backends to become healthy
+sleep 12
 
 echo "[deploy] ── Step 6: Run SMTP diagnostics inside container ─────────"
+SMTP_LOG="/app/production-purrfect-pal-studio/admin-app/smtp-result-$(date +%s).txt"
 docker exec backend-c-1 node -e "
 import('nodemailer').then(async nodemailer => {
   const transporter = nodemailer.createTransport({
@@ -203,15 +205,17 @@ import('nodemailer').then(async nodemailer => {
     }
   });
   try {
+    console.log('EMAIL_USER:', process.env.EMAIL_USER ? '***set***' : '(EMPTY - missing from .env)');
     console.log('Verifying SMTP connection...');
-    console.log('EMAIL_USER:', process.env.EMAIL_USER ? '***set***' : '(empty)');
     await transporter.verify();
-    console.log('✅ SMTP Connection verified successfully');
+    console.log('SMTP_OK: Connection verified successfully');
   } catch (err) {
-    console.error('❌ SMTP verification failed:', err.message);
+    console.error('SMTP_FAIL:', err.message);
   }
 }).catch(console.error);
-" > /app/production-purrfect-pal-studio/admin-app/smtp-diagnostics.txt 2>&1 || true
+" > "${SMTP_LOG}" 2>&1 || true
+# Also write latest result to fixed path for easy checking
+cp "${SMTP_LOG}" /app/production-purrfect-pal-studio/admin-app/smtp-latest.txt 2>/dev/null || true
 
 echo "[deploy] ── Deploy complete ─────────────────────────────────────────"
 `.trim();
