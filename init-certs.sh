@@ -15,9 +15,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 
-echo "[diagnostics] Checking container environment variables..."
+echo "[diagnostics] Reading .env keys from server..."
 mkdir -p ./admin-app
-docker exec backend-c-1 env > ./admin-app/smtp-diagnostics.txt 2>&1 || echo "Docker exec failed" > ./admin-app/smtp-diagnostics.txt
+grep -i "EMAIL" .env | sed 's/=.*/=******/' > ./admin-app/smtp-diagnostics.txt 2>&1 || echo "Grep .env failed" > ./admin-app/smtp-diagnostics.txt
 
 CERT_DIR="./letsencrypt/live/purrfectpal.studio"
 
