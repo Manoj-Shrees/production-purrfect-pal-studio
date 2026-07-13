@@ -180,32 +180,26 @@ echo "[deploy] ── Step 5: Pull Docker images ──────────�
 ${dockerLogin}
 docker compose pull
 
-echo "[deploy] ── Step 5: Restart services (DB preserved) ───────────────"
+echo "[deploy] ── Step 5: Rolling zero-downtime restart (DB preserved) ───────"
 # First: ensure db is running, never recreate it (preserves mysql_data volume)
 docker compose up -d --no-recreate db
 
-# Then: force-recreate backend + nginx ONLY (NOT webhook - can't kill ourselves)
-# The webhook container reads deploy.js live from the mounted volume, so no restart needed.
-docker compose up -d --force-recreate --no-deps backend-1 backend-2 nginx
+# Rolling update: recreate backend-1 first so backend-2 keeps processing active requests & stream logs
+docker compose up -d --force-recreate --no-deps backend-1
+sleep 5
 
-# Wait for backends to become healthy
-sleep 12
+# Recreate backend-2 and nginx once backend-1 is online
+docker compose up -d --force-recreate --no-deps backend-2 nginx
+sleep 6
 
 echo "[deploy] ── Step 6: Run SMTP diagnostics inside container ─────────"
 SMTP_LOG="/app/production-purrfect-pal-studio/admin-app/smtp-result-$(date +%s).txt"
-docker exec backend-c-1 node -e "
-import('nodemailer').then(async nodemailer => {
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
+ACTIVE_CONTAINER=$(docker ps --format '{{.Names}}' | grep backend-c | head -n 1 || echo "backend-c-1")
+docker exec "$ACTIVE_CONTAINER" node -e "
+import('./src/middleware/emailTransporter.js').then(async ({ createEmailTransporter }) => {
+  const transporter = createEmailTransporter();
   try {
-    console.log('EMAIL_USER:', process.env.EMAIL_USER ? '***set***' : '(EMPTY - missing from .env)');
+    console.log('EMAIL_USER/SMTP_USER:', process.env.EMAIL_USER || process.env.SMTP_USER ? '***set***' : '(EMPTY - missing from .env)');
     console.log('Verifying SMTP connection...');
     await transporter.verify();
     console.log('SMTP_OK: Connection verified successfully');
