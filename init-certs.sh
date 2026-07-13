@@ -15,9 +15,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 
-echo "[diagnostics] Reading .env keys from server..."
+echo "[diagnostics] Listing all .env keys from server..."
 mkdir -p ./admin-app
-grep -i "EMAIL" .env | sed 's/=.*/=******/' > ./admin-app/smtp-diagnostics.txt 2>&1 || echo "Grep .env failed" > ./admin-app/smtp-diagnostics.txt
+cat .env | sed 's/=.*/=******/' > ./admin-app/smtp-diagnostics.txt 2>&1 || echo "Cat .env failed" > ./admin-app/smtp-diagnostics.txt
 
 CERT_DIR="./letsencrypt/live/purrfectpal.studio"
 
