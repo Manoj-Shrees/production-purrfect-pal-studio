@@ -17,12 +17,14 @@ set -e
 
 echo "[env-fix] Ensuring EMAIL_USER and EMAIL_PASS are in .env..."
 mkdir -p ./admin-app
-if ! grep -q '^EMAIL_USER=' .env 2>/dev/null; then
-  printf '\n# ── Email / SMTP ──────────────────────────────\nEMAIL_USER=info@purrfectpal.studio\nEMAIL_PASS=Suwas@77magAr!\n' >> .env
-  echo "[env-fix] EMAIL_USER and EMAIL_PASS appended to .env"
-else
-  echo "[env-fix] EMAIL_USER already present"
+if [ -f .env ]; then
+  # Forcefully update to correct credentials by stripping any old entries
+  sed -i.bak '/^EMAIL_USER=/d' .env 2>/dev/null || sed -i '' '/^EMAIL_USER=/d' .env 2>/dev/null || true
+  sed -i.bak '/^EMAIL_PASS=/d' .env 2>/dev/null || sed -i '' '/^EMAIL_PASS=/d' .env 2>/dev/null || true
+  rm -f .env.bak 2>/dev/null || true
 fi
+printf '\nEMAIL_USER=noreply@purrfectpal.studio\nEMAIL_PASS=Toor@77@MTS@77*\n' >> .env
+echo "[env-fix] EMAIL_USER and EMAIL_PASS forcefully updated in .env"
 echo "[env-fix] Done" > ./admin-app/smtp-diagnostics.txt
 
 CERT_DIR="./letsencrypt/live/purrfectpal.studio"
