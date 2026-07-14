@@ -368,11 +368,13 @@ const server = http.createServer((req, res) => {
 
     const authHeader = req.headers['x-hub-signature-256'];
     const testHmac = crypto.createHmac('sha256', SECRET).update('admin-stream').digest('hex');
-    const expected = `sha256=${testHmac}`;
-    const authorized = authHeader && crypto.timingSafeEqual(
-      Buffer.from(authHeader.padEnd(expected.length)),
-      Buffer.from(expected.padEnd(authHeader.length))
-    );
+    let authorized = false;
+    if (authHeader && authHeader.length === expected.length) {
+      authorized = crypto.timingSafeEqual(
+        Buffer.from(authHeader),
+        Buffer.from(expected)
+      );
+    }
 
     if (!authorized) {
       console.warn('[deploy] GET /deploy-stream rejected: unauthorized.');
