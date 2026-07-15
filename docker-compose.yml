@@ -21,6 +21,9 @@ services:
       - mysql_data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
       - pps-network
 
@@ -42,11 +45,47 @@ services:
       retries: 3
       start_period: 30s
     environment:
-      - PPS_KEY=${PPS_KEY}
+      # ── Instance ──────────────────────────────
       - INSTANCE_ID=1
+      # ── Database ──────────────────────────────
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      # ── Auth / Encryption ─────────────────────
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - COOKIE_NAME=${COOKIE_NAME}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - BYCRPT_SALT=${BYCRPT_SALT}
+      # ── API Keys ──────────────────────────────
+      - PPS_KEY=${PPS_KEY}
+      - API_KEY=${API_KEY}
+      - ADMIN_KEY=${ADMIN_KEY}
+      - ARTIST_KEY=${ARTIST_KEY}
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      # ── Email / SMTP ──────────────────────────
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      # ── Stripe ────────────────────────────────
+      - STRIPE_KEY=${STRIPE_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      # ── APNs ──────────────────────────────────
+      - APNS_KEY_PATH=${APNS_KEY_PATH}
+      - APNS_KEY_ID=${APNS_KEY_ID}
+      - APNS_TEAM_ID=${APNS_TEAM_ID}
+      - APNS_IOS_BUNDLE_ID=${APNS_IOS_BUNDLE_ID}
+      - APNS_MACOS_BUNDLE_ID=${APNS_MACOS_BUNDLE_ID}
+      - APNS_PRODUCTION=${APNS_PRODUCTION}
+      # ── Web Push / VAPID ──────────────────────
+      - VAPID_EMAIL=${VAPID_EMAIL}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      # ── Runtime ───────────────────────────────
+      - NODE_ENV=${NODE_ENV}
+      - NODE_PORT=${NODE_PORT}
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles
@@ -74,11 +113,47 @@ services:
       retries: 3
       start_period: 30s
     environment:
-      - PPS_KEY=${PPS_KEY}
+      # ── Instance ──────────────────────────────
       - INSTANCE_ID=2
+      # ── Database ──────────────────────────────
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      # ── Auth / Encryption ─────────────────────
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_SECRET=${ENCRYPTION_SECRET}
+      - COOKIE_NAME=${COOKIE_NAME}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - BYCRPT_SALT=${BYCRPT_SALT}
+      # ── API Keys ──────────────────────────────
+      - PPS_KEY=${PPS_KEY}
+      - API_KEY=${API_KEY}
+      - ADMIN_KEY=${ADMIN_KEY}
+      - ARTIST_KEY=${ARTIST_KEY}
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      # ── Email / SMTP ──────────────────────────
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      # ── Stripe ────────────────────────────────
+      - STRIPE_KEY=${STRIPE_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      # ── APNs ──────────────────────────────────
+      - APNS_KEY_PATH=${APNS_KEY_PATH}
+      - APNS_KEY_ID=${APNS_KEY_ID}
+      - APNS_TEAM_ID=${APNS_TEAM_ID}
+      - APNS_IOS_BUNDLE_ID=${APNS_IOS_BUNDLE_ID}
+      - APNS_MACOS_BUNDLE_ID=${APNS_MACOS_BUNDLE_ID}
+      - APNS_PRODUCTION=${APNS_PRODUCTION}
+      # ── Web Push / VAPID ──────────────────────
+      - VAPID_EMAIL=${VAPID_EMAIL}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      # ── Runtime ───────────────────────────────
+      - NODE_ENV=${NODE_ENV}
+      - NODE_PORT=${NODE_PORT}
     volumes:
       - ./certs:/app/certs:ro
       - uploads_data:/app/uploadedfiles

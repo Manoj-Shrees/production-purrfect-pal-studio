@@ -22,6 +22,30 @@ let deployLogsHistory = [];
 let activeStreams = [];
 let deployProcess = null;
 
+const fs = require('fs');
+const LATEST_LOG = '/app/production-purrfect-pal-studio/admin-app/deploy-latest.log';
+const HISTORY_LOG = '/app/production-purrfect-pal-studio/admin-app/deploy-history.log';
+
+function writeDeployLog(line, isStart = false) {
+  try {
+    fs.mkdirSync('/app/production-purrfect-pal-studio/admin-app', { recursive: true });
+    const timestamp = new Date().toISOString();
+    const formattedLine = `[${timestamp}] ${line}\n`;
+    
+    // Append to historical log
+    fs.appendFileSync(HISTORY_LOG, formattedLine, 'utf8');
+    
+    // Write or append to latest log
+    if (isStart) {
+      fs.writeFileSync(LATEST_LOG, formattedLine, 'utf8');
+    } else {
+      fs.appendFileSync(LATEST_LOG, formattedLine, 'utf8');
+    }
+  } catch (err) {
+    console.error('[deploy] Error writing to log files:', err.message);
+  }
+}
+
 function broadcast(eventType, dataText) {
   let chunk = '';
   if (eventType === 'data') {
@@ -35,6 +59,9 @@ function broadcast(eventType, dataText) {
     deployLogsHistory.shift();
   }
   deployLogsHistory.push({ eventType, dataText });
+
+  // Persist line to log files
+  writeDeployLog(`[${eventType.toUpperCase()}] ${dataText}`);
 
   for (const res of activeStreams) {
     try {
@@ -225,6 +252,7 @@ function runDeploy() {
   deployLogsHistory = []; // Clear old logs when starting a new deploy
 
   console.log('[deploy] Starting deployment sequence...');
+  writeDeployLog('=== NEW DEPLOYMENT ATTEMPT ===', true);
   broadcast('data', '[deploy] 🚀 Starting deployment sequence...');
 
   const script = buildDeployScript();
