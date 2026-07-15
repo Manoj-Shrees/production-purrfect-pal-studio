@@ -132,6 +132,7 @@ services:
       - ADMIN_KEY=${ADMIN_KEY}
       - ARTIST_KEY=${ARTIST_KEY}
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - ALLOWED_IPS=${ALLOWED_IPS}
       # ── Email / SMTP ──────────────────────────
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
