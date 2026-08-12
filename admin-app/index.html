@@ -1,739 +1,1112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Purrfect Pal Studio — the free admin panel for digital pet art studio managers. Available on iOS and macOS."/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Purrfect Pal Studio — the free admin panel for digital pet art studio managers. Available on iOS and macOS." />
   <title>Purrfect Pal Studio</title>
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
-<div class="hex-grid"></div>
-<div class="page">
+  <div class="hex-grid"></div>
+  <div class="page">
 
-  <!-- ── NAV ── -->
-  <nav class="nav">
-    <a href="#" class="nav-brand">
-      <div class="nav-logo">
-        <img src="https://www.purrfectpal.studio/assets/images/pps-logo.png" alt="PPS"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
-          style="width:100%;height:100%;object-fit:cover;border-radius:9px;display:block"/>
-        <span style="display:none;font-size:12px;font-weight:700;color:#000;font-family:var(--font-hud)">PPS</span>
-      </div>
-      <span class="nav-name">Purrfect Pal Studio</span>
-      <span class="nav-badge">v4.0</span>
-    </a>
-    <div class="nav-r">
-      <ul class="nav-links" id="nav-links">
-        <li><a href="#screens">Screenshots</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#cta-download">Download</a></li>
-      </ul>
-      <a href="#cta-download" class="nav-cta">Download Free</a>
-      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- ── MOBILE NAV OVERLAY ── -->
-  <div class="mobile-nav-overlay" id="mobile-nav-overlay">
-    <ul class="mobile-nav-links">
-      <li><a href="#screens" class="mnl-item">Screenshots</a></li>
-      <li><a href="#features" class="mnl-item">Features</a></li>
-      <li><a href="#cta-download" class="mnl-item">Download</a></li>
-    </ul>
-    <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="mobile-nav-cta">Download Free on App Store</a>
-  </div>
-
-  <!-- ── HERO ── -->
-  <section class="hero">
-    <canvas id="particles"></canvas>
-    <div class="hero-inner">
-      <div class="hero-pill">
-        <span class="hero-pill-dot"></span>
-        System Online — Version 4.0
-      </div>
-      <h1 class="hero-h">
-        Purrfect Pal Studio
-        <em>Admin Portal</em>
-      </h1>
-      <p class="hero-sub">
-       The free all-in-one admin platform for creative businesses on iOS and macOS.
-       Streamline user management, artist management, orders, sales, item inventory, and print-on-demand fulfillment in one centralized dashboard.   
-      </p>
-      <div class="hero-dl" id="download">
-        <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
-          <svg width="20" height="24" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg"><path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/></svg>
-          <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
-        </a>
-        <a href="https://admin.purrfectpal.studio/assets/macos/PPS-admin-app.dmg" class="abtn mac">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
-        </a>
-      </div>
-      <div class="hero-stats">
-        <div class="hst"><span class="hst-n g">5.0 ★</span><span class="hst-l">Rating</span></div>
-        <div class="hst"><span class="hst-n">Free</span><span class="hst-l">No cost</span></div>
-        <div class="hst"><span class="hst-n">v4.0</span><span class="hst-l">Latest</span></div>
-        <div class="hst"><span class="hst-n">17.9 MB</span><span class="hst-l">Size</span></div>
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider"/>
-
-  <!-- ── SCREENSHOTS ── -->
-  <section class="screens-section reveal reveal-up" id="screens">
-    <div class="screens-head">
-      <div class="sec-pill">Screenshots</div>
-      <h2 class="sec-h">See it in action.<br/><span>iPhone &amp; macOS.</span></h2>
-    </div>
-
-    <div class="device-tabs reveal reveal-fade">
-      <button class="device-tab active" data-car="iphone">📱 iPhone</button>
-      <button class="device-tab" data-car="macos">💻 macOS</button>
-    </div>
-
-    <!-- iPhone Carousel -->
-    <div class="car-wrap show" id="car-iphone">
-      <div class="stage" id="stage-iphone">
-        <button class="arr arr-p" data-car="iphone">
-          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="slide portrait" data-index="0"><img src="assets/screenshots/iphone/IPSS1.png"  alt="Sign In"      loading="lazy"/><span class="slide-lbl">Sign In</span></div>
-        <div class="slide portrait" data-index="1"><img src="assets/screenshots/iphone/IPSS2.png"  alt="Dashboard"    loading="lazy"/><span class="slide-lbl">Dashboard</span></div>
-        <div class="slide portrait" data-index="2"><img src="assets/screenshots/iphone/IPSS3.png"  alt="Orders"       loading="lazy"/><span class="slide-lbl">Orders</span></div>
-        <div class="slide portrait" data-index="3"><img src="assets/screenshots/iphone/IPSS4.png"  alt="Order Detail" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
-        <div class="slide portrait" data-index="4"><img src="assets/screenshots/iphone/IPSS5.png"  alt="Pet Photos"   loading="lazy"/><span class="slide-lbl">Pet Photos</span></div>
-        <div class="slide portrait" data-index="5"><img src="assets/screenshots/iphone/IPSS6.png"  alt="Sales"        loading="lazy"/><span class="slide-lbl">Sales</span></div>
-        <div class="slide portrait" data-index="6"><img src="assets/screenshots/iphone/IPSS7.png"  alt="POD"          loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
-        <div class="slide portrait" data-index="7"><img src="assets/screenshots/iphone/IPSS8.png"  alt="Catalog"      loading="lazy"/><span class="slide-lbl">Catalog</span></div>
-        <div class="slide portrait" data-index="8"><img src="assets/screenshots/iphone/IPSS9.png"  alt="Add Item"     loading="lazy"/><span class="slide-lbl">Add Item</span></div>
-        <div class="slide portrait" data-index="9"><img src="assets/screenshots/iphone/IPSS10.png" alt="Artwork"      loading="lazy"/><span class="slide-lbl">Artwork</span></div>
-    
-        <button class="arr arr-n" data-car="iphone">
-          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-      <div class="car-progress" id="prog-iphone"></div>
-      <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
-    </div>
-
-    <!-- macOS Carousel -->
-    <div class="car-wrap" id="car-macos">
-      <div class="stage" id="stage-macos">
-        <button class="arr arr-p" data-car="macos">
-          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="slide landscape" data-index="0"><img src="assets/screenshots/macos/ipadss1.png"  alt="Sign In"      loading="lazy"/><span class="slide-lbl">Sign In</span></div>
-        <div class="slide landscape" data-index="1"><img src="assets/screenshots/macos/ipadss2.png"  alt="Orders"       loading="lazy"/><span class="slide-lbl">Orders</span></div>
-        <div class="slide landscape" data-index="2"><img src="assets/screenshots/macos/ipadss3.png"  alt="Order Detail" loading="lazy"/><span class="slide-lbl">Order Detail</span></div>
-        <div class="slide landscape" data-index="3"><img src="assets/screenshots/macos/ipadss4.png"  alt="Users"        loading="lazy"/><span class="slide-lbl">Users</span></div>
-        <div class="slide landscape" data-index="4"><img src="assets/screenshots/macos/ipadss5.png"  alt="Sales"        loading="lazy"/><span class="slide-lbl">Sales</span></div>
-        <div class="slide landscape" data-index="5"><img src="assets/screenshots/macos/ipadss6.png"  alt="POD"          loading="lazy"/><span class="slide-lbl">Print on Demand</span></div>
-        <div class="slide landscape" data-index="6"><img src="assets/screenshots/macos/ipadss7.png"  alt="Items"        loading="lazy"/><span class="slide-lbl">Items</span></div>
-        <div class="slide landscape" data-index="7"><img src="assets/screenshots/macos/ipadss8.png"  alt="POD Detail"   loading="lazy"/><span class="slide-lbl">POD Detail</span></div>
-        <div class="slide landscape" data-index="8"><img src="assets/screenshots/macos/ipadss9.png"  alt="New Order"    loading="lazy"/><span class="slide-lbl">New Order</span></div>
-        <div class="slide landscape" data-index="9"><img src="assets/screenshots/macos/ipadss10.png" alt="Artwork"      loading="lazy"/><span class="slide-lbl">Artwork</span></div>
-        <button class="arr arr-n" data-car="macos">
-          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-      <div class="car-progress" id="prog-macos"></div>
-      <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
-    </div>
-  </section>
-
-  <hr class="divider"/>
-
-  <!-- ── LIVE DEMO ── -->
-  <section class="demo-sec" id="features">
-    <div class="sec-pill reveal reveal-fade">Live Preview</div>
-    <h2 class="sec-h reveal reveal-up" style="text-align:center;margin-bottom:8px">
-      Tap through the dashboard.<br/><span>Try it yourself.</span>
-    </h2>
-    <p class="reveal reveal-fade" style="text-align:center;font-size:.85rem;color:var(--sub);margin-bottom:20px;font-family:var(--font-hud);letter-spacing:.04em">
-      EXPLORE EVERY SECTION OF THE ADMIN PANEL
-    </p>
-
-    <!-- ── DISCLAIMER BANNER ── -->
-    <div class="demo-disclaimer reveal reveal-fade">
-      <div class="demo-disclaimer-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-      </div>
-      <div class="demo-disclaimer-body">
-        <span class="demo-disclaimer-tag">Web Preview Only</span>
-        <span class="demo-disclaimer-text">This demo uses sample data &amp; a simplified interface. The real iOS &amp; macOS app may look and behave differently.</span>
-      </div>
-      <a href="#cta-download" class="demo-disclaimer-cta">
-        Get the real app
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    <!-- ── NAV ── -->
+    <nav class="nav">
+      <a href="#" class="nav-brand">
+        <div class="nav-logo">
+          <img src="https://www.purrfectpal.studio/assets/images/pps-logo.png" alt="PPS"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+            style="width:100%;height:100%;object-fit:cover;border-radius:9px;display:block" />
+          <span style="display:none;font-size:12px;font-weight:700;color:#000;font-family:var(--font-hud)">PPS</span>
+        </div>
+        <span class="nav-name">Purrfect Pal Studio</span>
+        <span class="nav-badge">v4.0</span>
       </a>
+      <div class="nav-r">
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#screens">Screenshots</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#cta-download">Download</a></li>
+        </ul>
+        <a href="#cta-download" class="nav-cta">Download Free</a>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ── MOBILE NAV OVERLAY ── -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+      <ul class="mobile-nav-links">
+        <li><a href="#screens" class="mnl-item">Screenshots</a></li>
+        <li><a href="#features" class="mnl-item">Features</a></li>
+        <li><a href="#cta-download" class="mnl-item">Download</a></li>
+      </ul>
+      <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank"
+        class="mobile-nav-cta">Download Free on App Store</a>
     </div>
 
-    <div class="demo-frame hud-box reveal reveal-scale">
-      <!-- Chrome bar -->
-      <div class="demo-mac-chrome">
-        <div class="demo-mac-dots"><span class="mc mc-r"></span><span class="mc mc-y"></span><span class="mc mc-g"></span></div>
-        <div class="demo-url">purrfectpal.studio/admin</div>
-        <div class="demo-status"><span class="demo-status-dot"></span>PREVIEW</div>
+    <!-- ── HERO ── -->
+    <section class="hero">
+      <canvas id="particles"></canvas>
+      <div class="hero-inner">
+        <div class="hero-pill">
+          <span class="hero-pill-dot"></span>
+          System Online — Version 4.0
+        </div>
+        <h1 class="hero-h">
+          Purrfect Pal Studio
+          <em>Admin Portal</em>
+        </h1>
+        <p class="hero-sub">
+          The free all-in-one admin platform for creative businesses on iOS and macOS.
+          Streamline user management, artist management, orders, sales, item inventory, and print-on-demand fulfillment
+          in one centralized dashboard.
+        </p>
+        <div class="hero-dl" id="download">
+          <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
+            <svg width="20" height="24" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z" />
+            </svg>
+            <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
+          </a>
+          <a href="https://admin.purrfectpal.studio/assets/macos/PPS-admin-app.dmg" class="abtn mac">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hst"><span class="hst-n g">5.0 ★</span><span class="hst-l">Rating</span></div>
+          <div class="hst"><span class="hst-n">Free</span><span class="hst-l">No cost</span></div>
+          <div class="hst"><span class="hst-n">v4.0</span><span class="hst-l">Latest</span></div>
+          <div class="hst"><span class="hst-n">17.9 MB</span><span class="hst-l">Size</span></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── SCREENSHOTS ── -->
+    <section class="screens-section reveal reveal-up" id="screens">
+      <div class="screens-head">
+        <div class="sec-pill">Screenshots</div>
+        <h2 class="sec-h">See it in action.<br /><span>iPhone &amp; macOS.</span></h2>
       </div>
 
-      <div class="demo-body">
-        <!-- Sidebar (desktop) / Top tab bar (mobile) -->
-        <div class="dsb">
-          <div class="dsb-logo">
-            <div class="dsb-logo-icon">🐾</div>
-            PPS Admin
-          </div>
-          <div class="dsb-nav-wrapper">
-            <span class="dsb-section-label">// Workspace</span>
-            <div class="dsb-nav" id="dsb-nav">
-              <button class="dsb-btn active" data-p="orders">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                <span class="dsb-btn-label">Orders (POD)</span>
-              </button>
-              <button class="dsb-btn" data-p="sales">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                <span class="dsb-btn-label">Sales &amp; Payments</span>
-              </button>
-              <button class="dsb-btn" data-p="payouts">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-                <span class="dsb-btn-label">Artist Payouts</span>
-              </button>
-              <button class="dsb-btn" data-p="users">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <span class="dsb-btn-label">Users &amp; Audit</span>
-              </button>
-              <button class="dsb-btn" data-p="artwork">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <span class="dsb-btn-label">Artwork Gallery</span>
-              </button>
-              <div class="dsb-sep"></div>
-              <span class="dsb-section-label">// Operations</span>
-              <button class="dsb-btn" data-p="disputes">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span class="dsb-btn-label">Disputes &amp; Refunds</span>
-              </button>
-              <button class="dsb-btn" data-p="promo">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                <span class="dsb-btn-label">Promo Codes</span>
-              </button>
-              <button class="dsb-btn" data-p="antifraud">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span class="dsb-btn-label">Anti-Fraud &amp; Risk</span>
-              </button>
-              <div class="dsb-sep"></div>
-              <span class="dsb-section-label">// Insights</span>
-              <button class="dsb-btn" data-p="performance">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span class="dsb-btn-label">Artist Perf.</span>
-              </button>
-              <button class="dsb-btn" data-p="analytics">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                <span class="dsb-btn-label">Analytics</span>
-              </button>
-              <button class="dsb-btn" data-p="forecast">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
-                <span class="dsb-btn-label">Forecast</span>
-              </button>
-              <button class="dsb-btn" data-p="system">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-                <span class="dsb-btn-label">System</span>
-              </button>
-              <button class="dsb-btn" data-p="notifications">
-                <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                <span class="dsb-btn-label">Alerts</span>
-                <span class="notif-badge">3</span>
-              </button>
-            </div>
-          </div>
+      <div class="device-tabs reveal reveal-fade">
+        <button class="device-tab active" data-car="iphone">📱 iPhone</button>
+        <button class="device-tab" data-car="macos">💻 macOS</button>
+      </div>
+
+      <!-- iPhone Carousel -->
+      <div class="car-wrap show" id="car-iphone">
+        <div class="stage" id="stage-iphone">
+          <button class="arr arr-p" data-car="iphone">
+            <svg viewBox="0 0 24 24">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <div class="slide portrait" data-index="0"><img src="assets/screenshots/iphone/IPSS1.png" alt="Sign In"
+              loading="lazy" /><span class="slide-lbl">Sign In</span></div>
+          <div class="slide portrait" data-index="1"><img src="assets/screenshots/iphone/IPSS2.png" alt="Dashboard"
+              loading="lazy" /><span class="slide-lbl">Dashboard</span></div>
+          <div class="slide portrait" data-index="2"><img src="assets/screenshots/iphone/IPSS3.png" alt="Orders"
+              loading="lazy" /><span class="slide-lbl">Orders</span></div>
+          <div class="slide portrait" data-index="3"><img src="assets/screenshots/iphone/IPSS4.png" alt="Order Detail"
+              loading="lazy" /><span class="slide-lbl">Order Detail</span></div>
+          <div class="slide portrait" data-index="4"><img src="assets/screenshots/iphone/IPSS5.png" alt="Pet Photos"
+              loading="lazy" /><span class="slide-lbl">Pet Photos</span></div>
+          <div class="slide portrait" data-index="5"><img src="assets/screenshots/iphone/IPSS6.png" alt="Sales"
+              loading="lazy" /><span class="slide-lbl">Sales</span></div>
+          <div class="slide portrait" data-index="6"><img src="assets/screenshots/iphone/IPSS7.png" alt="POD"
+              loading="lazy" /><span class="slide-lbl">Print on Demand</span></div>
+          <div class="slide portrait" data-index="7"><img src="assets/screenshots/iphone/IPSS8.png" alt="Catalog"
+              loading="lazy" /><span class="slide-lbl">Catalog</span></div>
+          <div class="slide portrait" data-index="8"><img src="assets/screenshots/iphone/IPSS9.png" alt="Add Item"
+              loading="lazy" /><span class="slide-lbl">Add Item</span></div>
+          <div class="slide portrait" data-index="9"><img src="assets/screenshots/iphone/IPSS10.png" alt="Artwork"
+              loading="lazy" /><span class="slide-lbl">Artwork</span></div>
+
+          <button class="arr arr-n" data-car="iphone">
+            <svg viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+        <div class="car-progress" id="prog-iphone"></div>
+        <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
+      </div>
+
+      <!-- macOS Carousel -->
+      <div class="car-wrap" id="car-macos">
+        <div class="stage" id="stage-macos">
+          <button class="arr arr-p" data-car="macos">
+            <svg viewBox="0 0 24 24">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <div class="slide landscape" data-index="0"><img src="assets/screenshots/macos/ipadss1.png" alt="Sign In"
+              loading="lazy" /><span class="slide-lbl">Sign In</span></div>
+          <div class="slide landscape" data-index="1"><img src="assets/screenshots/macos/ipadss2.png" alt="Orders"
+              loading="lazy" /><span class="slide-lbl">Orders</span></div>
+          <div class="slide landscape" data-index="2"><img src="assets/screenshots/macos/ipadss3.png" alt="Order Detail"
+              loading="lazy" /><span class="slide-lbl">Order Detail</span></div>
+          <div class="slide landscape" data-index="3"><img src="assets/screenshots/macos/ipadss4.png" alt="Users"
+              loading="lazy" /><span class="slide-lbl">Users</span></div>
+          <div class="slide landscape" data-index="4"><img src="assets/screenshots/macos/ipadss5.png" alt="Sales"
+              loading="lazy" /><span class="slide-lbl">Sales</span></div>
+          <div class="slide landscape" data-index="5"><img src="assets/screenshots/macos/ipadss6.png" alt="POD"
+              loading="lazy" /><span class="slide-lbl">Print on Demand</span></div>
+          <div class="slide landscape" data-index="6"><img src="assets/screenshots/macos/ipadss7.png" alt="Items"
+              loading="lazy" /><span class="slide-lbl">Items</span></div>
+          <div class="slide landscape" data-index="7"><img src="assets/screenshots/macos/ipadss8.png" alt="POD Detail"
+              loading="lazy" /><span class="slide-lbl">POD Detail</span></div>
+          <div class="slide landscape" data-index="8"><img src="assets/screenshots/macos/ipadss9.png" alt="New Order"
+              loading="lazy" /><span class="slide-lbl">New Order</span></div>
+          <div class="slide landscape" data-index="9"><img src="assets/screenshots/macos/ipadss10.png" alt="Artwork"
+              loading="lazy" /><span class="slide-lbl">Artwork</span></div>
+          <button class="arr arr-n" data-car="macos">
+            <svg viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+        <div class="car-progress" id="prog-macos"></div>
+        <p class="swipe-hint">[ SWIPE OR USE ARROWS TO NAVIGATE ]</p>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── LIVE DEMO ── -->
+    <section class="demo-sec" id="features">
+      <div class="sec-pill reveal reveal-fade">Live Preview</div>
+      <h2 class="sec-h reveal reveal-up" style="text-align:center;margin-bottom:8px">
+        Tap through the dashboard.<br /><span>Try it yourself.</span>
+      </h2>
+      <p class="reveal reveal-fade"
+        style="text-align:center;font-size:.85rem;color:var(--sub);margin-bottom:20px;font-family:var(--font-hud);letter-spacing:.04em">
+        EXPLORE EVERY SECTION OF THE ADMIN PANEL
+      </p>
+
+      <!-- ── DISCLAIMER BANNER ── -->
+      <div class="demo-disclaimer reveal reveal-fade">
+        <div class="demo-disclaimer-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <div class="demo-disclaimer-body">
+          <span class="demo-disclaimer-tag">Web Preview Only</span>
+          <span class="demo-disclaimer-text">This demo uses sample data &amp; a simplified interface. The real iOS &amp;
+            macOS app may look and behave differently.</span>
+        </div>
+        <a href="#cta-download" class="demo-disclaimer-cta">
+          Get the real app
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="demo-frame hud-box reveal reveal-scale">
+        <!-- Chrome bar -->
+        <div class="demo-mac-chrome">
+          <div class="demo-mac-dots"><span class="mc mc-r"></span><span class="mc mc-y"></span><span
+              class="mc mc-g"></span></div>
+          <div class="demo-url">purrfectpal.studio/admin</div>
+          <div class="demo-status"><span class="demo-status-dot"></span>PREVIEW</div>
         </div>
 
-        <!-- Panels -->
-        <div class="demo-main">
-
-          <!-- ORDERS -->
-          <div class="panel active" id="panel-orders">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Orders &amp; POD Sync</div><div class="ph-action">+ New Order</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n">18</span><span class="pstat-l">Pending Design</span></div>
-                <div class="pstat"><span class="pstat-n g">8</span><span class="pstat-l">POD Processing</span></div>
-                <div class="pstat"><span class="pstat-n c">154</span><span class="pstat-l">Shipped/Delivered</span></div>
-              </div>
+        <div class="demo-body">
+          <!-- Sidebar (desktop) / Top tab bar (mobile) -->
+          <div class="dsb">
+            <div class="dsb-logo">
+              <div class="dsb-logo-icon">🐾</div>
+              PPS Admin
             </div>
-            <div class="search-bar">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              Search orders &amp; shipments…
-            </div>
-            <div class="chips">
-              <div class="chip active">All</div>
-              <div class="chip">Pending Design</div>
-              <div class="chip">POD Processing</div>
-              <div class="chip">In Transit</div>
-              <div class="chip">Delivered</div>
-            </div>
-            <div class="table-scroll">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-5"><span>Customer</span><span>Style</span><span>POD Item</span><span>Provider</span><span>Fulfillment</span></div>
-                <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">S</span>Sarah M.</span><span>Watercolour</span><span>Mug 🫖</span><span>Gelato</span><span class="badge badge-prog">Shipped (#GEL-441)</span></div>
-                <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#f59e0b">J</span>James R.</span><span>Portrait</span><span>Canvas 🖼️</span><span>Printify</span><span class="badge badge-new">Processing</span></div>
-                <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#10b981">A</span>Amy K.</span><span>Cartoon</span><span>Poster 🖼️</span><span>Gelato</span><span class="badge badge-done">Delivered</span></div>
-                <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#ef4444">M</span>Mike P.</span><span>Chibi</span><span>Tote Bag 👜</span><span>Printful</span><span class="badge badge-new">Processing</span></div>
-                <div class="dp-tr tr-5" style="--ri:4"><span class="dp-cust"><span class="dp-av" style="background:#8b5cf6">L</span>Luna T.</span><span>Watercolour</span><span>Phone Case 📱</span><span>Gelato</span><span class="badge badge-prog">Shipped (#GEL-437)</span></div>
+            <div class="dsb-nav-wrapper">
+              <span class="dsb-section-label">// Workspace</span>
+              <div class="dsb-nav" id="dsb-nav">
+                <button class="dsb-btn active" data-p="orders">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13" />
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                  </svg>
+                  <span class="dsb-btn-label">Orders (POD)</span>
+                </button>
+                <button class="dsb-btn" data-p="sales">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                  </svg>
+                  <span class="dsb-btn-label">Sales &amp; Payments</span>
+                </button>
+                <button class="dsb-btn" data-p="payouts">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <line x1="12" y1="4" x2="12" y2="20" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                  </svg>
+                  <span class="dsb-btn-label">Artist Payouts</span>
+                </button>
+                <button class="dsb-btn" data-p="users">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                  <span class="dsb-btn-label">Users &amp; Audit</span>
+                </button>
+                <button class="dsb-btn" data-p="artwork">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                  <span class="dsb-btn-label">Artwork Gallery</span>
+                </button>
+                <div class="dsb-sep"></div>
+                <span class="dsb-section-label">// Operations</span>
+                <button class="dsb-btn" data-p="disputes">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  <span class="dsb-btn-label">Disputes &amp; Refunds</span>
+                </button>
+                <button class="dsb-btn" data-p="promo">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                    <line x1="7" y1="7" x2="7.01" y2="7" />
+                  </svg>
+                  <span class="dsb-btn-label">Promo Codes</span>
+                </button>
+                <button class="dsb-btn" data-p="antifraud">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                  <span class="dsb-btn-label">Anti-Fraud &amp; Risk</span>
+                </button>
+                <div class="dsb-sep"></div>
+                <span class="dsb-section-label">// Insights</span>
+                <button class="dsb-btn" data-p="performance">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  <span class="dsb-btn-label">Artist Perf.</span>
+                </button>
+                <button class="dsb-btn" data-p="analytics">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                  </svg>
+                  <span class="dsb-btn-label">Analytics</span>
+                </button>
+                <button class="dsb-btn" data-p="forecast">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 17 9 11 13 15 21 7" />
+                    <polyline points="14 7 21 7 21 14" />
+                  </svg>
+                  <span class="dsb-btn-label">Forecast</span>
+                </button>
+                <button class="dsb-btn" data-p="system">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+                  </svg>
+                  <span class="dsb-btn-label">System</span>
+                </button>
+                <button class="dsb-btn" data-p="notifications">
+                  <svg class="dsb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                  <span class="dsb-btn-label">Alerts</span>
+                  <span class="notif-badge">3</span>
+                </button>
               </div>
             </div>
           </div>
 
-          <!-- SALES -->
-          <div class="panel" id="panel-sales">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Sales &amp; Stripe Payments</div><div class="ph-action">Export CSV</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">$5,840</span><span class="pstat-l">Revenue (MTD)</span></div>
-                <div class="pstat"><span class="pstat-n">+24%</span><span class="pstat-l">vs Last Month</span></div>
-                <div class="pstat"><span class="pstat-n">99.8%</span><span class="pstat-l">Success Rate</span></div>
-              </div>
-            </div>
-            <div class="chart-wrap">
-              <div class="chart-lbl">Stripe Sales Revenue — Last 6 Months</div>
-              <div class="bars" id="sales-bars">
-                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-0" style="--h:42%"><span class="bar-v">$1.4k</span></div></div><span class="bar-m">Nov</span></div>
-                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-1" style="--h:58%"><span class="bar-v">$1.9k</span></div></div><span class="bar-m">Dec</span></div>
-                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-2" style="--h:35%"><span class="bar-v">$1.2k</span></div></div><span class="bar-m">Jan</span></div>
-                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-3" style="--h:71%"><span class="bar-v">$2.3k</span></div></div><span class="bar-m">Feb</span></div>
-                <div class="bar-col"><div class="bar-wrap"><div class="bar" id="bar-4" style="--h:80%"><span class="bar-v">$2.6k</span></div></div><span class="bar-m">Mar</span></div>
-                <div class="bar-col"><div class="bar-wrap"><div class="bar active" id="bar-5" style="--h:88%"><span class="bar-v">$2.8k</span></div></div><span class="bar-m">Apr</span></div>
-              </div>
-              <div class="table-scroll" style="margin-top:8px">
-                <div class="dp-table">
-                  <div class="dp-tr dp-th tr-5"><span>Item Description</span><span>Transaction ID</span><span>Processor</span><span>Amount</span><span>Status</span></div>
-                  <div class="dp-tr tr-5" style="--ri:0"><span>Watercolour Canvas Portrait</span><span>ch_3Mv8s9</span><span>Stripe</span><span class="pstat-n g">$120.00</span><span class="badge badge-done">Succeeded</span></div>
-                  <div class="dp-tr tr-5" style="--ri:1"><span>Golden Portrait Mug</span><span>ch_3Mv8t4</span><span>Apple Pay</span><span class="pstat-n g">$45.00</span><span class="badge badge-done">Succeeded</span></div>
-                  <div class="dp-tr tr-5" style="--ri:2"><span>Cartoon Tabby Poster</span><span>ch_3Mv8u2</span><span>Google Pay</span><span class="pstat-n g">$60.00</span><span class="badge badge-done">Succeeded</span></div>
-                  <div class="dp-tr tr-5" style="--ri:3"><span>Bunny Chibi Tote Bag</span><span>ch_3Mv8v1</span><span>Stripe</span><span class="pstat-n g">$55.00</span><span class="badge badge-done">Succeeded</span></div>
-                  <div class="dp-tr tr-5" style="--ri:4"><span>Parrot Watercolour Phone Case</span><span>ch_3Mv8w9</span><span>Stripe</span><span class="pstat-n g">$80.00</span><span class="badge badge-done">Succeeded</span></div>
+          <!-- Panels -->
+          <div class="demo-main">
+
+            <!-- ORDERS -->
+            <div class="panel active" id="panel-orders">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Orders &amp; POD Sync</div>
+                  <div class="ph-action">+ New Order</div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ARTIST PAYOUTS -->
-          <div class="panel" id="panel-payouts">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Artist Payouts</div><div class="ph-action">Initiate Payout</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">$1,120</span><span class="pstat-l">Pending Payouts</span></div>
-                <div class="pstat"><span class="pstat-n">$3,450</span><span class="pstat-l">Paid MTD</span></div>
-                <div class="pstat"><span class="pstat-n c">60%</span><span class="pstat-l">Avg Share Rate</span></div>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-5"><span>Artist</span><span>Commission</span><span>Pending Bal.</span><span>Method</span><span>Status</span></div>
-                <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">C</span>Clara W.</span><span>60%</span><span>$450.00</span><span>Stripe Connect</span><span class="badge badge-done">Paid</span></div>
-                <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#10b981">N</span>Nadia R.</span><span>65%</span><span>$320.00</span><span>PayPal</span><span class="badge badge-new">Pending</span></div>
-                <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#8b5cf6">A</span>Alex M.</span><span>60%</span><span>$180.00</span><span>Wise Transfer</span><span class="badge badge-done">Paid</span></div>
-                <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av" style="background:#e11d48">E</span>Elena P.</span><span>60%</span><span>$170.00</span><span>Stripe Connect</span><span class="badge badge-prog">On Hold</span></div>
-              </div>
-            </div>
-            <div style="margin-top:10px">
-              <div class="chart-lbl" style="margin-bottom:6px">Payout Pool Reserve Progress</div>
-              <div style="display:flex;flex-direction:column;gap:8px">
-                <div>
-                  <div style="display:flex;justify-content:space-between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
-                    <span>Monthly payout pool reserve cap</span>
-                    <span style="margin-left:auto">$4,570 / $10,000</span>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n">18</span><span class="pstat-l">Pending Design</span></div>
+                  <div class="pstat"><span class="pstat-n g">8</span><span class="pstat-l">POD Processing</span></div>
+                  <div class="pstat"><span class="pstat-n c">154</span><span class="pstat-l">Shipped/Delivered</span>
                   </div>
-                  <div class="payout-bar"><div class="payout-fill" data-w="45%"></div></div>
                 </div>
               </div>
-            </div>
-            <div class="chart-summary">
-              <div><div class="cs-label">Next Scheduled Payout Run</div><div style="font-size:.66rem;color:var(--sub);margin-top:2px;font-family:var(--font-hud)">Automated bi-weekly artist distributions</div></div>
-              <div class="cs-value" style="color:var(--cyan);text-shadow:0 0 10px rgba(0,212,255,.3)">June 15, 2026</div>
-            </div>
-          </div>
-
-          <!-- USERS -->
-          <div class="panel" id="panel-users">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// User Management &amp; Audit Logs</div><div class="ph-action">+ Invite</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">286</span><span class="pstat-l">Total Users</span></div>
-                <div class="pstat"><span class="pstat-n">3</span><span class="pstat-l">System Admins</span></div>
-                <div class="pstat"><span class="pstat-n c">12</span><span class="pstat-l">Active Sessions</span></div>
+              <div class="search-bar">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                Search orders &amp; shipments…
               </div>
-            </div>
-            <div class="chips">
-              <div class="chip active">User Directory</div>
-              <div class="chip">Audit Logs</div>
-            </div>
-            <!-- User Table -->
-            <div class="table-scroll">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-4"><span>User</span><span>Role</span><span>Joined</span><span>Status</span></div>
-                <div class="dp-tr tr-4" style="--ri:0"><span class="dp-cust"><span class="dp-av" style="background:#00e599;color:#000">M</span>Manoj S.</span><span>Admin</span><span>Jan 2024</span><span class="badge badge-done">Active</span></div>
-                <div class="dp-tr tr-4" style="--ri:1"><span class="dp-cust"><span class="dp-av" style="background:#6366f1">C</span>Clara W.</span><span>Artist</span><span>Mar 2024</span><span class="badge badge-done">Active</span></div>
-                <div class="dp-tr tr-4" style="--ri:2"><span class="dp-cust"><span class="dp-av" style="background:#f59e0b">T</span>Tom B.</span><span>Customer</span><span>Apr 2025</span><span class="badge badge-prog">Review</span></div>
+              <div class="chips">
+                <div class="chip active">All</div>
+                <div class="chip">Pending Design</div>
+                <div class="chip">POD Processing</div>
+                <div class="chip">In Transit</div>
+                <div class="chip">Delivered</div>
               </div>
-            </div>
-            <!-- Audit Logs section -->
-            <div style="margin-top:6px">
-              <div class="chart-lbl" style="margin-bottom:6px">// Real-Time Security Audit Logs</div>
               <div class="table-scroll">
-                <div class="dp-table" style="font-size:.68rem">
-                  <div class="dp-tr dp-th tr-4"><span>Actor</span><span>Action Performed</span><span>IP / Host</span><span>Timestamp</span></div>
-                  <div class="dp-tr tr-4" style="--ri:0"><span>Manoj S.</span><span>Approved refund ch_3Mv8s9</span><span>120.18.23.44</span><span>2m ago</span></div>
-                  <div class="dp-tr tr-4" style="--ri:1"><span>System Bot</span><span>Synced order #POD-441 Gelato API</span><span>-</span><span>15m ago</span></div>
-                  <div class="dp-tr tr-4" style="--ri:2"><span>Clara W.</span><span>Uploaded PNG artwork for #441</span><span>192.168.1.10</span><span>1h ago</span></div>
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-5"><span>Customer</span><span>Style</span><span>POD
+                      Item</span><span>Provider</span><span>Fulfillment</span></div>
+                  <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av"
+                        style="background:#6366f1">S</span>Sarah M.</span><span>Watercolour</span><span>Mug
+                      🫖</span><span>Gelato</span><span class="badge badge-prog">Shipped (#GEL-441)</span></div>
+                  <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av"
+                        style="background:#f59e0b">J</span>James R.</span><span>Portrait</span><span>Canvas
+                      🖼️</span><span>Printify</span><span class="badge badge-new">Processing</span></div>
+                  <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av"
+                        style="background:#10b981">A</span>Amy K.</span><span>Cartoon</span><span>Poster
+                      🖼️</span><span>Gelato</span><span class="badge badge-done">Delivered</span></div>
+                  <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av"
+                        style="background:#ef4444">M</span>Mike P.</span><span>Chibi</span><span>Tote Bag
+                      👜</span><span>Printful</span><span class="badge badge-new">Processing</span></div>
+                  <div class="dp-tr tr-5" style="--ri:4"><span class="dp-cust"><span class="dp-av"
+                        style="background:#8b5cf6">L</span>Luna T.</span><span>Watercolour</span><span>Phone Case
+                      📱</span><span>Gelato</span><span class="badge badge-prog">Shipped (#GEL-437)</span></div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- ARTWORK -->
-          <div class="panel" id="panel-artwork">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Artwork Gallery</div><div class="ph-action">Upload New</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">94</span><span class="pstat-l">Artworks</span></div>
-                <div class="pstat"><span class="pstat-n">6</span><span class="pstat-l">Styles</span></div>
-                <div class="pstat"><span class="pstat-n">4</span><span class="pstat-l">Artists</span></div>
-              </div>
-            </div>
-            <div class="chips">
-              <div class="chip active">All Styles</div>
-              <div class="chip">Watercolour</div>
-              <div class="chip">Portrait</div>
-              <div class="chip">Chibi</div>
-              <div class="chip">Cartoon</div>
-            </div>
-            <div class="art-grid">
-              <div class="art-card"><span class="art-em">🐺</span><span class="art-lbl">Husky</span><span class="art-sty">Watercolour</span></div>
-              <div class="art-card"><span class="art-em">🐶</span><span class="art-lbl">Golden</span><span class="art-sty">Portrait</span></div>
-              <div class="art-card"><span class="art-em">🐱</span><span class="art-lbl">Tabby</span><span class="art-sty">Cartoon</span></div>
-              <div class="art-card"><span class="art-em">🦜</span><span class="art-lbl">Parrot</span><span class="art-sty">Chibi</span></div>
-              <div class="art-card"><span class="art-em">🐰</span><span class="art-lbl">Bunny</span><span class="art-sty">Chibi</span></div>
-              <div class="art-card"><span class="art-em">🐠</span><span class="art-lbl">Clownfish</span><span class="art-sty">Cartoon</span></div>
-            </div>
-          </div>
-
-          <!-- DISPUTES & REFUNDS -->
-          <div class="panel" id="panel-disputes">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Disputes &amp; Refunds</div><div class="ph-action">Sync Stripe</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n" style="color:#ef4444;text-shadow:0 0 8px rgba(239,68,68,.3)">1</span><span class="pstat-l">Active Dispute</span></div>
-                <div class="pstat"><span class="pstat-n">1.2%</span><span class="pstat-l">Refund Rate</span></div>
-                <div class="pstat"><span class="pstat-n g">$75.00</span><span class="pstat-l">Disputed Amount</span></div>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-5"><span>Tx ID</span><span>Customer</span><span>Reason</span><span>Amount</span><span>Status</span></div>
-                <div class="dp-tr tr-5" style="--ri:0"><span>ch_3Mv8s9</span><span>Sarah M.</span><span>Print quality bleed</span><span>$75.00</span><span class="badge badge-new" style="background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.2)">Disputed (Stripe)</span></div>
-                <div class="dp-tr tr-5" style="--ri:1"><span>ch_3Mv8t4</span><span>James R.</span><span>Accidental double order</span><span>$90.00</span><span class="badge badge-done">Refunded</span></div>
-                <div class="dp-tr tr-5" style="--ri:2"><span>ch_3Mv8u2</span><span>Amy K.</span><span>Damaged print frame</span><span>$45.00</span><span class="badge badge-done">Refunded (Manual)</span></div>
-              </div>
-            </div>
-            <div style="margin-top:12px;font-size:.66rem;color:var(--sub);font-family:var(--font-hud);border:1px solid rgba(239,68,68,.15);border-radius:8px;padding:10px 14px;background:rgba(239,68,68,.03)">
-              <span style="color:#ef4444">// STRIPE ALIGNMENT:</span> Dispute `ch_3Mv8s9` requires response by June 10, 2026. Submit high-res design proof and tracking history to challenge.
-            </div>
-          </div>
-
-          <!-- PROMO CODES -->
-          <div class="panel" id="panel-promo">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Promo Codes &amp; Coupons</div><div class="ph-action">+ Create Code</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">4</span><span class="pstat-l">Active Codes</span></div>
-                <div class="pstat"><span class="pstat-n">184</span><span class="pstat-l">Redemptions</span></div>
-                <div class="pstat"><span class="pstat-n c">$854.50</span><span class="pstat-l">Total Discounted</span></div>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-5"><span>Code</span><span>Discount</span><span>Usage</span><span>Limit / Cap</span><span>Status</span></div>
-                <div class="dp-tr tr-5" style="--ri:0"><span>PURRFECT10</span><span>10% OFF</span><span>98 used</span><span>Unlimited</span><span class="badge badge-done">Active</span></div>
-                <div class="dp-tr tr-5" style="--ri:1"><span>PETLOVE20</span><span>20% OFF</span><span>45 used</span><span>100 Max</span><span class="badge badge-done">Active</span></div>
-                <div class="dp-tr tr-5" style="--ri:2"><span>WELCOME5</span><span>$5.00 FLAT</span><span>32 used</span><span>Unlimited</span><span class="badge badge-done">Active</span></div>
-                <div class="dp-tr tr-5" style="--ri:3"><span>SPRINGART</span><span>15% OFF</span><span>9 used</span><span>Expired</span><span class="badge badge-prog" style="background:rgba(122,122,138,.1);color:var(--sub);border-color:rgba(122,122,138,.2)">Expired</span></div>
-              </div>
-            </div>
-            <div class="promo-metrics" style="margin-top:12px">
-              <div class="chart-lbl" style="margin-bottom:6px">Campaign Usage Cap Fill</div>
-              <div style="display:flex;flex-direction:column;gap:8px">
-                <div>
-                  <div style="display:flex;justify-content:between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
-                    <span>PETLOVE20 Campaign Progress</span>
-                    <span style="margin-left:auto">45% (45 / 100)</span>
+            <!-- SALES -->
+            <div class="panel" id="panel-sales">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Sales &amp; Stripe Payments</div>
+                  <div class="ph-action">Export CSV</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">$5,840</span><span class="pstat-l">Revenue (MTD)</span>
                   </div>
-                  <div class="promo-bar"><div class="promo-fill" data-w="45%"></div></div>
+                  <div class="pstat"><span class="pstat-n">+24%</span><span class="pstat-l">vs Last Month</span></div>
+                  <div class="pstat"><span class="pstat-n">99.8%</span><span class="pstat-l">Success Rate</span></div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- ANTI FRAUD -->
-          <div class="panel" id="panel-antifraud">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Anti-Fraud &amp; Risk Control</div><div class="ph-action">Scan Queue</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">Low</span><span class="pstat-l">Global Risk</span></div>
-                <div class="pstat"><span class="pstat-n">24</span><span class="pstat-l">Blocked IPs</span></div>
-                <div class="pstat"><span class="pstat-n" style="color:#fbbf24">1</span><span class="pstat-l">Review Flagged</span></div>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-5"><span>Tx / IP</span><span>Location</span><span>Risk Score</span><span>Flags</span><span>Action</span></div>
-                <div class="dp-tr tr-5" style="--ri:0"><span>185.190.140.10</span><span>St. Petersburg (VPN)</span><span class="pstat-n" style="color:#ef4444">88 / 100</span><span>Proxy / VPN block</span><span class="badge badge-new" style="background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.2)">Auto-Blocked</span></div>
-                <div class="dp-tr tr-5" style="--ri:1"><span>94.23.48.12</span><span>Sydney, AU</span><span class="pstat-n g">12 / 100</span><span>Card Match</span><span class="badge badge-done">Approved</span></div>
-                <div class="dp-tr tr-5" style="--ri:2"><span>195.22.122.50</span><span>Unknown Proxy</span><span class="pstat-n" style="color:#fbbf24">65 / 100</span><span>Card mismatch</span><span class="badge badge-prog" style="background:rgba(251,191,36,.1);color:#fbbf24;border-color:rgba(251,191,36,.2)">Hold for Review</span></div>
-              </div>
-            </div>
-            <div class="risk-meter-section" style="margin-top:8px">
-              <div class="chart-lbl" style="margin-bottom:6px">Risk Vector Breakdown</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                <div style="background:rgba(255,255,255,.02);border:1px solid rgba(0,229,153,.05);border-radius:8px;padding:10px">
-                  <div style="font-size:.6rem;font-family:var(--font-hud);color:var(--sub)">Velocity Testing Limit</div>
-                  <div class="pstat-n g" style="margin:4px 0">Normal</div>
-                  <div class="risk-bar"><div class="risk-fill" data-w="15%"></div></div>
-                </div>
-                <div style="background:rgba(255,255,255,.02);border:1px solid rgba(0,229,153,.05);border-radius:8px;padding:10px">
-                  <div style="font-size:.6rem;font-family:var(--font-hud);color:var(--sub)">Proxy Attack Score</div>
-                  <div class="pstat-n" style="color:#fbbf24;margin:4px 0">Moderate Alert</div>
-                  <div class="risk-bar"><div class="risk-fill high" data-w="65%"></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ARTIST PERFORMANCE -->
-          <div class="panel" id="panel-performance">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Artist Performance Tracker</div><div class="ph-action">Export Report</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">24.2h</span><span class="pstat-l">Avg Turnaround</span></div>
-                <div class="pstat"><span class="pstat-n">2.8%</span><span class="pstat-l">Revision Rate</span></div>
-                <div class="pstat"><span class="pstat-n g">4.9 ★</span><span class="pstat-l">Avg CSAT Rating</span></div>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-5"><span>Artist</span><span>Queue</span><span>Avg Time</span><span>Rev. Rate</span><span>CSAT Rating</span></div>
-                <div class="dp-tr tr-5" style="--ri:0"><span>Clara W.</span><span>2 active</span><span>22 hours</span><span>1.8%</span><span class="pstat-n g">4.9 ★</span></div>
-                <div class="dp-tr tr-5" style="--ri:1"><span>Nadia R.</span><span>3 active</span><span>28 hours</span><span>3.2%</span><span class="pstat-n g">4.8 ★</span></div>
-                <div class="dp-tr tr-5" style="--ri:2"><span>Alex M.</span><span>1 active</span><span>19 hours</span><span>0.8%</span><span class="pstat-n g">5.0 ★</span></div>
-                <div class="dp-tr tr-5" style="--ri:3"><span>Elena P.</span><span>4 active</span><span>34 hours</span><span>5.4%</span><span class="pstat-n g">4.7 ★</span></div>
-              </div>
-            </div>
-            <div style="margin-top:12px">
-              <div class="chart-lbl" style="margin-bottom:6px">Capacity Load Levels</div>
-              <div style="display:flex;flex-direction:column;gap:8px">
-                <div>
-                  <div style="display:flex;justify-content:between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
-                    <span>Studio Overall Capacity Fill</span>
-                    <span style="margin-left:auto">72%</span>
+              <div class="chart-wrap">
+                <div class="chart-lbl">Stripe Sales Revenue — Last 6 Months</div>
+                <div class="bars" id="sales-bars">
+                  <div class="bar-col">
+                    <div class="bar-wrap">
+                      <div class="bar" id="bar-0" style="--h:42%"><span class="bar-v">$1.4k</span></div>
+                    </div><span class="bar-m">Nov</span>
                   </div>
-                  <div class="perf-bar"><div class="perf-fill" data-w="72%"></div></div>
+                  <div class="bar-col">
+                    <div class="bar-wrap">
+                      <div class="bar" id="bar-1" style="--h:58%"><span class="bar-v">$1.9k</span></div>
+                    </div><span class="bar-m">Dec</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-wrap">
+                      <div class="bar" id="bar-2" style="--h:35%"><span class="bar-v">$1.2k</span></div>
+                    </div><span class="bar-m">Jan</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-wrap">
+                      <div class="bar" id="bar-3" style="--h:71%"><span class="bar-v">$2.3k</span></div>
+                    </div><span class="bar-m">Feb</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-wrap">
+                      <div class="bar" id="bar-4" style="--h:80%"><span class="bar-v">$2.6k</span></div>
+                    </div><span class="bar-m">Mar</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-wrap">
+                      <div class="bar active" id="bar-5" style="--h:88%"><span class="bar-v">$2.8k</span></div>
+                    </div><span class="bar-m">Apr</span>
+                  </div>
+                </div>
+                <div class="table-scroll" style="margin-top:8px">
+                  <div class="dp-table">
+                    <div class="dp-tr dp-th tr-5"><span>Item Description</span><span>Transaction
+                        ID</span><span>Processor</span><span>Amount</span><span>Status</span></div>
+                    <div class="dp-tr tr-5" style="--ri:0"><span>Watercolour Canvas
+                        Portrait</span><span>ch_3Mv8s9</span><span>Stripe</span><span
+                        class="pstat-n g">$120.00</span><span class="badge badge-done">Succeeded</span></div>
+                    <div class="dp-tr tr-5" style="--ri:1"><span>Golden Portrait
+                        Mug</span><span>ch_3Mv8t4</span><span>Apple Pay</span><span class="pstat-n g">$45.00</span><span
+                        class="badge badge-done">Succeeded</span></div>
+                    <div class="dp-tr tr-5" style="--ri:2"><span>Cartoon Tabby
+                        Poster</span><span>ch_3Mv8u2</span><span>Google Pay</span><span
+                        class="pstat-n g">$60.00</span><span class="badge badge-done">Succeeded</span></div>
+                    <div class="dp-tr tr-5" style="--ri:3"><span>Bunny Chibi Tote
+                        Bag</span><span>ch_3Mv8v1</span><span>Stripe</span><span class="pstat-n g">$55.00</span><span
+                        class="badge badge-done">Succeeded</span></div>
+                    <div class="dp-tr tr-5" style="--ri:4"><span>Parrot Watercolour Phone
+                        Case</span><span>ch_3Mv8w9</span><span>Stripe</span><span class="pstat-n g">$80.00</span><span
+                        class="badge badge-done">Succeeded</span></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- ANALYTICS -->
-          <div class="panel" id="panel-analytics">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Analytics</div><div class="ph-action">Last 30 Days</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">$2,840</span><span class="pstat-l">Revenue</span></div>
-                <div class="pstat"><span class="pstat-n">52</span><span class="pstat-l">Orders</span></div>
-                <div class="pstat"><span class="pstat-n">+18%</span><span class="pstat-l">Growth</span></div>
+            <!-- ARTIST PAYOUTS -->
+            <div class="panel" id="panel-payouts">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Artist Payouts</div>
+                  <div class="ph-action">Initiate Payout</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">$1,120</span><span class="pstat-l">Pending Payouts</span>
+                  </div>
+                  <div class="pstat"><span class="pstat-n">$3,450</span><span class="pstat-l">Paid MTD</span></div>
+                  <div class="pstat"><span class="pstat-n c">60%</span><span class="pstat-l">Avg Share Rate</span></div>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-5"><span>Artist</span><span>Commission</span><span>Pending
+                      Bal.</span><span>Method</span><span>Status</span></div>
+                  <div class="dp-tr tr-5" style="--ri:0"><span class="dp-cust"><span class="dp-av"
+                        style="background:#6366f1">C</span>Clara
+                      W.</span><span>60%</span><span>$450.00</span><span>Stripe Connect</span><span
+                      class="badge badge-done">Paid</span></div>
+                  <div class="dp-tr tr-5" style="--ri:1"><span class="dp-cust"><span class="dp-av"
+                        style="background:#10b981">N</span>Nadia
+                      R.</span><span>65%</span><span>$320.00</span><span>PayPal</span><span
+                      class="badge badge-new">Pending</span></div>
+                  <div class="dp-tr tr-5" style="--ri:2"><span class="dp-cust"><span class="dp-av"
+                        style="background:#8b5cf6">A</span>Alex M.</span><span>60%</span><span>$180.00</span><span>Wise
+                      Transfer</span><span class="badge badge-done">Paid</span></div>
+                  <div class="dp-tr tr-5" style="--ri:3"><span class="dp-cust"><span class="dp-av"
+                        style="background:#e11d48">E</span>Elena
+                      P.</span><span>60%</span><span>$170.00</span><span>Stripe Connect</span><span
+                      class="badge badge-prog">On Hold</span></div>
+                </div>
+              </div>
+              <div style="margin-top:10px">
+                <div class="chart-lbl" style="margin-bottom:6px">Payout Pool Reserve Progress</div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div>
+                    <div
+                      style="display:flex;justify-content:space-between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
+                      <span>Monthly payout pool reserve cap</span>
+                      <span style="margin-left:auto">$4,570 / $10,000</span>
+                    </div>
+                    <div class="payout-bar">
+                      <div class="payout-fill" data-w="45%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-summary">
+                <div>
+                  <div class="cs-label">Next Scheduled Payout Run</div>
+                  <div style="font-size:.66rem;color:var(--sub);margin-top:2px;font-family:var(--font-hud)">Automated
+                    bi-weekly artist distributions</div>
+                </div>
+                <div class="cs-value" style="color:var(--cyan);text-shadow:0 0 10px rgba(0,212,255,.3)">June 15, 2026
+                </div>
               </div>
             </div>
-            <div class="analytics-grid">
-              <div class="an-card"><div class="an-label">Conversion Rate</div><div class="an-value g">68.4%</div><div class="an-change up">↑ 4.2% vs last month</div><div class="mini-bar-row" id="mini-bars-conv"></div></div>
-              <div class="an-card"><div class="an-label">Avg Order Value</div><div class="an-value">$54.62</div><div class="an-change up">↑ $3.10 vs last month</div><div class="mini-bar-row" id="mini-bars-aov"></div></div>
-              <div class="an-card"><div class="an-label">New Customers</div><div class="an-value">14</div><div class="an-change dn">↓ 2 vs last month</div><div class="mini-bar-row" id="mini-bars-cust"></div></div>
-              <div class="an-card"><div class="an-label">Repeat Customers</div><div class="an-value g">38</div><div class="an-change up">↑ 5 vs last month</div><div class="mini-bar-row" id="mini-bars-rep"></div></div>
-            </div>
-          </div>
 
-          <!-- FORECAST -->
-          <div class="panel" id="panel-forecast">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Revenue Forecast</div><div class="ph-action">3-Month View</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">$9,240</span><span class="pstat-l">Q2 Projected</span></div>
-                <div class="pstat"><span class="pstat-n c">+22%</span><span class="pstat-l">YoY Growth</span></div>
+            <!-- USERS -->
+            <div class="panel" id="panel-users">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// User Management &amp; Audit Logs</div>
+                  <div class="ph-action">+ Invite</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">286</span><span class="pstat-l">Total Users</span></div>
+                  <div class="pstat"><span class="pstat-n">3</span><span class="pstat-l">System Admins</span></div>
+                  <div class="pstat"><span class="pstat-n c">12</span><span class="pstat-l">Active Sessions</span></div>
+                </div>
+              </div>
+              <div class="chips">
+                <div class="chip active">User Directory</div>
+                <div class="chip">Audit Logs</div>
+              </div>
+              <!-- User Table -->
+              <div class="table-scroll">
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-4"><span>User</span><span>Role</span><span>Joined</span><span>Status</span>
+                  </div>
+                  <div class="dp-tr tr-4" style="--ri:0"><span class="dp-cust"><span class="dp-av"
+                        style="background:#00e599;color:#000">M</span>Manoj S.</span><span>Admin</span><span>Jan
+                      2024</span><span class="badge badge-done">Active</span></div>
+                  <div class="dp-tr tr-4" style="--ri:1"><span class="dp-cust"><span class="dp-av"
+                        style="background:#6366f1">C</span>Clara W.</span><span>Artist</span><span>Mar 2024</span><span
+                      class="badge badge-done">Active</span></div>
+                  <div class="dp-tr tr-4" style="--ri:2"><span class="dp-cust"><span class="dp-av"
+                        style="background:#f59e0b">T</span>Tom B.</span><span>Customer</span><span>Apr 2025</span><span
+                      class="badge badge-prog">Review</span></div>
+                </div>
+              </div>
+              <!-- Audit Logs section -->
+              <div style="margin-top:6px">
+                <div class="chart-lbl" style="margin-bottom:6px">// Real-Time Security Audit Logs</div>
+                <div class="table-scroll">
+                  <div class="dp-table" style="font-size:.68rem">
+                    <div class="dp-tr dp-th tr-4"><span>Actor</span><span>Action Performed</span><span>IP /
+                        Host</span><span>Timestamp</span></div>
+                    <div class="dp-tr tr-4" style="--ri:0"><span>Manoj S.</span><span>Approved refund
+                        ch_3Mv8s9</span><span>120.18.23.44</span><span>2m ago</span></div>
+                    <div class="dp-tr tr-4" style="--ri:1"><span>System Bot</span><span>Synced order #POD-441 Gelato
+                        API</span><span>-</span><span>15m ago</span></div>
+                    <div class="dp-tr tr-4" style="--ri:2"><span>Clara W.</span><span>Uploaded PNG artwork for
+                        #441</span><span>192.168.1.10</span><span>1h ago</span></div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="forecast-grid">
-              <div class="fc-card">
-                <div class="fc-month">May 2026</div><div class="fc-value up">$3,080</div>
-                <div class="fc-change">↑ +8.5% projected</div>
-                <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="78%"></div></div>
-              </div>
-              <div class="fc-card">
-                <div class="fc-month">Jun 2026</div><div class="fc-value up">$3,290</div>
-                <div class="fc-change">↑ +6.8% projected</div>
-                <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="83%"></div></div>
-              </div>
-              <div class="fc-card">
-                <div class="fc-month">Jul 2026</div><div class="fc-value up">$3,870</div>
-                <div class="fc-change">↑ +17.6% seasonal peak</div>
-                <div class="fc-bar"><div class="fc-fill" style="width:0%" data-w="98%"></div></div>
-              </div>
-            </div>
-            <div style="margin-top:12px;font-size:.66rem;color:var(--sub);font-family:var(--font-hud);border:1px solid rgba(0,229,153,.1);border-radius:8px;padding:10px 14px;background:rgba(0,229,153,.03)">
-              <span style="color:var(--green)">// AI INSIGHT:</span> Peak demand expected mid-July. Consider pre-loading POD inventory and onboarding an additional artist by June to maintain delivery rates above 98%.
-            </div>
-          </div>
 
-          <!-- SYSTEM -->
-          <div class="panel" id="panel-system">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// System Status</div><div class="ph-action">Refresh</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">99.97%</span><span class="pstat-l">Uptime</span></div>
-                <div class="pstat"><span class="pstat-n c">42ms</span><span class="pstat-l">API Latency</span></div>
+            <!-- ARTWORK -->
+            <div class="panel" id="panel-artwork">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Artwork Gallery</div>
+                  <div class="ph-action">Upload New</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">94</span><span class="pstat-l">Artworks</span></div>
+                  <div class="pstat"><span class="pstat-n">6</span><span class="pstat-l">Styles</span></div>
+                  <div class="pstat"><span class="pstat-n">4</span><span class="pstat-l">Artists</span></div>
+                </div>
+              </div>
+              <div class="chips">
+                <div class="chip active">All Styles</div>
+                <div class="chip">Watercolour</div>
+                <div class="chip">Portrait</div>
+                <div class="chip">Chibi</div>
+                <div class="chip">Cartoon</div>
+              </div>
+              <div class="art-grid">
+                <div class="art-card"><span class="art-em">🐺</span><span class="art-lbl">Husky</span><span
+                    class="art-sty">Watercolour</span></div>
+                <div class="art-card"><span class="art-em">🐶</span><span class="art-lbl">Golden</span><span
+                    class="art-sty">Portrait</span></div>
+                <div class="art-card"><span class="art-em">🐱</span><span class="art-lbl">Tabby</span><span
+                    class="art-sty">Cartoon</span></div>
+                <div class="art-card"><span class="art-em">🦜</span><span class="art-lbl">Parrot</span><span
+                    class="art-sty">Chibi</span></div>
+                <div class="art-card"><span class="art-em">🐰</span><span class="art-lbl">Bunny</span><span
+                    class="art-sty">Chibi</span></div>
+                <div class="art-card"><span class="art-em">🐠</span><span class="art-lbl">Clownfish</span><span
+                    class="art-sty">Cartoon</span></div>
               </div>
             </div>
-            <div class="sys-grid">
-              <div class="sys-card">
-                <div class="sys-row"><div class="sys-label">API Gateway</div><div class="sys-status ok"><span style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online</div></div>
-                <div class="sys-metric">Requests: 1,248 / min</div>
-                <div class="sys-pct-bar"><div class="sys-pct-fill" style="width:0%" data-w="62%"></div></div>
-              </div>
-              <div class="sys-card">
-                <div class="sys-row"><div class="sys-label">Database</div><div class="sys-status ok"><span style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online</div></div>
-                <div class="sys-metric">Read: 0.8ms · Write: 1.2ms</div>
-                <div class="sys-pct-bar"><div class="sys-pct-fill" style="width:0%" data-w="28%"></div></div>
-              </div>
-              <div class="sys-card">
-                <div class="sys-row"><div class="sys-label">CDN</div><div class="sys-status ok"><span style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online</div></div>
-                <div class="sys-metric">Hit rate: 94.2% · 18 edge nodes</div>
-                <div class="sys-pct-bar"><div class="sys-pct-fill" style="width:0%" data-w="94%"></div></div>
-              </div>
-              <div class="sys-card">
-                <div class="sys-row"><div class="sys-label">POD Integration</div><div class="sys-status warn"><span style="width:5px;height:5px;border-radius:50%;background:#fbbf24"></span>Degraded</div></div>
-                <div class="sys-metric">Partial outage: provider API</div>
-                <div class="sys-pct-bar"><div class="sys-pct-fill warn" style="width:0%" data-w="45%"></div></div>
-              </div>
-            </div>
-            <div class="table-scroll" style="margin-top:4px">
-              <div class="dp-table">
-                <div class="dp-tr dp-th tr-3"><span>Event</span><span>Time</span><span>Status</span></div>
-                <div class="dp-tr tr-3" style="--ri:0"><span>Backup completed</span><span>02:00 AEST</span><span class="badge badge-done">OK</span></div>
-                <div class="dp-tr tr-3" style="--ri:1"><span>POD API slowdown</span><span>08:42 AEST</span><span class="badge badge-new">Warn</span></div>
-                <div class="dp-tr tr-3" style="--ri:2"><span>Auto-scale triggered</span><span>11:14 AEST</span><span class="badge badge-prog">Info</span></div>
-              </div>
-            </div>
-          </div>
 
-          <!-- NOTIFICATIONS -->
-          <div class="panel" id="panel-notifications">
-            <div class="ph">
-              <div class="ph-row"><div class="ph-title">// Notifications</div><div class="ph-action">Mark All Read</div></div>
-              <div class="ph-stats">
-                <div class="pstat"><span class="pstat-n g">3</span><span class="pstat-l">Unread</span></div>
-                <div class="pstat"><span class="pstat-n">12</span><span class="pstat-l">This Week</span></div>
+            <!-- DISPUTES & REFUNDS -->
+            <div class="panel" id="panel-disputes">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Disputes &amp; Refunds</div>
+                  <div class="ph-action">Sync Stripe</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n"
+                      style="color:#ef4444;text-shadow:0 0 8px rgba(239,68,68,.3)">1</span><span class="pstat-l">Active
+                      Dispute</span></div>
+                  <div class="pstat"><span class="pstat-n">1.2%</span><span class="pstat-l">Refund Rate</span></div>
+                  <div class="pstat"><span class="pstat-n g">$75.00</span><span class="pstat-l">Disputed Amount</span>
+                  </div>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-5"><span>Tx
+                      ID</span><span>Customer</span><span>Reason</span><span>Amount</span><span>Status</span></div>
+                  <div class="dp-tr tr-5" style="--ri:0"><span>ch_3Mv8s9</span><span>Sarah M.</span><span>Print quality
+                      bleed</span><span>$75.00</span><span class="badge badge-new"
+                      style="background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.2)">Disputed
+                      (Stripe)</span></div>
+                  <div class="dp-tr tr-5" style="--ri:1"><span>ch_3Mv8t4</span><span>James R.</span><span>Accidental
+                      double order</span><span>$90.00</span><span class="badge badge-done">Refunded</span></div>
+                  <div class="dp-tr tr-5" style="--ri:2"><span>ch_3Mv8u2</span><span>Amy K.</span><span>Damaged print
+                      frame</span><span>$45.00</span><span class="badge badge-done">Refunded (Manual)</span></div>
+                </div>
+              </div>
+              <div
+                style="margin-top:12px;font-size:.66rem;color:var(--sub);font-family:var(--font-hud);border:1px solid rgba(239,68,68,.15);border-radius:8px;padding:10px 14px;background:rgba(239,68,68,.03)">
+                <span style="color:#ef4444">// STRIPE ALIGNMENT:</span> Dispute `ch_3Mv8s9` requires response by June
+                10, 2026. Submit high-res design proof and tracking history to challenge.
               </div>
             </div>
-            <div class="notif-list">
-              <div class="notif-item unread" style="--ni:0">
-                <div class="notif-dot"></div>
-                <div class="notif-icon green">🎨</div>
-                <div class="notif-body"><div class="notif-title">New order from Sarah M.</div><div class="notif-sub">Husky watercolour portrait — $75</div></div>
-                <div class="notif-time">2m ago</div>
+
+            <!-- PROMO CODES -->
+            <div class="panel" id="panel-promo">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Promo Codes &amp; Coupons</div>
+                  <div class="ph-action">+ Create Code</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">4</span><span class="pstat-l">Active Codes</span></div>
+                  <div class="pstat"><span class="pstat-n">184</span><span class="pstat-l">Redemptions</span></div>
+                  <div class="pstat"><span class="pstat-n c">$854.50</span><span class="pstat-l">Total Discounted</span>
+                  </div>
+                </div>
               </div>
-              <div class="notif-item unread" style="--ni:1">
-                <div class="notif-dot"></div>
-                <div class="notif-icon amber">⭐</div>
-                <div class="notif-body"><div class="notif-title">5-star review received</div><div class="notif-sub">James R. left a review on Golden Portrait</div></div>
-                <div class="notif-time">14m ago</div>
+              <div class="table-scroll">
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-5"><span>Code</span><span>Discount</span><span>Usage</span><span>Limit /
+                      Cap</span><span>Status</span></div>
+                  <div class="dp-tr tr-5" style="--ri:0"><span>PURRFECT10</span><span>10% OFF</span><span>98
+                      used</span><span>Unlimited</span><span class="badge badge-done">Active</span></div>
+                  <div class="dp-tr tr-5" style="--ri:1"><span>PETLOVE20</span><span>20% OFF</span><span>45
+                      used</span><span>100 Max</span><span class="badge badge-done">Active</span></div>
+                  <div class="dp-tr tr-5" style="--ri:2"><span>WELCOME5</span><span>$5.00 FLAT</span><span>32
+                      used</span><span>Unlimited</span><span class="badge badge-done">Active</span></div>
+                  <div class="dp-tr tr-5" style="--ri:3"><span>SPRINGART</span><span>15% OFF</span><span>9
+                      used</span><span>Expired</span><span class="badge badge-prog"
+                      style="background:rgba(122,122,138,.1);color:var(--sub);border-color:rgba(122,122,138,.2)">Expired</span>
+                  </div>
+                </div>
               </div>
-              <div class="notif-item unread" style="--ni:2">
-                <div class="notif-dot"></div>
-                <div class="notif-icon blue">📦</div>
-                <div class="notif-body"><div class="notif-title">POD order #441 shipped</div><div class="notif-sub">Mug — estimated delivery in 3 days</div></div>
-                <div class="notif-time">1h ago</div>
-              </div>
-              <div class="notif-item" style="--ni:3">
-                <div class="notif-icon green">💰</div>
-                <div class="notif-body"><div class="notif-title">Monthly revenue milestone</div><div class="notif-sub">You crossed $2,500 for April</div></div>
-                <div class="notif-time">3h ago</div>
-              </div>
-              <div class="notif-item" style="--ni:4">
-                <div class="notif-icon amber">🎯</div>
-                <div class="notif-body"><div class="notif-title">Order #POD-440 delivered</div><div class="notif-sub">Canvas delivered to Amy K.</div></div>
-                <div class="notif-time">Yesterday</div>
+              <div class="promo-metrics" style="margin-top:12px">
+                <div class="chart-lbl" style="margin-bottom:6px">Campaign Usage Cap Fill</div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div>
+                    <div
+                      style="display:flex;justify-content:between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
+                      <span>PETLOVE20 Campaign Progress</span>
+                      <span style="margin-left:auto">45% (45 / 100)</span>
+                    </div>
+                    <div class="promo-bar">
+                      <div class="promo-fill" data-w="45%"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-        </div><!-- /.demo-main -->
-      </div><!-- /.demo-body -->
-    </div><!-- /.demo-frame -->
-  </section>
+            <!-- ANTI FRAUD -->
+            <div class="panel" id="panel-antifraud">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Anti-Fraud &amp; Risk Control</div>
+                  <div class="ph-action">Scan Queue</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">Low</span><span class="pstat-l">Global Risk</span></div>
+                  <div class="pstat"><span class="pstat-n">24</span><span class="pstat-l">Blocked IPs</span></div>
+                  <div class="pstat"><span class="pstat-n" style="color:#fbbf24">1</span><span class="pstat-l">Review
+                      Flagged</span></div>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-5"><span>Tx / IP</span><span>Location</span><span>Risk
+                      Score</span><span>Flags</span><span>Action</span></div>
+                  <div class="dp-tr tr-5" style="--ri:0"><span>185.190.140.10</span><span>St. Petersburg
+                      (VPN)</span><span class="pstat-n" style="color:#ef4444">88 / 100</span><span>Proxy / VPN
+                      block</span><span class="badge badge-new"
+                      style="background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.2)">Auto-Blocked</span>
+                  </div>
+                  <div class="dp-tr tr-5" style="--ri:1"><span>94.23.48.12</span><span>Sydney, AU</span><span
+                      class="pstat-n g">12 / 100</span><span>Card Match</span><span
+                      class="badge badge-done">Approved</span></div>
+                  <div class="dp-tr tr-5" style="--ri:2"><span>195.22.122.50</span><span>Unknown Proxy</span><span
+                      class="pstat-n" style="color:#fbbf24">65 / 100</span><span>Card mismatch</span><span
+                      class="badge badge-prog"
+                      style="background:rgba(251,191,36,.1);color:#fbbf24;border-color:rgba(251,191,36,.2)">Hold for
+                      Review</span></div>
+                </div>
+              </div>
+              <div class="risk-meter-section" style="margin-top:8px">
+                <div class="chart-lbl" style="margin-bottom:6px">Risk Vector Breakdown</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div
+                    style="background:rgba(255,255,255,.02);border:1px solid rgba(0,229,153,.05);border-radius:8px;padding:10px">
+                    <div style="font-size:.6rem;font-family:var(--font-hud);color:var(--sub)">Velocity Testing Limit
+                    </div>
+                    <div class="pstat-n g" style="margin:4px 0">Normal</div>
+                    <div class="risk-bar">
+                      <div class="risk-fill" data-w="15%"></div>
+                    </div>
+                  </div>
+                  <div
+                    style="background:rgba(255,255,255,.02);border:1px solid rgba(0,229,153,.05);border-radius:8px;padding:10px">
+                    <div style="font-size:.6rem;font-family:var(--font-hud);color:var(--sub)">Proxy Attack Score</div>
+                    <div class="pstat-n" style="color:#fbbf24;margin:4px 0">Moderate Alert</div>
+                    <div class="risk-bar">
+                      <div class="risk-fill high" data-w="65%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  <hr class="divider"/>
+            <!-- ARTIST PERFORMANCE -->
+            <div class="panel" id="panel-performance">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Artist Performance Tracker</div>
+                  <div class="ph-action">Export Report</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">24.2h</span><span class="pstat-l">Avg Turnaround</span>
+                  </div>
+                  <div class="pstat"><span class="pstat-n">2.8%</span><span class="pstat-l">Revision Rate</span></div>
+                  <div class="pstat"><span class="pstat-n g">4.9 ★</span><span class="pstat-l">Avg CSAT Rating</span>
+                  </div>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-5"><span>Artist</span><span>Queue</span><span>Avg Time</span><span>Rev.
+                      Rate</span><span>CSAT Rating</span></div>
+                  <div class="dp-tr tr-5" style="--ri:0"><span>Clara W.</span><span>2 active</span><span>22
+                      hours</span><span>1.8%</span><span class="pstat-n g">4.9 ★</span></div>
+                  <div class="dp-tr tr-5" style="--ri:1"><span>Nadia R.</span><span>3 active</span><span>28
+                      hours</span><span>3.2%</span><span class="pstat-n g">4.8 ★</span></div>
+                  <div class="dp-tr tr-5" style="--ri:2"><span>Alex M.</span><span>1 active</span><span>19
+                      hours</span><span>0.8%</span><span class="pstat-n g">5.0 ★</span></div>
+                  <div class="dp-tr tr-5" style="--ri:3"><span>Elena P.</span><span>4 active</span><span>34
+                      hours</span><span>5.4%</span><span class="pstat-n g">4.7 ★</span></div>
+                </div>
+              </div>
+              <div style="margin-top:12px">
+                <div class="chart-lbl" style="margin-bottom:6px">Capacity Load Levels</div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div>
+                    <div
+                      style="display:flex;justify-content:between;font-size:.6rem;font-family:var(--font-hud);color:var(--sub);margin-bottom:3px">
+                      <span>Studio Overall Capacity Fill</span>
+                      <span style="margin-left:auto">72%</span>
+                    </div>
+                    <div class="perf-bar">
+                      <div class="perf-fill" data-w="72%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  <!-- ── CTA ── -->
-  <div class="cta reveal reveal-up" id="cta-download">
-    <div class="cta-rings">
-      <div class="cta-ring"></div>
-      <div class="cta-ring"></div>
-      <div class="cta-ring"></div>
-      <div class="cta-ring"></div>
-    </div>
-    <div class="cta-inner">
-      <h2>Download <em>free</em> today.</h2>
-      <p>Built by Manoj Shrees. No cost, no subscriptions, no limits.</p>
-      <div class="hero-dl">
-        <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
-          <svg width="20" height="24" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg"><path d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z"/></svg>
-          <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
-        </a>
-        <a href="https://admin.purrfectpal.studio/assets/macos/PPS-admin-app.dmg" class="abtn mac">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
-        </a>
+            <!-- ANALYTICS -->
+            <div class="panel" id="panel-analytics">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Analytics</div>
+                  <div class="ph-action">Last 30 Days</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">$2,840</span><span class="pstat-l">Revenue</span></div>
+                  <div class="pstat"><span class="pstat-n">52</span><span class="pstat-l">Orders</span></div>
+                  <div class="pstat"><span class="pstat-n">+18%</span><span class="pstat-l">Growth</span></div>
+                </div>
+              </div>
+              <div class="analytics-grid">
+                <div class="an-card">
+                  <div class="an-label">Conversion Rate</div>
+                  <div class="an-value g">68.4%</div>
+                  <div class="an-change up">↑ 4.2% vs last month</div>
+                  <div class="mini-bar-row" id="mini-bars-conv"></div>
+                </div>
+                <div class="an-card">
+                  <div class="an-label">Avg Order Value</div>
+                  <div class="an-value">$54.62</div>
+                  <div class="an-change up">↑ $3.10 vs last month</div>
+                  <div class="mini-bar-row" id="mini-bars-aov"></div>
+                </div>
+                <div class="an-card">
+                  <div class="an-label">New Customers</div>
+                  <div class="an-value">14</div>
+                  <div class="an-change dn">↓ 2 vs last month</div>
+                  <div class="mini-bar-row" id="mini-bars-cust"></div>
+                </div>
+                <div class="an-card">
+                  <div class="an-label">Repeat Customers</div>
+                  <div class="an-value g">38</div>
+                  <div class="an-change up">↑ 5 vs last month</div>
+                  <div class="mini-bar-row" id="mini-bars-rep"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FORECAST -->
+            <div class="panel" id="panel-forecast">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Revenue Forecast</div>
+                  <div class="ph-action">3-Month View</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">$9,240</span><span class="pstat-l">Q2 Projected</span>
+                  </div>
+                  <div class="pstat"><span class="pstat-n c">+22%</span><span class="pstat-l">YoY Growth</span></div>
+                </div>
+              </div>
+              <div class="forecast-grid">
+                <div class="fc-card">
+                  <div class="fc-month">May 2026</div>
+                  <div class="fc-value up">$3,080</div>
+                  <div class="fc-change">↑ +8.5% projected</div>
+                  <div class="fc-bar">
+                    <div class="fc-fill" style="width:0%" data-w="78%"></div>
+                  </div>
+                </div>
+                <div class="fc-card">
+                  <div class="fc-month">Jun 2026</div>
+                  <div class="fc-value up">$3,290</div>
+                  <div class="fc-change">↑ +6.8% projected</div>
+                  <div class="fc-bar">
+                    <div class="fc-fill" style="width:0%" data-w="83%"></div>
+                  </div>
+                </div>
+                <div class="fc-card">
+                  <div class="fc-month">Jul 2026</div>
+                  <div class="fc-value up">$3,870</div>
+                  <div class="fc-change">↑ +17.6% seasonal peak</div>
+                  <div class="fc-bar">
+                    <div class="fc-fill" style="width:0%" data-w="98%"></div>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="margin-top:12px;font-size:.66rem;color:var(--sub);font-family:var(--font-hud);border:1px solid rgba(0,229,153,.1);border-radius:8px;padding:10px 14px;background:rgba(0,229,153,.03)">
+                <span style="color:var(--green)">// AI INSIGHT:</span> Peak demand expected mid-July. Consider
+                pre-loading POD inventory and onboarding an additional artist by June to maintain delivery rates above
+                98%.
+              </div>
+            </div>
+
+            <!-- SYSTEM -->
+            <div class="panel" id="panel-system">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// System Status</div>
+                  <div class="ph-action">Refresh</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">99.97%</span><span class="pstat-l">Uptime</span></div>
+                  <div class="pstat"><span class="pstat-n c">42ms</span><span class="pstat-l">API Latency</span></div>
+                </div>
+              </div>
+              <div class="sys-grid">
+                <div class="sys-card">
+                  <div class="sys-row">
+                    <div class="sys-label">API Gateway</div>
+                    <div class="sys-status ok"><span
+                        style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online
+                    </div>
+                  </div>
+                  <div class="sys-metric">Requests: 1,248 / min</div>
+                  <div class="sys-pct-bar">
+                    <div class="sys-pct-fill" style="width:0%" data-w="62%"></div>
+                  </div>
+                </div>
+                <div class="sys-card">
+                  <div class="sys-row">
+                    <div class="sys-label">Database</div>
+                    <div class="sys-status ok"><span
+                        style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online
+                    </div>
+                  </div>
+                  <div class="sys-metric">Read: 0.8ms · Write: 1.2ms</div>
+                  <div class="sys-pct-bar">
+                    <div class="sys-pct-fill" style="width:0%" data-w="28%"></div>
+                  </div>
+                </div>
+                <div class="sys-card">
+                  <div class="sys-row">
+                    <div class="sys-label">CDN</div>
+                    <div class="sys-status ok"><span
+                        style="width:5px;height:5px;border-radius:50%;background:#00e599;box-shadow:0 0 5px #00e599"></span>Online
+                    </div>
+                  </div>
+                  <div class="sys-metric">Hit rate: 94.2% · 18 edge nodes</div>
+                  <div class="sys-pct-bar">
+                    <div class="sys-pct-fill" style="width:0%" data-w="94%"></div>
+                  </div>
+                </div>
+                <div class="sys-card">
+                  <div class="sys-row">
+                    <div class="sys-label">POD Integration</div>
+                    <div class="sys-status warn"><span
+                        style="width:5px;height:5px;border-radius:50%;background:#fbbf24"></span>Degraded</div>
+                  </div>
+                  <div class="sys-metric">Partial outage: provider API</div>
+                  <div class="sys-pct-bar">
+                    <div class="sys-pct-fill warn" style="width:0%" data-w="45%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="table-scroll" style="margin-top:4px">
+                <div class="dp-table">
+                  <div class="dp-tr dp-th tr-3"><span>Event</span><span>Time</span><span>Status</span></div>
+                  <div class="dp-tr tr-3" style="--ri:0"><span>Backup completed</span><span>02:00 AEST</span><span
+                      class="badge badge-done">OK</span></div>
+                  <div class="dp-tr tr-3" style="--ri:1"><span>POD API slowdown</span><span>08:42 AEST</span><span
+                      class="badge badge-new">Warn</span></div>
+                  <div class="dp-tr tr-3" style="--ri:2"><span>Auto-scale triggered</span><span>11:14 AEST</span><span
+                      class="badge badge-prog">Info</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- NOTIFICATIONS -->
+            <div class="panel" id="panel-notifications">
+              <div class="ph">
+                <div class="ph-row">
+                  <div class="ph-title">// Notifications</div>
+                  <div class="ph-action">Mark All Read</div>
+                </div>
+                <div class="ph-stats">
+                  <div class="pstat"><span class="pstat-n g">3</span><span class="pstat-l">Unread</span></div>
+                  <div class="pstat"><span class="pstat-n">12</span><span class="pstat-l">This Week</span></div>
+                </div>
+              </div>
+              <div class="notif-list">
+                <div class="notif-item unread" style="--ni:0">
+                  <div class="notif-dot"></div>
+                  <div class="notif-icon green">🎨</div>
+                  <div class="notif-body">
+                    <div class="notif-title">New order from Sarah M.</div>
+                    <div class="notif-sub">Husky watercolour portrait — $75</div>
+                  </div>
+                  <div class="notif-time">2m ago</div>
+                </div>
+                <div class="notif-item unread" style="--ni:1">
+                  <div class="notif-dot"></div>
+                  <div class="notif-icon amber">⭐</div>
+                  <div class="notif-body">
+                    <div class="notif-title">5-star review received</div>
+                    <div class="notif-sub">James R. left a review on Golden Portrait</div>
+                  </div>
+                  <div class="notif-time">14m ago</div>
+                </div>
+                <div class="notif-item unread" style="--ni:2">
+                  <div class="notif-dot"></div>
+                  <div class="notif-icon blue">📦</div>
+                  <div class="notif-body">
+                    <div class="notif-title">POD order #441 shipped</div>
+                    <div class="notif-sub">Mug — estimated delivery in 3 days</div>
+                  </div>
+                  <div class="notif-time">1h ago</div>
+                </div>
+                <div class="notif-item" style="--ni:3">
+                  <div class="notif-icon green">💰</div>
+                  <div class="notif-body">
+                    <div class="notif-title">Monthly revenue milestone</div>
+                    <div class="notif-sub">You crossed $2,500 for April</div>
+                  </div>
+                  <div class="notif-time">3h ago</div>
+                </div>
+                <div class="notif-item" style="--ni:4">
+                  <div class="notif-icon amber">🎯</div>
+                  <div class="notif-body">
+                    <div class="notif-title">Order #POD-440 delivered</div>
+                    <div class="notif-sub">Canvas delivered to Amy K.</div>
+                  </div>
+                  <div class="notif-time">Yesterday</div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /.demo-main -->
+        </div><!-- /.demo-body -->
+      </div><!-- /.demo-frame -->
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── CTA ── -->
+    <div class="cta reveal reveal-up" id="cta-download">
+      <div class="cta-rings">
+        <div class="cta-ring"></div>
+        <div class="cta-ring"></div>
+        <div class="cta-ring"></div>
+        <div class="cta-ring"></div>
+      </div>
+      <div class="cta-inner">
+        <h2>Download <em>free</em> today.</h2>
+        <p>Built by Manoj Shrees. No cost, no subscriptions, no limits.</p>
+        <div class="hero-dl">
+          <a href="https://apps.apple.com/au/app/purrfect-pal-studio/id6759013431" target="_blank" class="abtn ios">
+            <svg width="20" height="24" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14.94 11.63c-.02-2.67 2.18-3.96 2.28-4.02-1.24-1.81-3.17-2.06-3.86-2.09-1.64-.17-3.2.97-4.03.97-.83 0-2.12-.94-3.49-.92-1.8.03-3.45 1.05-4.37 2.65C-.56 11.44.79 16.22 2.52 18.82c.88 1.28 1.94 2.72 3.32 2.67 1.33-.06 1.83-.86 3.44-.86s2.07.86 3.49.83c1.44-.02 2.35-1.31 3.22-2.6 1.01-1.49 1.43-2.93 1.45-3.01-.03-.01-2.78-1.07-2.78-4.22zM12.11 3.73c.73-.89 1.23-2.12 1.09-3.36-1.06.04-2.34.7-3.1 1.59-.68.78-1.27 2.04-1.11 3.25 1.18.09 2.38-.6 3.12-1.48z" />
+            </svg>
+            <div class="abtn-text"><span class="ts">Download on the</span><span class="tb">App Store</span></div>
+          </a>
+          <a href="https://admin.purrfectpal.studio/assets/macos/PPS-admin-app.dmg" class="abtn mac">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            <div class="abtn-text"><span class="ts">Download for</span><span class="tb">macOS</span></div>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ── FOOTER ── -->
-  <footer>
-    <a href="https://purrfectpal.studio" target="_blank" class="f-brand">
-      <img class="f-logo"
-        src="https://www.purrfectpal.studio/assets/images/pps-logo.png"
-        alt="PPS"
-        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-      <span class="f-logo-fb">PPS</span>
-      <span class="f-nm">Purrfect Pal Studio</span>
-    </a>
-    <ul class="f-links">
-      <li><a href="https://purrfectpal.studio/PrivacyPolicy" target="_blank">Privacy Policy</a></li>
-      <li><a href="https://purrfectpal.studio" target="_blank">Website</a></li>
-      <li><a href="https://www.manojshrees.dev" target="_blank">Manoj Shrees</a></li>
-    </ul>
-    <span class="f-copy">© 2026 Purrfect Pal Studio</span>
-  </footer>
+    <!-- ── FOOTER ── -->
+    <footer>
+      <a href="https://purrfectpal.studio" target="_blank" class="f-brand">
+        <img class="f-logo" src="https://www.purrfectpal.studio/assets/images/pps-logo.png" alt="PPS"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+        <span class="f-logo-fb">PPS</span>
+        <span class="f-nm">Purrfect Pal Studio</span>
+      </a>
+      <ul class="f-links">
+        <li><a href="https://purrfectpal.studio/PrivacyPolicy" target="_blank">Privacy Policy</a></li>
+        <li><a href="https://purrfectpal.studio" target="_blank">Website</a></li>
+        <li><a href="https://www.manojshrees.dev" target="_blank">Manoj Shrees</a></li>
+      </ul>
+      <span class="f-copy">© 2026 Purrfect Pal Studio</span>
+    </footer>
 
-</div><!-- /.page -->
-<script src="js/main.js"></script>
+  </div><!-- /.page -->
+  <script src="js/main.js"></script>
 </body>
+
 </html>
