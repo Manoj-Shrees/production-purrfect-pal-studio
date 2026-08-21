@@ -1,0 +1,129 @@
+/* Global Styles */
+html,
+body {
+  height: auto;
+  /* ✅ allow full scroll height */
+  overflow-x: hidden;
+  /* ✅ prevent horizontal scroll */
+  overflow-y: auto;
+  /* ✅ allow vertical scroll */
+}
+
+
+:root {
+  --nav-height: 56px;
+  /* default desktop height */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --nav-height: 80px;
+    /* mobile height */
+  }
+}
+
+body {
+  padding-top: var(--nav-height);
+  margin: 0;
+}
+
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* global styles.css or component's styles */
+.custom-snackbar {
+  margin-bottom: 10% !important;
+  /* 🔸 Adds margin from bottom */
+  background-color: #222 !important;
+  /* 🔸 Custom background */
+  color: #fff !important;
+  /* 🔸 Text color */
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cdk-overlay-container {
+  z-index: 1100 !important;
+}
+
+@font-face {
+  font-family: 'GreatVibe';
+  src: url('/assets/fonts/PredikatOneday.ttf') format('truetype');
+}
+
+/* Promo Banner Layout Adjustments */
+body.has-promo-banner {
+  padding-top: calc(var(--nav-height) + 38px) !important;
+}
+body.has-promo-banner .navbar.fixed-top {
+  top: 38px !important;
+}
+
+@media (max-width: 768px) {
+  body.has-promo-banner {
+    padding-top: calc(var(--nav-height) + 84px) !important;
+  }
+  body.has-promo-banner .navbar.fixed-top {
+    top: 84px !important;
+  }
+}
+
+/* ── Unified Shop Now Button ───────────────────────────────────────────── */
+.btn-shop {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  border-radius: 50px !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  font-size: 0.92rem !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: #1e293b !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.btn-shop:hover {
+  background: #ffffff !important;
+  color: #2f8bfd !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 8px 22px rgba(47, 139, 253, 0.35) !important;
+  transform: translateY(-2px) scale(1.03) !important;
+}
+
+.btn-shop i {
+  display: inline-block !important;
+  transition: transform 0.3s ease !important;
+  font-size: 0.9em !important;
+}
+
+.btn-shop:hover i {
+  animation: paw-wiggle 0.6s infinite alternate !important;
+}
+
+@keyframes paw-wiggle {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(15deg); }
+}
+
+@media (max-width: 768px) {
+  .btn-shop {
+    padding: 7px 15px !important;
+    font-size: 0.85rem !important;
+  }
+}

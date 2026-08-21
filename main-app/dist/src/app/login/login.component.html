@@ -1,0 +1,177 @@
+<!-- ══════════════════════════════════════════════════════
+     Login Page — fully responsive
+     ══════════════════════════════════════════════════════ -->
+
+<div class="container py-4 d-flex justify-content-center align-items-center login-container">
+  <div class="row w-100 justify-content-center">
+
+    <div class="col-12 mx-auto">
+
+      <!-- Extra top margin so badge never clips the viewport edge -->
+      <div class="login-card shadow position-relative overflow-visible mt-5 mt-sm-4 mb-4">
+
+        <!-- ── Centered Badge Logo ──────────────────────────── -->
+        <div class="logo-wrapper text-center">
+          <a routerLink="/Home" style="cursor:pointer;">
+            <div class="logo-badge">
+              <img src="/assets/images/pps-logo.png"
+                   alt="Purrfect Pal Studio Logo"
+                   draggable="false"
+                   oncontextmenu="return false;"
+                   class="img-fluid" />
+            </div>
+          </a>
+        </div>
+
+        <!-- ── Card Body ────────────────────────────────────── -->
+        <div class="card-body px-3 px-sm-4 mt-5">
+
+          <!-- Title block -->
+          <div class="text-center title-offset">
+            <h1 class="card-title fw-bold mb-1">Purrfect Pal Studio</h1>
+            <p class="text-muted mb-3" style="font-size: clamp(0.78rem, 2.5vw, 0.95rem);">
+              Welcome back! Please enter your credentials to log in.
+            </p>
+          </div>
+
+          <!-- ── IP LOCKOUT BANNER ─────────────────────────────── -->
+          <div class="lockout-banner" *ngIf="isBlocked">
+            <div class="lockout-icon">
+              <div class="lock-pulse"></div>
+              <span class="lock-emoji">🔒</span>
+            </div>
+            <div class="lockout-body">
+              <div class="lockout-title">Access Temporarily Blocked</div>
+              <div class="lockout-msg">Too many failed attempts. Please wait before trying again.</div>
+              <div class="lockout-timer-row">
+                <span class="lockout-timer-label">Try again in&nbsp;</span>
+                <span class="lockout-timer">{{ blockTimerString }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Remaining attempts warning ────────────────────── -->
+          <div class="attempts-warning" *ngIf="!isBlocked && remainingAttempts !== null && remainingAttempts <= 3">
+            <span>⚠️</span>
+            <span>{{ remainingAttempts }} attempt{{ remainingAttempts === 1 ? '' : 's' }} left before lockout</span>
+          </div>
+
+          <!-- ── Glassy Form ──────────────────────────────────── -->
+          <form class="rounded shadow-sm form-glass"
+                [class.form-dimmed]="isBlocked"
+                #loginForm="ngForm"
+                autocomplete="on"
+                (ngSubmit)="onlogin(loginForm)"
+                novalidate>
+
+            <!-- ── Email ───────────────────────────────────────── -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Email</label>
+              <input type="email"
+                     id="username"
+                     name="email"
+                     class="form-control"
+                     [class.is-invalid]="emailError"
+                     placeholder="Email"
+                     required
+                     autocomplete="email"
+                     [(ngModel)]="email"
+                     #emailField="ngModel"
+                     (blur)="validateEmail()"
+                     (ngModelChange)="validateEmail()" />
+              <div class="input-error" *ngIf="emailError">
+                <i class="fa-solid fa-circle-exclamation" style="font-size:13px !important;"></i>
+                {{ emailError }}
+              </div>
+            </div>
+
+            <!-- ── Password ─────────────────────────────────────── -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <div class="position-relative">
+                <input type="password"
+                       id="password"
+                       name="password"
+                       [(ngModel)]="password"
+                       placeholder="Password"
+                       required
+                       class="form-control pe-5"
+                       [class.is-invalid]="passwordError"
+                       autocomplete="current-password"
+                       #passwordInput
+                       #passwordField="ngModel"
+                       (blur)="validatePassword()" />
+                <i class="fa-solid position-absolute top-50 end-0 translate-middle-y me-3"
+                   [class.fa-eye]="!isPasswordVisible"
+                   [class.fa-eye-slash]="isPasswordVisible"
+                   (click)="togglePassword(passwordInput)"
+                   style="cursor:pointer;"></i>
+              </div>
+              <div class="input-error" *ngIf="passwordError">
+                <i class="fa-solid fa-circle-exclamation" style="font-size:13px !important;"></i>
+                {{ passwordError }}
+              </div>
+            </div>
+
+            <!-- ── Forgot Password ──────────────────────────────── -->
+            <div class="d-flex justify-content-end mb-3">
+              <a (click)="openrouteforgotpass()"
+                 class="text-primary"
+                 style="font-size: clamp(0.78rem, 2.5vw, 0.9rem);">
+                Forgot Password?
+              </a>
+            </div>
+
+            <!-- ── Form-level error banner ──────────────────────── -->
+            <div class="form-error-banner mb-3" *ngIf="loginError">
+              <i class="fa-solid fa-triangle-exclamation me-2"
+                 style="font-size:14px !important; color:#c0392b !important;"></i>
+              {{ loginError }}
+            </div>
+
+            <!-- ── Loader ───────────────────────────────────────── -->
+            <div class="d-flex justify-content-center mb-3" *ngIf="isLoading()">
+              <div class="loader mt-2"></div>
+            </div>
+
+            <!-- ── Submit ───────────────────────────────────────── -->
+            <button type="submit" class="btn btn-login" [disabled]="isLoading() || isBlocked">
+              Log In
+            </button>
+
+          </form><!-- /.form-glass -->
+
+          <p class="text-center mt-3" style="font-size: clamp(0.78rem, 2.5vw, 0.9rem);">
+            Don't have an account? <a [routerLink]="['/Signup']">Signup</a>
+          </p>
+          <p class="text-center mt-1" style="font-size: clamp(0.78rem, 2.5vw, 0.9rem);">OR</p>
+          <p class="text-center mt-1 mb-2" style="font-size: clamp(0.78rem, 2.5vw, 0.9rem);">
+            Return to <a [routerLink]="['/Home']">Home</a>
+          </p>
+
+        </div><!-- /.card-body -->
+      </div><!-- /.login-card -->
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+</div>
+
+<!-- ── UNACTIVE ACCOUNT POPUP ────────────────────────────────────────────── -->
+<div class="popup-overlay" *ngIf="showUnactivePopup" (click)="closeUnactivePopup()">
+  <div class="popup-card" (click)="$event.stopPropagation()">
+    <div class="popup-icon-ring" style="background: linear-gradient(145deg, #d97706, #f59e0b);">
+      <div class="popup-icon-pulse" style="background: rgba(245, 158, 11, 0.35);"></div>
+      <i class="fa-solid fa-triangle-exclamation popup-icon" style="color: #ffffff;"></i>
+    </div>
+    <h2 class="popup-title" style="color: #f59e0b;">Account Not Activated</h2>
+    <p class="popup-subtitle">Your account is not activated yet</p>
+    <p class="popup-email" *ngIf="unactiveEmail">{{ unactiveEmail }}</p>
+    <p class="popup-hint">
+      Please check your email inbox (and spam folder) for the activation link to activate your account.
+    </p>
+    <div class="popup-tip" style="background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.3); color: #d97706;">
+      <i class="fa-solid fa-envelope me-2"></i>
+      If you did not receive the activation link, please contact <a href="mailto:support@purrfectpal.studio" style="color: #d97706; font-weight: 700; text-decoration: underline;">support@purrfectpal.studio</a>.
+    </div>
+    <button class="btn btn-login popup-btn" (click)="closeUnactivePopup()">Got It</button>
+  </div>
+</div>

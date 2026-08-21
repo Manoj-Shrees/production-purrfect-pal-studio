@@ -1,0 +1,146 @@
+.page-wrapper {
+  padding: 40px 20px;
+  height: auto;
+  font-family: 'Inter', sans-serif;
+}
+
+.customer-review-heading {
+  margin-top: 20px;
+  font-size: 2.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.reviews-container {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.review-card {
+  background-color: #ffffff;
+  align-items: stretch;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform 0.2s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-5px);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.reviewer-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewer-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.review-text {
+  color: #444;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Image container & anti-screenshot proof layer */
+.review-img-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  -webkit-touch-callout: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+.pet-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Anti-AI studio proof watermark on review pet images */
+.review-proof-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+
+/* Multi-frequency AI Disruptor Grid — breaks AI convolutional kernels & FFT filters */
+.review-proof-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0px, rgba(255, 255, 255, 0.04) 1px, transparent 1px, transparent 6px),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 12px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.05) 1px, transparent 1px, transparent 12px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Dual-Tone Tiled Text Watermark — Non-invertible anti-AI proof stamp */
+.review-proof-layer::after {
+  content: "© PURRFECT PAL STUDIO  •  DIGITAL PROOF  •  NOT FOR REPRODUCTION  •  PROTECTED ARTWORK";
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.16);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  transform: rotate(-25deg);
+  pointer-events: none;
+  user-select: none;
+  line-height: 2.2;
+  word-break: break-all;
+  word-spacing: 6px;
+  z-index: 2;
+  mix-blend-mode: overlay;
+}
+
+/* Medium screens (tablets, small laptops) */
+@media (max-width: 992px) {
+  .pet-image {
+    padding: 16px;
+  }
+}
+
+/* Small screens (phones) */
+@media (max-width: 576px) {
+  .pet-image {
+    padding: 24px;
+  }
+}

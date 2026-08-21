@@ -1,0 +1,372 @@
+<!-- Header Start -->
+<header>
+  <nav class="navbar navbar-expand-lg py-2 fixed-top">
+    <div class="container-fluid align-items-center">
+      <a routerLink="/Home#home" class="navbar-brand d-flex align-items-center">
+        <img id="nav-logo" src="/assets/images/pps-logo.png" appDisablerightclick draggable="false"
+          oncontextmenu="return false;" alt="Logo" style="width: 60px;">
+        <span class="ms-2">Purrfect Pal Studio</span>
+      </a>
+      <button class="navbar-toggler" #buttonRef type="button" (click)="toggleMenu()" [class.active]="menuOpen">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="navbar-collapse" [class.show]="menuOpen" [ngClass]="{ 'd-none': innerWidth < 1430 && !menuOpen }">
+        <ul class="navbar-nav ms-auto align-items-center gap-md-3">
+          <li class="nav-item">
+            <a routerLink="/Home#home" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/ProductPage" class="btn-shop"><i class="fas fa-shopping-bag"></i> Shop Now</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+<!-- Header End -->
+
+
+<!-- PAGE -->
+<div class="op-page">
+
+  <!-- Title bar -->
+  <div class="op-titlebar">
+    <div class="op-titlebar-in">
+      <div class="op-title-left">
+        <span class="op-eyebrow">Your account</span>
+        <h1 class="op-title">Order History</h1>
+      </div>
+      <div class="op-title-pills">
+        <div class="op-pill">
+          <span class="op-pill-num">{{ orderlist.length }}</span>
+          <span class="op-pill-lbl">Total</span>
+        </div>
+        <div class="op-pill op-pill--blue">
+          <span class="op-pill-num">{{ getActiveCount() }}</span>
+          <span class="op-pill-lbl">Active</span>
+        </div>
+        <div class="op-pill op-pill--green">
+          <span class="op-pill-num">{{ getCompletedCount() }}</span>
+          <span class="op-pill-lbl">Done</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="op-content">
+
+    <!-- SKELETON -->
+    @if (isLoading()) {
+      <div class="op-list">
+        @for (s of skeletonItems; track s) {
+          <div class="op-skeleton-card">
+            <div class="op-sk-img"></div>
+            <div class="op-sk-body">
+              <div class="op-sk-line w55"></div>
+              <div class="op-sk-line w35"></div>
+              <div class="op-sk-line w70"></div>
+            </div>
+            <div class="op-sk-side">
+              <div class="op-sk-badge"></div>
+              <div class="op-sk-btn"></div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ORDERS -->
+    @if (!isLoading() && orderlist.length > 0) {
+      <div class="op-list">
+        @for (order of orderlist; track order.Order_ID; let i = $index) {
+          <div class="op-card op-card--{{ order.Status }}"
+               [style.animation-delay]="(i * 0.06) + 's'">
+
+            <!-- First item — always visible -->
+            <div class="op-item">
+              <div class="op-img-wrap">
+                <img [src]="getPrimaryImage(order.items[0])"
+                     appDisablerightclick draggable="false"
+                     oncontextmenu="return false;"
+                     [alt]="order.items[0].name"
+                     class="op-img"
+                     (error)="onImgError($event)" />
+              </div>
+              <div class="op-item-body">
+                <h3 class="op-item-name">{{ order.items[0].name }}</h3>
+                <div class="op-item-tags">
+                  <span class="op-tag">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                      <path d="M6 1l1.5 3H11l-2.5 2 1 3L6 7.5 2.5 9l1-3L1 4h3.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                    </svg>
+                    {{ order.items[0].art_style }}
+                  </span>
+                  @if (isExpressDelivery(order.items[0])) {
+                    <span class="op-tag op-tag--express">
+                      ⚡ Express 24h
+                    </span>
+                  }
+                  <span class="op-tag">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                      <circle cx="6" cy="4" r="2" stroke="currentColor" stroke-width="1.3"/>
+                      <path d="M2 10.5c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                    {{ order.items[0].pet_quantity }} pet{{ order.items[0].pet_quantity !== 1 ? 's' : '' }}
+                  </span>
+                  <span class="op-tag">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                      <rect x="1.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                      <rect x="6.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                      <rect x="1.5" y="6.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                      <rect x="6.5" y="6.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                    </svg>
+                    {{ order.items[0].subject_type }}
+                  </span>
+                </div>
+              </div>
+              <div class="op-item-price">A ${{ order.items[0].price | number:'1.2-2' }}</div>
+            </div>
+
+            <!-- Extra items — collapsed by default -->
+            @if (order.items.length > 1) {
+
+              <!-- Expandable extra items -->
+              <div class="op-extra-items" [class.op-extra-items--open]="isExpanded(order.Order_ID)">
+                @for (item of order.items; track item; let j = $index) {
+                  @if (j > 0) {
+                    <div class="op-item op-item--sep">
+                      <div class="op-img-wrap">
+                       <img [src]="getPrimaryImage(item)"
+                             appDisablerightclick draggable="false"
+                             oncontextmenu="return false;"
+                             [alt]="item.name"
+                             class="op-img"
+                             (error)="onImgError($event)" />
+                      </div>
+                      <div class="op-item-body">
+                        <h3 class="op-item-name">{{ item.name }}</h3>
+                        <div class="op-item-tags">
+                          <span class="op-tag">
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                              <path d="M6 1l1.5 3H11l-2.5 2 1 3L6 7.5 2.5 9l1-3L1 4h3.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                            </svg>
+                            {{ item.art_style }}
+                          </span>
+                          <span class="op-tag">
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                              <circle cx="6" cy="4" r="2" stroke="currentColor" stroke-width="1.3"/>
+                              <path d="M2 10.5c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            </svg>
+                            {{ item.pet_quantity }} pet{{ item.pet_quantity !== 1 ? 's' : '' }}
+                          </span>
+                          <span class="op-tag">
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                              <rect x="1.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                              <rect x="6.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                              <rect x="1.5" y="6.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                              <rect x="6.5" y="6.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                            </svg>
+                            {{ item.subject_type }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="op-item-price">A ${{ item.price | number:'1.2-2' }}</div>
+                    </div>
+                  }
+                }
+              </div>
+
+              <!-- Show more / less toggle row -->
+              <button class="op-toggle-row" (click)="toggleExpand(order.Order_ID)">
+                @if (!isExpanded(order.Order_ID)) {
+                  <span class="op-toggle-badge">+{{ order.items.length - 1 }}</span>
+                  <span class="op-toggle-label">Show {{ order.items.length - 1 }} more item{{ order.items.length - 1 !== 1 ? 's' : '' }}</span>
+                  <svg class="op-toggle-chevron" width="12" height="12" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                } @else {
+                  <span class="op-toggle-label">Show less</span>
+                  <svg class="op-toggle-chevron op-toggle-chevron--up" width="12" height="12" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                }
+              </button>
+
+            }
+
+            <!-- Footer row -->
+            <div class="op-foot">
+              <div class="op-foot-left">
+                <code class="op-id">#{{ order.Order_ID }}</code>
+                <span class="op-status op-status--{{ order.Status }}">
+                  <i class="op-status-dot"></i>
+                  {{ order.Status === 'refund_pending' ? 'Refund Pending' : (order.Status | titlecase) }}
+                </span>
+              </div>
+              <div class="op-foot-right">
+
+                <button class="op-action-btn" (click)="openorderdetail(order)">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                    <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M7 6v4M7 4.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                  Details
+                </button>
+
+                @if (order.Status === 'pending') {
+                  <button class="op-action-btn op-action-btn--red" (click)="opencancelmodal(i)">
+                    <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                      <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M9 5L5 9M5 5l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Cancel
+                  </button>
+                }
+
+                @if (order.Status === 'active') {
+                  <span class="op-foot-tag op-foot-tag--blue">
+                    <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                      <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    In Progress
+                  </span>
+                }
+
+                @if (order.Status === 'cancelled') {
+                  <span class="op-foot-tag op-foot-tag--rose">
+                    <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                      <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M9 5L5 9M5 5l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Cancelled
+                  </span>
+                }
+
+                @if (order.Status === 'refund_pending') {
+                  <span class="op-foot-tag op-foot-tag--amber">
+                    <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                      <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M7 4.5v3M7 9.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Refund Pending
+                  </span>
+                }
+
+                @if (order.Status === 'refunded') {
+                  <span class="op-foot-tag op-foot-tag--green">
+                    <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                      <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M4.5 7L6 8.5L9.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Refunded
+                  </span>
+                }
+
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+    <!-- EMPTY -->
+    @if (!isLoading() && orderlist.length === 0) {
+      <div class="op-empty">
+        <div class="op-empty-icon">
+          <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
+            <rect x="8" y="14" width="36" height="30" rx="5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M18 14v-3a8 8 0 0116 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M20 26h12M20 32h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h2 class="op-empty-title">No orders yet</h2>
+        <p class="op-empty-sub">Your commissioned artworks will appear here once you place an order.</p>
+        <a routerLink="/ProductPage" class="op-empty-btn">
+          Browse Shop
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+            <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    }
+
+  </div>
+</div>
+
+
+<!-- CANCEL MODAL -->
+@if (showCancelModal()) {
+  <div class="op-backdrop" (click)="closeCancelModal()">
+    <div class="op-modal" (click)="$event.stopPropagation()">
+      <div class="op-modal-icon">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="11" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M14 9v6M14 17.5v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2 class="op-modal-title">Cancel this order?</h2>
+      <p class="op-modal-sub">This can't be undone. Your commission will be withdrawn and the artist notified.</p>
+      
+      <div class="op-modal-reason-group">
+        <label for="cancel-reason" class="op-modal-reason-label">Reason for Cancellation</label>
+        <textarea
+          id="cancel-reason"
+          class="op-modal-textarea"
+          placeholder="Please tell us why you want to cancel (required)..."
+          [ngModel]="cancelReason()"
+          (ngModelChange)="cancelReason.set($event)"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="op-modal-btns">
+        <button class="op-modal-btn" (click)="closeCancelModal()">Keep Order</button>
+        <button class="op-modal-btn op-modal-btn--red" [disabled]="isCancelling() || !cancelReason().trim()" (click)="cancelorder()">
+          @if (isCancelling()) {
+            <span class="op-spin"></span> Cancelling…
+          } @else {
+            Yes, Cancel It
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+
+<!-- Footer Start -->
+<footer class="container-fluid p-4">
+  <div class="row justify-content-between">
+    <div class="col-7 col-md-4 d-flex justify-content-center">
+      <div class="d-flex flex-column gap-2">
+        <a routerLink="/Home#home" class="navbar-brand d-flex align-items-center">
+          <img src="/assets/images/pps-logo.png" appDisablerightclick draggable="false"
+            oncontextmenu="return false;" class="image-fluid" style="max-width: 150px;" alt="logo">
+        </a>
+        <h5 class="text-uppercase text-dark">Purrfect Pal Studio</h5>
+        <h6 class="text-dark">Where Art Meets Heart – Bringing Your Pets to Life Through Art</h6>
+      </div>
+    </div>
+    <div class="col-5 col-md-3 d-flex justify-content-center align-items-center">
+      <div class="d-flex flex-column text-start" style="cursor: pointer;">
+        <a class="text-dark text-decoration-none mb-2" routerLink="/Home#home">Home</a>
+        <a class="text-dark text-decoration-none mb-2" routerLink="/PrivacyPolicy">Privacy Policy</a>
+        <a class="text-dark text-decoration-none mb-2" routerLink="/FaqPage">FAQ's</a>
+      </div>
+    </div>
+    <div class="col-12 col-md-4 social text-center my-auto mx-auto">
+      <h4 class="text-dark mt-4">Connect with us</h4>
+      <div class="d-flex flex-row justify-content-center">
+        <a class="instagram" (click)="opensocialurl(0)"><i class="fa-brands fa-instagram"></i></a>
+        <a class="facebook" (click)="opensocialurl(1)"><i class="fa-brands fa-facebook"></i></a>
+        <a class="email" href="mailto:support@purrfectpal.studio"><i class="fa fa-envelope"></i></a>
+        <a class="tiktok" (click)="opensocialurl(2)"><i class="fa-brands fa-tiktok"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Footer End -->

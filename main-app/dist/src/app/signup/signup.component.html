@@ -1,0 +1,350 @@
+<!-- ══════════════════════════════════════════════════════
+     User Sign-up Page
+     Design mirrors the artist registration form:
+       • Floating logo badge
+       • Outer glass card  →  .signup-card
+       • Inner glass form  →  .form-glass-card
+       • Per-field error strings with .input-error
+       • Password checklist
+       • Formatted phone input
+       • Material datepicker
+       • Loader + form-level error banner
+       • Success popup overlay
+     ══════════════════════════════════════════════════════ -->
+
+<div class="signup-page-wrapper">
+  <div class="container py-5 d-flex justify-content-center align-items-center min-vh-100">
+    <div class="row w-100 justify-content-center">
+      <div class="col mx-auto signup-col">
+
+        <!-- ── Outer Glass Card ─────────────────────────────── -->
+        <div class="card shadow signup-card mt-4">
+
+          <!-- Floating Logo -->
+          <div class="logo-wrapper">
+            <a routerLink="/Home">
+              <img src="/assets/images/pps-logo.png"
+                   draggable="false"
+                   oncontextmenu="return false;"
+                   alt="Purrfect Pal Studio Logo"
+                   class="logo-circle img-fluid">
+            </a>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body text-center pt-5">
+            <h1 class="mt-3">Create Your Account</h1>
+            <p class="text-muted mb-4">Join Purrfect Pal Studio today</p>
+
+            <!-- ── Inner Glass Form ──────────────────────────── -->
+            <div class="form-glass-card">
+              <form #signupForm="ngForm"
+                    (ngSubmit)="onsignup(signupForm)"
+                    novalidate
+                    autocomplete="off">
+
+                <!-- ── Full Name ──────────────────────────────── -->
+                <div class="mb-3 text-start">
+                  <label for="name">Full Name</label>
+                  <input type="text"
+                         class="form-control"
+                         [class.is-invalid]="nameError"
+                         id="name"
+                         name="name"
+                         placeholder="Enter your full name"
+                         [(ngModel)]="name"
+                         required
+                         #nameField="ngModel"
+                         (blur)="validateName()">
+                  <div class="input-error" *ngIf="nameError">{{ nameError }}</div>
+                </div>
+
+                <!-- ── Email ─────────────────────────────────── -->
+                <div class="mb-3 text-start">
+                  <label for="email">Email</label>
+                  <input type="email"
+                         class="form-control"
+                         [class.is-invalid]="emailError"
+                         id="email"
+                         name="email"
+                         placeholder="name@example.com"
+                         [(ngModel)]="email"
+                         required
+                         #emailField="ngModel"
+                         (blur)="validateEmail()"
+                         (ngModelChange)="validateEmail()">
+                  <div class="input-error" *ngIf="emailError">{{ emailError }}</div>
+                </div>
+
+                <!-- ── Password ───────────────────────────────── -->
+                <div class="mb-3 text-start">
+                  <label for="password">Password</label>
+
+                  <div class="input-icon-wrapper">
+                    <input type="password"
+                           class="form-control pe-5"
+                           [class.is-invalid]="password && !passwordValid"
+                           id="password"
+                           name="password"
+                           placeholder="Create a strong password"
+                           [(ngModel)]="password"
+                           required
+                           #passwordField="ngModel"
+                           #passwordInput
+                           (input)="validatePassword()"
+                           (blur)="validatePassword()">
+                    <i class="fa password-toggle"
+                       [class.fa-eye]="!isPasswordVisible"
+                       [class.fa-eye-slash]="isPasswordVisible"
+                       (click)="togglePassword(passwordInput)"></i>
+                  </div>
+
+                  <div class="password-checklist" *ngIf="password">
+                    <div class="check-item" [class.check-ok]="passwordChecks.minLength">
+                      <i class="fa"
+                         [class.fa-check-circle]="passwordChecks.minLength"
+                         [class.fa-times-circle]="!passwordChecks.minLength"></i>
+                      At least 8 characters
+                    </div>
+                    <div class="check-item" [class.check-ok]="passwordChecks.uppercase">
+                      <i class="fa"
+                         [class.fa-check-circle]="passwordChecks.uppercase"
+                         [class.fa-times-circle]="!passwordChecks.uppercase"></i>
+                      One uppercase letter
+                    </div>
+                    <div class="check-item" [class.check-ok]="passwordChecks.lowercase">
+                      <i class="fa"
+                         [class.fa-check-circle]="passwordChecks.lowercase"
+                         [class.fa-times-circle]="!passwordChecks.lowercase"></i>
+                      One lowercase letter
+                    </div>
+                    <div class="check-item" [class.check-ok]="passwordChecks.number">
+                      <i class="fa"
+                         [class.fa-check-circle]="passwordChecks.number"
+                         [class.fa-times-circle]="!passwordChecks.number"></i>
+                      One number (0–9)
+                    </div>
+                    <div class="check-item" [class.check-ok]="passwordChecks.symbol">
+                      <i class="fa"
+                         [class.fa-check-circle]="passwordChecks.symbol"
+                         [class.fa-times-circle]="!passwordChecks.symbol"></i>
+                      One special character (!&#64;#$…)
+                    </div>
+                  </div>
+
+                  <div class="input-error" *ngIf="!password && passwordField.touched">
+                    Password is required.
+                  </div>
+                </div>
+
+                <!-- ── Confirm Password ───────────────────────── -->
+                <div class="mb-3 text-start">
+                  <label for="confirm_password">Confirm Password</label>
+
+                  <div class="input-icon-wrapper">
+                    <input type="password"
+                           class="form-control pe-5"
+                           [class.is-invalid]="confirmPasswordError"
+                           id="confirm_password"
+                           name="confirmPassword"
+                           placeholder="Re-enter your password"
+                           [(ngModel)]="confirmPassword"
+                           required
+                           #confirmField="ngModel"
+                           #confirmInput
+                           (input)="passwordMatchValidator()"
+                           (blur)="validateConfirmPassword()">
+                    <i class="fa confirm-toggle"
+                       [class.fa-eye]="!isConfirmVisible"
+                       [class.fa-eye-slash]="isConfirmVisible"
+                       (click)="toggleConfirm(confirmInput)"></i>
+                  </div>
+
+                  <div class="input-error" *ngIf="confirmPasswordError">{{ confirmPasswordError }}</div>
+                </div>
+
+                <!-- ── Phone Number ───────────────────────────── -->
+                <div class="mb-3 text-start">
+                  <label for="phone_number">Phone Number</label>
+
+                  <div class="d-flex flex-column gap-2 mt-3">
+
+                    <!-- Country-code selector -->
+                    <select class="form-select border border-dark bg-light"
+                            style="cursor: pointer;"
+                            [(ngModel)]="selectedCountryIso"
+                            name="country_iso"
+                            required
+                            (change)="onCountryIsoChange()">
+                      @for (country of countrycodelist; track country) {
+                        <option [value]="country.iso">
+                          {{ country.label }} ({{ country.code }})
+                        </option>
+                      }
+                    </select>
+
+                    <!-- Prefix badge + tel input side-by-side -->
+                    <div class="d-flex align-items-stretch">
+                      <span class="border border-dark bg-light px-3 d-flex align-items-center
+                                   rounded-start phone-prefix-badge">
+                        {{ selectedCountryCode }}
+                      </span>
+                      <input type="tel"
+                             id="phone_number"
+                             name="phone_number"
+                             class="form-control border border-dark p-3 phone-number-input"
+                             [class.is-invalid]="phoneError"
+                             [(ngModel)]="phone"
+                             #phoneField="ngModel"
+                             required
+                             placeholder="Enter phone number"
+                             [maxlength]="phoneInputMaxLength"
+                             (input)="formatPhoneNumber($event)"
+                             (keypress)="allowNumbersOnly($event)"
+                             (blur)="validatePhone()"
+                             autocomplete="tel-national">
+                    </div>
+                  </div>
+
+                  <div class="input-error mt-1" *ngIf="phoneError">{{ phoneError }}</div>
+                </div>
+
+                <!-- ── Date of Birth ──────────────────────────── -->
+                <div class="mb-3 text-start">
+                  <label class="mt-2 mb-2" for="date-of-birth">Date of Birth</label>
+
+                  <mat-form-field appearance="outline" class="d-block w-100">
+                    <mat-label>Select date</mat-label>
+                    <input matInput
+                           [matDatepicker]="picker"
+                           [(ngModel)]="date_of_birth"
+                           name="date_of_birth"
+                           required
+                           #dobField="ngModel"
+                           [max]="maxDate"
+                           [min]="minDate"
+                           placeholder="MM/DD/YYYY"
+                           readonly>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker startView="multi-year"></mat-datepicker>
+                  </mat-form-field>
+
+                  <div class="input-error"
+                       *ngIf="dobField.invalid && dobField.touched && dobField.errors?.['required']">
+                    Date of birth is required.
+                  </div>
+                  <div class="input-error" *ngIf="dobField.errors?.['matDatepickerMax']">
+                    You must be at least 18 years old to register.
+                  </div>
+                  <div class="input-error" *ngIf="dobField.errors?.['matDatepickerMin']">
+                    Please enter a valid date of birth (not more than 100 years ago).
+                  </div>
+                  <div class="input-error" *ngIf="dobField.errors?.['matDatepickerParse']">
+                    Invalid date format — please use the calendar picker.
+                  </div>
+                </div>
+
+                <!-- ── Form-level error banner ────────────────── -->
+                <div class="form-error-banner mb-3" *ngIf="loginError">
+                  <i class="fa fa-exclamation-circle me-2"></i>{{ loginError }}
+                </div>
+
+                <!-- ── Loader ─────────────────────────────────── -->
+                <div class="loader-wrapper" *ngIf="isLoading">
+                  <div class="loader"></div>
+                </div>
+
+                <!-- ── Submit ─────────────────────────────────── -->
+                <button type="submit" class="btn btn-glass" [disabled]="isLoading">
+                  Sign Up
+                </button>
+
+                <p class="signup-option mt-4">
+                  Already have an account? <a routerLink="/Login">Login</a>
+                </p>
+
+                <p class="signup-option mt-2">
+                  Return to <a routerLink="/Home">Home</a>
+                </p>
+
+              </form>
+            </div><!-- /form-glass-card -->
+          </div><!-- /card-body -->
+        </div><!-- /signup-card -->
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SUCCESS POPUP — shown after a successful API response.
+     Clicking the backdrop or the button both navigate to /Login.
+     ══════════════════════════════════════════════════════ -->
+<div class="popup-overlay"
+     *ngIf="showSuccessPopup"
+     (click)="closePopupAndGoLogin()">
+
+  <div class="popup-card" (click)="$event.stopPropagation()">
+
+    <!-- Animated envelope icon -->
+    <div class="popup-icon-ring">
+      <div class="popup-icon-pulse"></div>
+      <i class="fa fa-envelope-open-text popup-icon"></i>
+    </div>
+
+    <h2 class="popup-title">You're almost there!</h2>
+    <p class="popup-subtitle">We've sent an activation link to</p>
+    <p class="popup-email">{{ email }}</p>
+
+    <p class="popup-hint">
+      Click the link in that email to activate your account and start your
+      journey with <strong>Purrfect Pal Studio</strong>.
+    </p>
+
+    <div class="popup-tip">
+      <i class="fa fa-info-circle me-2"></i>
+      Didn't receive it? Check your spam folder or wait a minute.
+    </div>
+
+    <button class="btn btn-glass popup-btn" (click)="closePopupAndGoLogin()">
+      Go to Login
+    </button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     UNACTIVE ACCOUNT POPUP — shown when user signed up but account is not activated yet.
+     ══════════════════════════════════════════════════════ -->
+<div class="popup-overlay"
+     *ngIf="showUnactivePopup"
+     (click)="closeUnactivePopupAndGoLogin()">
+
+  <div class="popup-card" (click)="$event.stopPropagation()">
+
+    <!-- Animated warning icon -->
+    <div class="popup-icon-ring" style="background: linear-gradient(145deg, #d97706, #f59e0b);">
+      <div class="popup-icon-pulse" style="background: rgba(245, 158, 11, 0.35);"></div>
+      <i class="fa fa-exclamation-triangle popup-icon" style="color: #ffffff;"></i>
+    </div>
+
+    <h2 class="popup-title" style="color: #f59e0b;">Account Already Exists!</h2>
+    <p class="popup-subtitle">You have already signed up with</p>
+    <p class="popup-email">{{ email }}</p>
+
+    <p class="popup-hint">
+      Your account is not activated yet. <strong>We have resent the activation link email</strong> to your inbox.
+    </p>
+
+    <div class="popup-tip" style="background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.3); color: #d97706;">
+      <i class="fa fa-paper-plane me-2"></i>
+      Please check your email inbox (and spam folder) and click the link to activate your account. If you did not receive the link, contact <a href="mailto:support@purrfectpal.studio" style="color: #d97706; font-weight: 700; text-decoration: underline;">support@purrfectpal.studio</a>.
+    </div>
+
+    <button class="btn btn-glass popup-btn" (click)="closeUnactivePopupAndGoLogin()">
+      Go to Login
+    </button>
+
+  </div>
+</div>

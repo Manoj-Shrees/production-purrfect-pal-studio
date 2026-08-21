@@ -1,0 +1,617 @@
+<!-- ══ SKELETON ══ -->
+<div class="skeleton-shell" *ngIf="!isLoaded" aria-label="Loading payment" aria-busy="true">
+  <div class="skeleton-left">
+    <div class="skeleton-left-inner">
+      <div class="sk sk-logo"></div>
+      <div class="sk sk-img"></div>
+      <div class="sk sk-pill"></div>
+      <div class="sk sk-total"></div>
+      <div class="sk-loader">
+        <div class="sk-loader-dot"></div>
+        <div class="sk-loader-dot"></div>
+        <div class="sk-loader-dot"></div>
+        <span class="sk-loading-text">Preparing your order…</span>
+      </div>
+    </div>
+  </div>
+  <div class="skeleton-right">
+    <div class="sk sk-badge"></div>
+    <div class="sk sk-heading"></div>
+    <div class="sk sk-xsmall"></div>
+    <div style="height: 24px"></div>
+    <div class="sk sk-sm" style="height:11px;width:90px;"></div>
+    <div class="sk sk-express"></div>
+    <div style="height: 8px"></div>
+    <div class="sk sk-sm" style="height:11px;width:80px;"></div>
+    <div class="sk sk-field"></div>
+    <div class="sk-card-row">
+      <div class="sk sk-field"></div>
+      <div class="sk sk-field"></div>
+    </div>
+    <div class="sk sk-btn"></div>
+    <div class="sk sk-xsmall" style="margin-top:4px;"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     POD POST-PAYMENT UPLOAD OVERLAY
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- ── Uploading / Done state ── -->
+<div class="pod-upload-overlay"
+     [class.pod-upload-overlay--visible]="isPodUploading"
+     role="dialog" aria-modal="true" aria-label="Finalising your print order"
+     aria-live="polite">
+
+  <div class="pod-upload-card">
+
+    <div class="pod-upload-icon" [class.pod-upload-icon--done]="podUploadStatus === 'done'">
+      <ng-container *ngIf="podUploadStatus !== 'done'">
+        <svg class="pod-upload-spin" width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="22" r="18" stroke="rgba(184,146,106,.15)" stroke-width="3"/>
+          <path d="M22 4a18 18 0 0 1 18 18" stroke="#b8926a" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <svg class="pod-upload-icon-inner" width="22" height="22" fill="none" stroke="currentColor"
+             stroke-width="1.4" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <path d="M3 14l5-5 4 4 3-4 6 7"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+        </svg>
+      </ng-container>
+      <ng-container *ngIf="podUploadStatus === 'done'">
+        <svg width="44" height="44" fill="none" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="20" fill="rgba(42,96,71,.12)" stroke="#2a6047" stroke-width="2"/>
+          <polyline points="13 22 19 28 31 15" stroke="#2a6047" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </ng-container>
+    </div>
+
+    <h2 class="pod-upload-title">
+      <ng-container *ngIf="podUploadStatus === 'uploading'">Finalising your print order…</ng-container>
+      <ng-container *ngIf="podUploadStatus === 'done'">All done!</ng-container>
+    </h2>
+
+    <p class="pod-upload-sub">
+      <ng-container *ngIf="podUploadStatus === 'uploading'">
+        Payment confirmed — now uploading your canvas image to the print queue.
+        Please don't close this tab.
+      </ng-container>
+      <ng-container *ngIf="podUploadStatus === 'done'">
+        Your image has been sent to print. Taking you to your order summary…
+      </ng-container>
+    </p>
+
+    <div class="pod-progress-track" *ngIf="podUploadStatus === 'uploading'">
+      <div class="pod-progress-fill" [style.width.%]="podUploadProgress"></div>
+    </div>
+    <p class="pod-progress-pct" *ngIf="podUploadStatus === 'uploading'">
+      {{ podUploadProgress }}%
+    </p>
+
+    <div class="pod-upload-steps" *ngIf="podUploadStatus === 'uploading'">
+      <div class="pod-step" [class.pod-step--active]="podUploadProgress < 86"
+                            [class.pod-step--done]="podUploadProgress >= 86">
+        <div class="pod-step-dot"></div>
+        <span>Uploading image</span>
+      </div>
+      <div class="pod-step-line"></div>
+      <div class="pod-step" [class.pod-step--active]="podUploadProgress >= 86 && podUploadProgress < 100"
+                            [class.pod-step--done]="podUploadProgress >= 100">
+        <div class="pod-step-dot"></div>
+        <span>Updating print order</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Failed state ── -->
+<div class="pod-upload-overlay pod-upload-overlay--error"
+     [class.pod-upload-overlay--visible]="isPodUploadFailed"
+     role="alertdialog" aria-modal="true" aria-label="Upload failed">
+
+  <div class="pod-upload-card pod-upload-card--error">
+
+    <div class="pod-upload-icon pod-upload-icon--error">
+      <svg width="44" height="44" fill="none" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r="20" fill="rgba(184,92,26,.1)" stroke="#b85c1a" stroke-width="2"/>
+        <path d="M22 13v10M22 27v2" stroke="#b85c1a" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <h2 class="pod-upload-title pod-upload-title--error">Image upload failed</h2>
+
+    <p class="pod-upload-sub">
+      Your payment was <strong>successful</strong> — the order is reserved.
+      However we couldn't upload your image automatically.
+    </p>
+
+    <div class="pod-upload-error-box" *ngIf="podUploadError">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 12 12">
+        <circle cx="6" cy="6" r="5"/>
+        <line x1="6" y1="4" x2="6" y2="6.5"/>
+        <circle cx="6" cy="8.5" r=".6" fill="currentColor" stroke="none"/>
+      </svg>
+      {{ podUploadError }}
+    </div>
+
+    <div class="pod-upload-ref" *ngIf="podOrderId">
+      <span class="pod-upload-ref-label">Order reference</span>
+      <strong class="pod-upload-ref-val">{{ podOrderId }}</strong>
+      <span class="pod-upload-ref-hint">Keep this — support will need it to attach your image.</span>
+    </div>
+
+    <div class="pod-upload-error-actions">
+      <button class="pod-upload-btn-retry" (click)="retryPodUpload()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 14 14">
+          <path d="M2.5 7a4.5 4.5 0 1 1 1.2 3" stroke-linecap="round"/>
+          <polyline points="1 8.5 2.5 7 4 8.5" stroke-linecap="round"/>
+        </svg>
+        Try Again
+      </button>
+      <button class="pod-upload-btn-skip" (click)="skipPodUpload()">
+        Continue to order summary
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 12 12">
+          <polyline points="4 2 9 6 4 10"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="pod-upload-support-note">
+      If this keeps failing, email
+      <a href="mailto:support@purrfectpal.studio">support@purrfectpal.studio</a>
+      with your order reference and your image attached.
+    </p>
+
+  </div>
+</div>
+<!-- ══ /POD UPLOAD OVERLAY ══ -->
+
+
+<!-- ══ MAIN CONTENT ══ -->
+<div class="atelier-wrap" [hidden]="!isLoaded">
+
+  <!-- ════════════════════════════════
+       LEFT — PRODUCT CANVAS (dark)
+  ════════════════════════════════ -->
+  <aside class="canvas-panel">
+    <div class="canvas-inner">
+
+      <!-- Studio mark -->
+      <div class="studio-mark">
+        <div class="studio-avatar">
+          <img src="/assets/images/pps-logo.png"
+               appDisablerightclick draggable="false" oncontextmenu="return false;"
+               alt="Purrfect Pal Studio" fetchpriority="high" decoding="async"
+               class="studio-logo" />
+        </div>
+        <div class="studio-info">
+          <span class="studio-name">Purrfect Pal Studio</span>
+          <span class="studio-sub">Custom Portraits Art</span>
+        </div>
+
+        <span class="pod-order-badge" *ngIf="isPodOrder">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            <line x1="12" y1="12" x2="12" y2="16"/>
+            <line x1="10" y1="14" x2="14" y2="14"/>
+          </svg>
+          Print on Demand
+        </span>
+      </div>
+
+      <!-- ══ PORTRAIT HERO IMAGE ══ -->
+      <div class="portrait-hero">
+
+        <img *ngIf="getPreviewImgSrc()"
+             [src]="getPreviewImgSrc()"
+             [alt]="getPreviewAltText()"
+             appDisablerightclick draggable="false" oncontextmenu="return false;"
+             loading="lazy" decoding="async" />
+
+        <div class="portrait-hero-placeholder" *ngIf="!getPreviewImgSrc()">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+            <ellipse cx="12" cy="17" rx="5" ry="3.5"/>
+            <ellipse cx="6.5" cy="12.5" rx="2.2" ry="1.8"/>
+            <ellipse cx="17.5" cy="12.5" rx="2.2" ry="1.8"/>
+            <ellipse cx="9"    cy="8"    rx="1.8" ry="1.4"/>
+            <ellipse cx="15"   cy="8"    rx="1.8" ry="1.4"/>
+          </svg>
+          <span>Portrait preview<br>will appear here</span>
+        </div>
+
+        <div class="portrait-caption">
+          <span class="portrait-caption-name">{{ selectedItem?.name || 'Custom Portrait' }}</span>
+          <div class="portrait-caption-meta">
+
+            <span class="portrait-caption-tag" *ngIf="selectedItem?.art_style">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/>
+                <circle cx="8.5"  cy="7.5" r="1.5"/><circle cx="6.5"  cy="12.5" r="1.5"/>
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688
+                         0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125
+                         a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554
+                         C21.965 6.012 17.461 2 12 2z"/>
+              </svg>
+              {{ selectedItem.art_style }}
+            </span>
+
+          </div>
+        </div>
+      </div><!-- /portrait-hero -->
+
+      <!-- ══ ITEM TABS ══ -->
+      <div class="item-selector" *ngIf="mycartdata.length > 1">
+        <div class="item-selector-header">
+          <span class="item-selector-label">Your order</span>
+          <span class="item-selector-count">{{ mycartdata.length }} items</span>
+        </div>
+        <div class="item-tabs" role="tablist">
+          <button
+            *ngFor="let item of mycartdata; let i = index"
+            class="item-tab"
+            [class.item-tab--active]="selectedItemIndex === i"
+            (click)="selectItem(i)"
+            role="tab" type="button"
+            [attr.aria-selected]="selectedItemIndex === i"
+            [attr.aria-label]="'View item ' + (i + 1) + ': ' + item.name">
+            <span class="item-tab-num">{{ i + 1 }}</span>
+            <span class="item-tab-body">
+              <span class="item-tab-name">{{ item.name }}</span>
+              <span class="item-tab-meta"
+                    *ngIf="item.petname && item.petname !== 'null'">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                  <ellipse cx="12" cy="17" rx="5" ry="3.5"/>
+                  <ellipse cx="6.5" cy="12.5" rx="2.2" ry="1.8"/>
+                  <ellipse cx="17.5" cy="12.5" rx="2.2" ry="1.8"/>
+                  <ellipse cx="9"    cy="8"    rx="1.8" ry="1.4"/>
+                  <ellipse cx="15"   cy="8"    rx="1.8" ry="1.4"/>
+                </svg>
+                {{ item.petname }}
+              </span>
+              <span class="item-tab-meta"
+                    *ngIf="item.art_style && !(item.petname && item.petname !== 'null')">
+                {{ item.art_style }}
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ SUMMARY BLOCK ══ -->
+      <div class="summary-block">
+        <div class="summary-line" *ngIf="mycartdata.length > 1">
+          <span>Items</span>
+          <span class="summary-line-val">× {{ mycartdata.length }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Style</span>
+          <span class="summary-line-val">{{ selectedItem?.art_style || '—' }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Format</span>
+          <span class="summary-line-val text-warning fw-bold" *ngIf="!isPodOrder && (!selectedItem?.artist_additional_notes || !selectedItem.artist_additional_notes.includes('Canvas'))">
+            <i class="fas fa-file-image me-1"></i>High-Res Digital File (Email Delivery)
+          </span>
+          <span class="summary-line-val text-primary fw-bold" *ngIf="isPodOrder || (selectedItem?.artist_additional_notes && selectedItem.artist_additional_notes.includes('Canvas'))">
+            <i class="fas fa-paint-brush me-1"></i>Physical Gallery Canvas (Doorstep Delivery)
+          </span>
+        </div>
+        <div class="summary-line" *ngIf="isPodOrder">
+          <span>Type</span>
+          <span class="summary-line-val summary-line-pod">Print on Demand</span>
+        </div>
+        <div class="summary-total">
+          <span class="summary-total-label">Total due</span>
+          <span class="summary-total-amount">AUD ${{ formattedTotalPrice }}</span>
+        </div>
+      </div>
+
+      <!-- 100% Certified Human Art Guarantee Badge (Left Side After Order Summary) -->
+      <div class="my-3 text-center">
+        <div class="d-inline-flex flex-wrap align-items-center justify-content-center gap-2.5 rounded-4 rounded-md-pill shadow-sm"
+             style="background: linear-gradient(135deg, #2e0854 0%, #5b21b6 50%, #7c3aed 100%);
+                    border: 1.5px solid rgba(233, 213, 255, 0.7);
+                    box-shadow: 0 4px 22px rgba(124, 58, 237, 0.45);
+                    padding: 9px 24px;
+                    max-width: 100%;
+                    overflow: hidden;">
+          <div class="d-flex align-items-center" style="gap: 10px;">
+            <span class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.65));">
+              <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Scalloped Gold Medallion Outer Seal -->
+                <path d="M16 2L18.4 5.2L22.2 4.4L23.2 8.2L27 9.2L26.4 13.2L29.4 15.8L27.4 19.2L29 22.8L25.4 24.4L25.2 28.4L21.4 28.2L19.6 31.6L16 29.8L12.4 31.6L10.6 28.2L6.8 28.4L6.6 24.4L3 22.8L4.6 19.2L2.6 15.8L5.6 13.2L5 9.2L8.8 8.2L9.8 4.4L13.6 5.2L16 2Z" fill="url(#goldCertGradPay)" stroke="#92400e" stroke-width="1.2"/>
+                <!-- Inner Velvet Circle -->
+                <circle cx="16" cy="16" r="9" fill="#3b0764" stroke="#fef08a" stroke-width="1.2"/>
+                <!-- Gold Artist Star / Crown -->
+                <path d="M16 9.5L17.6 13.2L21.5 13.7L18.7 16.4L19.4 20.3L16 18.3L12.6 20.3L13.3 16.4L10.5 13.7L14.4 13.2L16 9.5Z" fill="#fde047" stroke="#ca8a04" stroke-width="0.5"/>
+                <defs>
+                  <linearGradient id="goldCertGradPay" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#fff59d"/>
+                    <stop offset="45%" stop-color="#fbbf24"/>
+                    <stop offset="100%" stop-color="#d97706"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </span>
+            <span class="fw-bold text-white text-nowrap" style="font-size: 12px; letter-spacing: 0.3px;">100% Certified Human Art</span>
+          </div>
+          <span class="text-white-50 ps-2" style="font-size: 11px;">•</span>
+          <span class="fw-bold text-white text-nowrap ps-2" style="font-size: 11px; letter-spacing: 0.3px; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">Hand-Drawn Digital Art</span>
+        </div>
+      </div>
+
+      <!-- ══ FEATURE BLOCK ══ -->
+      <div class="feature-block">
+        <div class="feature-row">
+          <div class="feature-item">
+            <div class="feature-icon">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <span class="feature-title">Buyer Protected</span>
+              <span class="feature-sub">100% secure payment</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <span class="feature-title">SSL Encrypted</span>
+              <span class="feature-sub">Powered by Stripe</span>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+                <ellipse cx="12" cy="17" rx="5"   ry="3.5"/>
+                <ellipse cx="6.5" cy="12.5" rx="2.2" ry="1.8"/>
+                <ellipse cx="17.5" cy="12.5" rx="2.2" ry="1.8"/>
+                <ellipse cx="9"    cy="8"    rx="1.8" ry="1.4"/>
+                <ellipse cx="15"   cy="8"    rx="1.8" ry="1.4"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <span class="feature-title">100% Certified Human Art</span>
+              <span class="feature-sub">Hand-Drawn Digital Art</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust row -->
+      <div class="trust-row">
+        <div class="trust-badge">
+          <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 16 16">
+            <path d="M8 1L2 4v4c0 4 3 6.5 6 7.5C11 14.5 14 12 14 8V4L8 1z"/>
+          </svg>
+          SSL Secured
+        </div>
+        <div class="trust-sep"></div>
+        <div class="trust-badge">
+          <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 16 16">
+            <rect x="2" y="5" width="12" height="8" rx="1"/><path d="M5 5V4a3 3 0 016 0v1"/>
+          </svg>
+          Powered by Stripe
+        </div>
+        <div class="trust-sep"></div>
+        <div class="trust-badge">
+          <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="7"/><path d="M5 8l2 2 4-4"/>
+          </svg>
+          Buyer Protected
+        </div>
+      </div>
+
+    </div>
+  </aside><!-- /canvas-panel -->
+
+
+  <!-- ════════════════════════════════
+       RIGHT — PAYMENT FORM
+  ════════════════════════════════ -->
+  <main class="form-panel">
+    <div class="form-inner">
+
+      <!-- Breadcrumb -->
+      <div class="form-breadcrumb">
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 16">
+          <path d="M8 1L2 4v4c0 4 3 6.5 6 7.5C11 14.5 14 12 14 8V4L8 1z"/>
+        </svg>
+        <span>Secure Checkout</span>
+        <span class="breadcrumb-dot" aria-hidden="true">·</span>
+        <span class="breadcrumb-highlight">Payment</span>
+        <ng-container *ngIf="isPodOrder">
+          <span class="breadcrumb-dot" aria-hidden="true">·</span>
+          <span class="breadcrumb-pod">Print on Demand</span>
+        </ng-container>
+      </div>
+
+      <!-- Mobile-only summary strip -->
+      <div class="mobile-summary">
+        <span class="mobile-summary-name">{{ selectedItem?.name }}</span>
+        <span class="mobile-summary-price">AUD ${{ formattedTotalPrice }}</span>
+      </div>
+
+      <!-- Header -->
+      <header class="form-header">
+        <h1 class="form-title">
+          <span>Complete your</span>
+          <em>order</em>
+        </h1>
+        <p class="form-sub">AUD ${{ formattedTotalPrice }} charged on confirmation</p>
+      </header>
+
+      <!-- POD info note — shown only for print orders -->
+      <div class="pod-payment-note" *ngIf="isPodOrder">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 13 13">
+          <circle cx="6.5" cy="6.5" r="5.5"/>
+          <line x1="6.5" y1="4.5" x2="6.5" y2="7"/>
+          <circle cx="6.5" cy="8.8" r=".6" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>
+          Your canvas image is saved on this device. We'll upload it to the print queue
+          <strong>immediately after payment confirms</strong> — please don't close this tab until you see the order summary.
+        </span>
+      </div>
+
+      <div class="address-warning" *ngIf="isPodOrder">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>
+          <strong>Important:</strong> Wrong address might make extra charge and also delay for the product. Please
+          update us within 24 hours of the product order placed if you need to change the address. on
+          support@purrfectpal.studio
+        </p>
+      </div>
+
+      <form id="payment-form" (submit)="handleSubmit($event)" novalidate>
+
+        <section class="section-block">
+          <div class="section-eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="eyebrow-text">Express Checkout</span>
+            <span class="eyebrow-line"></span>
+          </div>
+          <div id="express-checkout-element"></div>
+        </section>
+
+        <div class="or-rail">
+          <span class="or-line"></span>
+          <span class="or-word">or pay with card</span>
+          <span class="or-line"></span>
+        </div>
+
+        <section class="section-block">
+          <div class="section-eyebrow left-align">
+            <span class="eyebrow-text">Card Details</span>
+          </div>
+          <div id="payment-element"></div>
+        </section>
+
+        <!-- ══ CANCEL / PROVIDER-ERROR NOTICE ══ -->
+        <div class="cancel-notice" *ngIf="showCancelNotice" role="alert">
+          <div class="cancel-notice-icon"
+               [class.cancel-notice-icon--warn]="paymentStatus === 'provider-error'">
+            <svg *ngIf="paymentStatus === 'cancelled'"
+                 width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="1.8" viewBox="0 0 16 16">
+              <circle cx="8" cy="8" r="7"/>
+              <path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg *ngIf="paymentStatus === 'provider-error'"
+                 width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="1.8" viewBox="0 0 16 16">
+              <path d="M8 2L1.5 13h13L8 2z" stroke-linejoin="round"/>
+              <line x1="8" y1="7" x2="8" y2="10" stroke-linecap="round"/>
+              <circle cx="8" cy="12" r=".6" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <div class="cancel-notice-body">
+            <span class="cancel-notice-title">{{ cancelNoticeTitle }}</span>
+            <span class="cancel-notice-sub">{{ cancelNoticeSub }}</span>
+          </div>
+          <button type="button" class="cancel-notice-close"
+                  (click)="dismissCancelNotice()"
+                  aria-label="Dismiss notice">
+            <svg width="10" height="10" fill="none" stroke="currentColor"
+                 stroke-width="2.5" viewBox="0 0 12 12">
+              <line x1="2" y1="2" x2="10" y2="10"/>
+              <line x1="10" y1="2" x2="2" y2="10"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- ══ HARD ERROR BAR ══ -->
+        <div class="error-bar"
+             *ngIf="paymentMessage && !isProcessing && paymentStatus === 'idle'"
+             role="alert">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="7"/>
+            <line x1="8" y1="5" x2="8" y2="9"/>
+            <circle cx="8" cy="11.5" r=".8" fill="currentColor" stroke="none"/>
+          </svg>
+          {{ paymentMessage }}
+        </div>
+
+        <!-- ══ PAY BUTTON ══ -->
+        <button type="submit" class="pay-cta"
+                [disabled]="isProcessing || !isPaymentReady"
+                [class.processing]="isProcessing">
+          <span class="cta-bg"></span>
+
+          <span class="cta-content" *ngIf="!isProcessing">
+            <span class="cta-icon">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 16">
+                <rect x="2" y="5" width="12" height="8" rx="1"/>
+                <path d="M5 5V4a3 3 0 016 0v1"/>
+              </svg>
+            </span>
+            <span class="cta-text">
+              <span class="cta-label">Pay now</span>
+              <span class="cta-amount">AUD ${{ formattedTotalPrice }}</span>
+            </span>
+            <span class="cta-arrow" aria-hidden="true">→</span>
+          </span>
+
+          <span class="cta-content" *ngIf="isProcessing">
+            <span class="cta-spinner">
+              <svg class="spin-svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="rgba(255,255,255,.2)" stroke-width="2"/>
+                <path d="M9 2a7 7 0 017 7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="cta-label" style="opacity:.6;">Processing payment…</span>
+          </span>
+        </button>
+
+      </form>
+
+      <p class="form-footnote">
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 16 16">
+          <path d="M8 1L2 4v4c0 4 3 6.5 6 7.5C11 14.5 14 12 14 8V4L8 1z"/>
+        </svg>
+        Encrypted by Stripe · We never store card details
+      </p>
+
+    </div>
+  </main>
+
+</div><!-- /atelier-wrap -->
+
+
+<!-- ══ LEAVE GUARD ══ -->
+<div class="guard-overlay" [class.is-open]="showLeaveModal" role="dialog" aria-modal="true"
+     aria-labelledby="guard-title" aria-describedby="guard-desc">
+  <div class="guard-modal" (click)="$event.stopPropagation()">
+    <div class="guard-icon">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path d="M12 2L3 7v6c0 5.5 3.9 10.7 9 12 5.1-1.3 9-6.5 9-12V7L12 2z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <circle cx="12" cy="16" r=".8" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+    <h2 class="guard-title" id="guard-title">Leave checkout?</h2>
+    <p class="guard-desc" id="guard-desc">
+      You have an unfinished payment. Leaving will cancel your session and you'll need to restart.
+    </p>
+    <div class="guard-actions">
+      <button class="guard-btn-stay"  (click)="onLeaveStay()">Stay &amp; continue</button>
+      <button class="guard-btn-leave" (click)="onLeaveConfirm()">Yes, leave</button>
+    </div>
+  </div>
+</div>

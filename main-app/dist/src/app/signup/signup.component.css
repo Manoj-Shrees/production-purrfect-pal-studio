@@ -1,0 +1,532 @@
+/* ════════════════════════════════════════════════════════════════
+   User Signup — Component Styles
+   Design language is identical to the artist registration form.
+   All shared primitives (card, logo, inputs, button, popup, phone,
+   password-checklist, loader) are preserved exactly so both forms
+   feel like a single coherent product.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Page wrapper ─────────────────────────────────────────────── */
+.signup-page-wrapper {
+  min-height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Column width constraint ──────────────────────────────────── */
+.signup-col {
+  width: 98% !important;
+  max-width: 98% !important;
+  flex: 0 0 98% !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Outer glass card ─────────────────────────────────────────── */
+.signup-card {
+  border-radius: 20px;
+  margin-top: 40px;
+  padding-top: 80px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    inset 0 2px 10px rgba(255, 255, 255, 0.2),
+    0 10px 25px rgba(0, 0, 0, 0.15);
+  position: relative;
+  width: 100%;
+
+  animation: cardSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardSlideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Floating logo ────────────────────────────────────────────── */
+.logo-wrapper {
+  position: absolute;
+  top: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 140px;
+  z-index: 999;
+
+  animation: logoDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes logoDrop {
+  from { opacity: 0; transform: translateX(-50%) translateY(-24px) scale(0.85); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)     scale(1); }
+}
+
+.logo-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #1d9692, #25b09b);
+  border: 3px solid #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.logo-circle:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.25),
+    0 0 25px rgba(29, 150, 146, 0.45);
+}
+
+/* ── Inner glass form card ────────────────────────────────────── */
+.form-glass-card {
+  background: rgba(11, 11, 11, 0.028);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, 0.058),
+    0 8px 20px rgba(0, 0, 0, 0.065);
+}
+
+/* ── Labels ───────────────────────────────────────────────────── */
+.form-glass-card label {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ── Inputs, textareas, selects ───────────────────────────────── */
+.form-glass-card input,
+.form-glass-card textarea,
+.form-glass-card select {
+  height: 50px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 0 45px 0 15px;
+  margin-top: 8px;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.form-glass-card input:focus,
+.form-glass-card textarea:focus {
+  border-color: #1d9692;
+  box-shadow: 0 0 0 3px rgba(29, 150, 146, 0.15);
+  outline: none;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.form-glass-card input.is-invalid,
+.form-glass-card textarea.is-invalid,
+.form-glass-card select.is-invalid {
+  border-color: #ff6b6b !important;
+  background-color: rgba(255, 107, 107, 0.05) !important;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15) !important;
+}
+
+/* ── Input + eye-icon wrapper ─────────────────────────────────── */
+.input-icon-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* ── Eye-toggle icons ─────────────────────────────────────────── */
+.password-toggle,
+.confirm-toggle {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  font-size: 1.15rem;
+  color: rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  z-index: 2;
+  animation: eyeSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+@keyframes eyeSlideIn {
+  from { opacity: 0; right: -4px; }
+  to   { opacity: 1; right: 14px; }
+}
+
+.password-toggle:hover,
+.confirm-toggle:hover {
+  color: #1d9692;
+  transform: translateY(-50%) scale(1.15);
+}
+
+.input-icon-wrapper input.is-invalid {
+  background-image: none !important;
+  padding-right: 45px !important;
+}
+
+input.pe-5 {
+  padding-right: 2.5rem;
+}
+
+/* ── Password requirement checklist ──────────────────────────── */
+.password-checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 16px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #cc3333;
+  transition: color 0.2s ease;
+}
+
+.check-item .fa {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.check-item.check-ok { color: #1d9692; }
+
+.check-item:last-child { grid-column: 1 / -1; }
+
+/* ── Phone field ──────────────────────────────────────────────── */
+.phone-prefix-badge {
+  min-height: 50px;
+  font-weight: 500;
+  white-space: nowrap;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-right: none !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.phone-number-input {
+  border-radius: 0 10px 10px 0 !important;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0.06em;
+  margin-top: 0 !important;
+}
+
+/* ── Glassy submit button ─────────────────────────────────────── */
+.btn-glass {
+  margin: 30px 20px 20px 20px;
+  width: calc(100% - 40px);
+  background: linear-gradient(145deg, #1d9692, #25b09b);
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+  padding: 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.422);
+  cursor: pointer;
+  box-shadow:
+    inset 0 2px 10px rgba(255, 255, 255, 0.2),
+    0 6px 15px rgba(0, 0, 0, 0.16);
+  transition: all 0.3s ease;
+}
+
+.btn-glass:hover {
+  background: linear-gradient(145deg, #27c7c2, #2fddc3);
+  box-shadow:
+    inset 0 2px 15px rgba(255, 255, 255, 0.25),
+    0 8px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+/* ── Per-field error messages ─────────────────────────────────── */
+.input-error {
+  font-size: 0.82rem;
+  color: #e03e3e;
+  margin-top: 5px;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  line-height: 1.4;
+  animation: errorSlide 0.22s ease both;
+}
+
+.input-error::before {
+  content: '⚠';
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  margin-top: 1px;
+}
+
+@keyframes errorSlide {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Form-level error banner ──────────────────────────────────── */
+.form-error-banner {
+  background: rgba(224, 62, 62, 0.08);
+  border: 1px solid rgba(224, 62, 62, 0.3);
+  border-left: 3px solid #e03e3e;
+  border-radius: 10px;
+  color: #c0392b;
+  font-size: 0.875rem;
+  padding: 12px 16px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Loader ───────────────────────────────────────────────────── */
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.loader {
+  width: 20px;
+  aspect-ratio: 1;
+  background: #25b09b;
+  box-shadow: 0 0 60px 15px #25b09b;
+  clip-path: inset(0);
+  animation:
+    l4-1 0.5s ease-in-out infinite alternate,
+    l4-2 1s   ease-in-out infinite;
+}
+
+@keyframes l4-1 {
+  0%   { transform: translateX(-80px); }
+  100% { transform: translateX(80px); }
+}
+
+@keyframes l4-2 {
+  33% { clip-path: inset(0 0 0 -100px); }
+  50% { clip-path: inset(0 0 0 0); }
+  83% { clip-path: inset(0 -100px 0 0); }
+}
+
+/* ── Navigation links ─────────────────────────────────────────── */
+.signup-option {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.signup-option a {
+  color: #1d9692;
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+}
+
+.signup-option a::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: #1d9692;
+  transition: width 0.25s ease;
+}
+
+.signup-option a:hover::after { width: 100%; }
+
+/* ── Shake ────────────────────────────────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-7px); }
+  40%       { transform: translateX(7px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.shake { animation: shake 0.4s ease both; }
+
+/* ══════════════════════════════════════════════════════════════
+   SUCCESS POPUP
+   ══════════════════════════════════════════════════════════════ */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeInOverlay 0.3s ease;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.popup-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(29, 150, 146, 0.2);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.22),
+    inset 0 2px 10px rgba(255, 255, 255, 0.5);
+  padding: 48px 36px 40px;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.popup-icon-ring {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-icon-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(29, 150, 146, 0.15);
+  animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulseRing {
+  0%   { transform: scale(1);    opacity: 0.6; }
+  70%  { transform: scale(1.45); opacity: 0; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+.popup-icon {
+  font-size: 2.4rem;
+  color: #1d9692;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(145deg, #1d9692, #25b09b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.popup-title    { font-size: 1.55rem; font-weight: 700; color: #111; margin-bottom: 8px; }
+.popup-subtitle { color: #555; font-size: 0.95rem; margin-bottom: 4px; }
+.popup-email    { font-weight: 700; color: #1d9692; font-size: 1rem; word-break: break-all; margin-bottom: 16px; }
+.popup-hint     { color: #444; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
+
+.popup-tip {
+  background: rgba(29, 150, 146, 0.08);
+  border-left: 3px solid #1d9692;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: #1d6e6b;
+  text-align: left;
+  margin-bottom: 28px;
+}
+
+.popup-btn { width: 100%; margin: 0; padding: 14px 0; font-size: 1rem; }
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Large desktop (≥ 1200px) ─────────────────────────────────── */
+@media (min-width: 1200px) {
+  .signup-col {
+    width: 80% !important;
+    max-width: 80% !important;
+    flex: 0 0 80% !important;
+  }
+}
+
+/* ── Desktop / small laptop (993px – 1199px) ──────────────────── */
+@media (min-width: 993px) and (max-width: 1199px) {
+  .signup-col {
+    width: 80% !important;
+    max-width: 80% !important;
+    flex: 0 0 80% !important;
+  }
+}
+
+/* ── Tablet landscape / small desktop (769px – 992px) ─────────── */
+@media (min-width: 769px) and (max-width: 992px) {
+  .signup-col {
+    width: 80% !important;
+    max-width: 80% !important;
+    flex: 0 0 80% !important;
+  }
+}
+
+/* ── Tablet portrait (577px – 768px) ─────────────────────────── */
+@media (max-width: 768px) {
+  .signup-col {
+    width: 80% !important;
+    max-width: 80% !important;
+    flex: 0 0 80% !important;
+  }
+  .signup-card        { padding-top: 80px; }
+  .logo-wrapper       { width: 120px; height: 120px; top: -55px; }
+  .password-checklist { grid-template-columns: 1fr; }
+  .check-item:last-child { grid-column: auto; }
+}
+
+/* ── Mobile (≤ 576px) ─────────────────────────────────────────── */
+@media (max-width: 576px) {
+  .signup-col {
+    width: 98% !important;
+    max-width: 98% !important;
+    flex: 0 0 98% !important;
+    padding: 0;
+  }
+  .signup-card        { padding-top: 70px; padding-left: 20px; padding-right: 20px; margin-top: 25px; margin-bottom: 20px; }
+  .form-glass-card    { padding: 20px 14px; margin-bottom: 16px; }
+  .logo-wrapper       { width: 100px; height: 100px; top: -45px; }
+  .logo-circle        { width: 100px; height: 100px; }
+  .btn-glass          { margin: 20px 0; width: 100%; }
+  .popup-card         { padding: 40px 24px 32px; }
+  .phone-prefix-badge { min-width: 44px; padding: 0 10px; font-size: 12px; }
+  .password-checklist { grid-template-columns: 1fr; padding: 10px 12px; margin-top: 10px; margin-bottom: 14px; }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .signup-col {
+    width: 90% !important;
+    max-width: 90% !important;
+    flex: 0 0 90% !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .signup-col {
+    width: 80% !important;
+    max-width: 80% !important;
+    flex: 0 0 80% !important;
+  }
+}

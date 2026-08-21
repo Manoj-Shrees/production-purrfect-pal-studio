@@ -1,0 +1,609 @@
+<!-- Header Start-->
+<header>
+  <nav class="navbar navbar-expand-lg py-2 bg-body-secondary fixed-top">
+    <div class="container-fluid">
+      <!-- Logo -->
+      <a routerLink="/Home#home" class="navbar-brand d-flex align-items-center">
+        <img id="nav-logo" src="/assets/images/pps-logo.webp" appDisablerightclick draggable="false"
+          oncontextmenu="return false;" alt="Logo" width="60" height="60" fetchpriority="high" decoding="async" style="width: 60px; height: auto;">
+        <span class="ms-2">Purrfect Pal Studio</span>
+      </a>
+
+      <!-- Toggle button -->
+      <button class="navbar-toggler ms-auto" #buttonRef type="button" (click)="toggleMenu()" [class.active]="menuOpen">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <!-- Nav Items + Buttons -->
+      <div class="navbar-collapse" [class.show]="menuOpen" [ngClass]="{ 'd-none': innerWidth < 1430 && !menuOpen }">
+        <ul class="navbar-nav ms-auto d-flex align-items-center gap-md-1" style="cursor: pointer;">
+          <li class="nav-item"><a (click)="scrollToFragment('hero')" class="nav-link">Home</a></li>
+          <li class="nav-item"><a (click)="scrollToFragment('LegacyinPixels')" class="nav-link">Memopix</a></li>
+          <li class="nav-item"><a (click)="scrollToFragment('Wisedetailing&Sharpness')"
+              class="nav-link">PixelPrecision</a></li>
+          <li class="nav-item"><a (click)="scrollToFragment('howitworks')" class="nav-link">Workflow</a></li>
+          <li class="nav-item"><a (click)="scrollToFragment('Video-guide-section')" class="nav-link">Tutorials</a></li>
+          <li class="nav-item"><a (click)="scrollToFragment('testimonails')" class="nav-link">Testimonials</a></li>
+          <li class="nav-item"><a routerLink="/AboutUs" class="nav-link">About Us</a></li>
+        </ul>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-3 mt-lg-0">
+
+          <!-- Left buttons -->
+          <div class="d-flex gap-2 flex-wrap align-items-center">
+            @if (!isloggedin) {
+            <a routerLink="/Login" class="btn-login"><i class="fas fa-paw"></i> Login</a>
+            }
+            @if (!isloggedin) {
+            <a routerLink="/Signup" class="btn-signup"><i class="fas fa-paw"></i> Join Now</a>
+            }
+            <a routerLink="/ProductPage" class="btn-shop"><i class="fas fa-shopping-bag"></i> Shop Now</a>
+          </div>
+
+          <!-- Profile Image & Dropdown -->
+          @if (isloggedin && userdata?.length) {
+          <div class="profile-dropdown ms-auto">
+            <button (click)="profiletoggleMenu()" class="btn p-0 border-0 bg-transparent" #menuButton>
+              <img
+                [src]="formatImageUrl(userdata[0].Url) + '?v=' + cacheBuster"
+                alt="User Profile" class="rounded-circle" draggable="false" fetchpriority="high" decoding="async"
+                loading="eager" width="40" height="40" oncontextmenu="return false;" appDisablerightclick
+                style="width: 40px; height: 40px;" (error)="onImageError($event)" />
+            </button>
+            <!-- Dropdown Menu -->
+            @if (profilemenuOpen) {
+            <div #popup class="chat-bubble-popup position-absolute mt-2 bg-body-secondary shadow-sm"
+              style="top: 100%; right: 0; min-width: 220px; z-index: 1050;" #menu>
+              <div class="card-content p-3">
+                <div class="border-bottom border-dark pb-2 mb-4">
+                  <strong style="color: #000;">{{ userdata[0].Name }}</strong><br />
+                  <small style="color: #333;">{{ userdata[0].email }}</small>
+                </div>
+                <a routerLink="/Mycart" class="dropdown-item d-flex align-items-center py-1 text-black">
+                  <i class="fas fa-shopping-cart me-2"></i> My Cart
+                </a>
+                <a routerLink="/OrderPage" class="dropdown-item d-flex align-items-center py-1 text-black">
+                  <i class="fas fa-box me-2"></i> My Orders
+                </a>
+                <a routerLink="/Profile" class="dropdown-item d-flex align-items-center py-1 text-black">
+                  <i class="fas fa-user me-2"></i> Profile
+                </a>
+                <hr class="my-2 border-dark" />
+                <button (click)="logout()" class="dropdown-item d-flex align-items-center py-1 text-danger">
+                  <i class="fas fa-sign-out-alt me-2 text-dark"></i> Logout
+                </button>
+              </div>
+            </div>
+            }
+          </div>
+          }
+
+        </div>
+
+
+      </div>
+    </div>
+  </nav>
+
+</header>
+
+
+<!-- Header End-->
+
+
+
+
+<!--Hero Section Start-->
+<section id="hero" #animatedSection class="section-animate">
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="hero-image">
+        <img src="assets/images/homepage-hero.gif" appDisablerightclick draggable="false" oncontextmenu="return false;"
+          alt="Hand-drawn custom pet portrait of a golden retriever" width="800" height="800" fetchpriority="high" decoding="async" />
+      </div>
+      <div class="hero-text">
+        <h1>WELCOME TO</h1>
+        <h2>PURRFECT PAL STUDIO</h2>
+        <p>
+          Where Art Meets Heart: Turning Your Beloved Pets — and You — into Timeless Digital Masterpieces.
+          <strong>Handcrafted Digital Art by Real Artists, Made with Love.</strong>
+        </p>
+
+        <!-- 100% Certified Human Art Badge -->
+        <div class="my-3">
+          <div class="d-inline-flex flex-wrap align-items-center justify-content-center gap-2.5 rounded-4 rounded-md-pill shadow"
+               style="background: linear-gradient(135deg, #2e0854 0%, #5b21b6 50%, #7c3aed 100%);
+                      border: 1.5px solid rgba(233, 213, 255, 0.7);
+                      box-shadow: 0 4px 22px rgba(124, 58, 237, 0.45);
+                      padding: 9px 24px;
+                      max-width: 100%;
+                      overflow: hidden;">
+            <div class="d-flex align-items-center" style="gap: 10px;">
+              <span class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 30px; height: 30px; filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.65));">
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Scalloped Gold Medallion Outer Seal -->
+                  <path d="M16 2L18.4 5.2L22.2 4.4L23.2 8.2L27 9.2L26.4 13.2L29.4 15.8L27.4 19.2L29 22.8L25.4 24.4L25.2 28.4L21.4 28.2L19.6 31.6L16 29.8L12.4 31.6L10.6 28.2L6.8 28.4L6.6 24.4L3 22.8L4.6 19.2L2.6 15.8L5.6 13.2L5 9.2L8.8 8.2L9.8 4.4L13.6 5.2L16 2Z" fill="url(#goldCertGrad)" stroke="#92400e" stroke-width="1.2"/>
+                  <!-- Inner Velvet Circle -->
+                  <circle cx="16" cy="16" r="9" fill="#3b0764" stroke="#fef08a" stroke-width="1.2"/>
+                  <!-- Gold Artist Star / Crown -->
+                  <path d="M16 9.5L17.6 13.2L21.5 13.7L18.7 16.4L19.4 20.3L16 18.3L12.6 20.3L13.3 16.4L10.5 13.7L14.4 13.2L16 9.5Z" fill="#fde047" stroke="#ca8a04" stroke-width="0.5"/>
+                  <defs>
+                    <linearGradient id="goldCertGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#fff59d"/>
+                      <stop offset="45%" stop-color="#fbbf24"/>
+                      <stop offset="100%" stop-color="#d97706"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </span>
+              <span class="fw-bold text-white text-nowrap" style="font-size: 13px; letter-spacing: 0.4px;">100% Certified Human Art</span>
+            </div>
+            <span class="text-white-50 ps-2" style="font-size: 11px;">•</span>
+            <span class="fw-bold text-white text-nowrap ps-2" style="font-size: 12px; letter-spacing: 0.3px; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">Hand-Drawn Digital Art</span>
+          </div>
+        </div>
+
+        <button (click)="openProductPage()" class="cta-button">ORDER YOURS NOW!</button>
+
+
+      </div>
+    </div>
+  </div>
+</section>
+<!---Hero Section End-->
+
+<!-- Featured Artist & Spotlight Section Start -->
+<section *ngIf="spotlights && spotlights.length > 0" class="spotlight-section py-4">
+  <div class="container text-center">
+    <span class="spotlight-section-badge badge px-3.5 py-1.5 fw-bold rounded-pill mb-1.5 shadow-sm">
+      👑 FEATURED ARTIST & SPOTLIGHT
+    </span>
+    <h2 class="spotlight-header-title fw-bold mb-1 fs-3">Featured Artist of the Month & Trending Masterpieces</h2>
+    <p class="spotlight-header-subtitle small mb-3" style="max-width: 580px; margin-left: auto; margin-right: auto;">
+      Celebrate our featured monthly artists, top creators, and viral custom portrait styles.
+    </p>
+    
+    <div class="row justify-content-center g-3.5 mt-2">
+      <div *ngFor="let spot of spotlights" class="col-lg-5 col-md-8 col-sm-11 spotlight-card-wrapper" (click)="trackSpotlightClick(spot)">
+        <div class="spotlight-glass-card rounded-4 border shadow-sm position-relative overflow-hidden">
+          <!-- Top accent gradient line -->
+          <div class="spotlight-card-accent-bar position-absolute top-0 start-0 w-100" style="height: 3.5px; background: linear-gradient(90deg, #7c3aed, #a855f7, #ec4899); z-index: 2;"></div>
+
+          <div class="spotlight-image-container position-relative overflow-hidden">
+            <img [src]="spot.imageURL" [alt]="spot.targetName" class="spotlight-image img-fluid w-100" loading="lazy" decoding="async">
+            <span class="spotlight-tag position-absolute top-0 start-0 m-2.5 px-2.5 py-1 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-1">
+              {{ spot.type === 'artist' ? '👑 Featured Artist' : '🖼️ Spotlight' }}
+            </span>
+          </div>
+
+          <div class="spotlight-info text-start p-3 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <h3 class="spotlight-name fw-bold mb-0 fs-5">{{ spot.targetName }}</h3>
+                <span class="spotlight-card-badge badge px-2 py-0.5 rounded-pill fs-7">
+                  <i class="fas fa-crown me-1 text-warning"></i> Spotlight
+                </span>
+              </div>
+              <p class="spotlight-desc small mb-2" style="line-height: 1.45;">{{ spot.targetDetail }}</p>
+            </div>
+
+            <button class="spotlight-cta btn w-100 fw-bold rounded-pill py-2 text-white border-0 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+              (click)="$event.stopPropagation(); trackSpotlightClick(spot)">
+              <i class="fas fa-sparkles text-white"></i> {{ spot.type === 'artist' ? 'View Artist Profile' : 'Order Artist Style' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Featured Artist & Spotlight Section End -->
+
+
+
+<!--Memories Section Start-->
+
+<section #animatedSection class="gallery section-animate alter-background" id="LegacyinPixels">
+
+  <h1 class="text-center fw-bold mt-4">Together — Celebrating the Bond You Share</h1>
+  <app-showcase-gallery></app-showcase-gallery>
+</section>
+
+<!--Memories Section End-->
+
+<!--! artist work showcase section start -->
+
+<section #animatedSection class="section-animate" id="Wisedetailing&Sharpness">
+  <app-art-sharpness-demo></app-art-sharpness-demo>
+</section>
+
+<!--! artist work showcase section end -->
+
+
+<!--How it works Section Start-->
+<section id="howitworks" #animatedSection class="section-animate alter-background">
+  <div class="container">
+    <div class="row py-5">
+      <div class="col-lg-12">
+        <h1 class="text-center fw-bold">Workflow - How it works</h1>
+        <p class="text-center">
+          Its really simple, in just 3 simple step get your artwork.
+        </p>
+      </div>
+      <div class="container" style="height: auto; position: relative;">
+        <img src="assets/images/paw-img.webp" appDisablerightclick draggable="false" oncontextmenu="return false;"
+          class="d-none d-md-block" loading="lazy" decoding="async"
+          style="position: absolute; top: 5%; left: 22%; width: 55%; height: auto; z-index: 0" alt="Paw Background Track">
+        <div class="row justify-content-between text-center" style="z-index: 2">
+          @for (item of howitworkdatalists; track item) {
+          <div class="col-12 col-md-3">
+            <img [src]="item.imgurl" [alt]="item.title + ' - ' + item.subtitle" appDisablerightclick draggable="false" oncontextmenu="return false;"
+              class="rounded" style="width: 60%" loading="lazy" decoding="async">
+            <p>{{item.title}}</p>
+            <h5>{{item.subtitle}}</h5>
+            <p>{{item.description}}</p>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--How it works Section End-->
+
+
+<!--Video Guide Section Start-->
+<section id="Video-guide-section" #animatedSection class="section-animate">
+  <div class="video-guide-container">
+    <h1 style="text-align:center"> A Video Guide</h1>
+    <p style="text-align:center; padding: 5px;">
+      Watch this video to learn how to order your <strong>custom digital portrait of you and your pet</strong>.
+    </p>
+
+    <div class="container my-4">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+          <div class="ratio ratio-16x9 shadow rounded">
+            <iframe width="1840" height="1095" src="https://www.youtube.com/embed/IuOXXmrRF_c"  
+              class="rounded" style="border: none;"
+              loading="lazy"
+              title="Purrfect Pal Studio  - How to Order?" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button (click)="openProductPage()" class="cta-button">Try Now !</button>
+  </div>
+</section>
+<!--Video Guide Section End-->
+
+<!--Testimonial Section Start-->
+<section id="testimonails" #animatedSection class="section-animate alter-background">
+  <div class="testimonial-container">
+    <h1 class="testimonial-heading">Testimonial</h1>
+    <h2>What our customers are saying?</h2>
+    <div class="testimonial-card-wrapper">
+
+      @for (testimonial of testimonialdata; track testimonial) {
+      <div class="testimonial-card text-center" appDisablerightclick draggable="false" oncontextmenu="return false;">
+        <img class="testimonial-image" [src]="formatImageUrl(testimonial.img_url)" appDisablerightclick draggable="false"
+          oncontextmenu="return false;" loading="lazy" decoding="async" alt="Customer Testimonial">
+        <h2> {{testimonial.name}}</h2>
+        <h3>{{testimonial.title}}</h3>
+        <p><i class="fa fa-quote-left"
+            style="font-size: 15px; color: rgb(247, 59, 59); margin-right: 8px; position: relative; top: -10px;"></i>
+          {{testimonial.text}}
+          <i class="fa fa-quote-right"
+            style="font-size: 15px; color:rgb(247, 59, 59); margin-left: 8px; position: relative; bottom: -5px;"></i>
+        </p>
+      </div>
+      }
+
+    </div>
+  </div>
+</section>
+<!--Testimonial Section End-->
+
+
+<!--About Us / Journey Start (Unified Consistent Layout across all screen sizes)-->
+<section id="about-us-section" class="py-4">
+  <div class="container">
+    <div class="text-center mb-4 mt-2">
+      <h1 class="fw-bold fs-2 fs-md-1">Journey – From Quiet Love to Digital Legacy</h1>
+    </div>
+
+    <div class="about-journey-layout">
+      <!-- Left: Masterpiece Artwork -->
+      <div class="about-journey-image-col">
+        <a routerLink="/AboutUs" class="d-flex align-items-center justify-content-center text-decoration-none">
+          <img src="assets/images/about-us-image.webp" appDisablerightclick draggable="false" oncontextmenu="return false;"
+            alt="Purrfect Pal Studio Artistic Journey" class="about-journey-img shadow rounded-4" loading="lazy" decoding="async">
+        </a>
+      </div>
+
+      <!-- Right: Story narrative and CTA -->
+      <div class="about-journey-text-col">
+        <p>
+          It started with a quiet observation: the moments people value most are rarely the loud ones. A pet resting beside its owner. A shared glance between close friends. A family captured in an ordinary moment that becomes unforgettable later.
+          Purrfect Pal Studio began as a way to preserve those moments through art.
+        </p>
+
+        <p>
+          At first, the focus was simple—capturing pets in a way that felt more alive than a photograph. Not just how they look, but who they are. Their expression, their energy, their presence in a home.
+          But over time, the work naturally expanded. Because it was never only about pets. It was about the bond around them—the person who cares for them, and the relationships they exist within.
+        </p>
+
+        <p>
+          Today, each piece is created as a personal translation of those connections—whether it is a single subject, a companion animal, or shared moments between people and pets. Every portrait is designed to feel intentional, expressive, and emotionally grounded rather than decorative.
+        </p>
+
+        <div class="mt-2">
+          <button (click)="openProductPage()" class="cta-button">Explore now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Us & Founders Callout Banner -->
+  <div class="container py-4 founder-container text-center">
+    <div class="divider justify-content-center" role="separator" aria-label="Divider"></div>
+
+    <div class="container my-4 py-3">
+      <div class="p-4 p-md-5 rounded-4 shadow-sm text-center" style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); color: #ffffff;">
+        <span class="badge rounded-pill bg-warning text-dark px-3 py-2 fs-6 mb-3">
+          <i class="fas fa-heart me-1"></i> Who We Are
+        </span>
+        <h2 class="fw-bold mb-3 display-6">Meet the Founders Behind Purrfect Pal Studio</h2>
+        <p class="lead text-white-50 mx-auto mb-4" style="max-width: 650px;">
+          Learn about our mission, our passion for custom pet artistry, and the team driving pixel precision and customer joy.
+        </p>
+        <a routerLink="/AboutUs" class="btn btn-warning rounded-pill px-4 py-2 fw-bold shadow-sm">
+          <i class="fas fa-users me-2"></i> Read Our Story & Meet Founders
+        </a>
+      </div>
+    </div>
+  </div>
+
+    <div class="divider" role="separator" aria-label="Divider"></div>
+
+    <!-- Featured Digital Artist Card -->
+    <div class="artist-card" (mouseleave)="hidePopup()">
+      <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+        <span class="badge text-white px-3 py-1 rounded-pill fw-bold" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(192, 132, 252, 0.4); font-size: 0.78rem; letter-spacing: 0.5px;">
+          👑 MEET OUR TALENT
+        </span>
+      </div>
+      <h3 class="artist-title">Featured Digital Artists</h3>
+      <p class="text-white-50 small text-center mb-3 mb-md-4" style="max-width: 540px; margin-left: auto; margin-right: auto;">
+        Click on any artist to view their full portfolio, specialty styles & select them for your custom portrait.
+      </p>
+
+      <div class="artist-images">
+        @for (artist of artists; track artist.name || artist) {
+        <div class="artist-img-wrapper" (click)="openArtistBriefing(artist)" (mouseenter)="showPopup($event, artist)" role="button" [attr.aria-label]="'View ' + (artist.name || $any(artist).Name) + ' profile'">
+          <div class="artist-avatar-container position-relative">
+            <img [src]="formatImageUrl(artist.img || $any(artist).Url)" [alt]="artist.name || $any(artist).Name"
+              appDisablerightclick draggable="false" oncontextmenu="return false;" class="artist-img" loading="lazy" decoding="async" />
+            <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-2 border-dark rounded-circle" title="Available for commissions"></span>
+          </div>
+          <span class="artist-name fw-bold text-white mt-2">{{ artist.name || $any(artist).Name }}</span>
+          <span class="artist-skill text-white-50 small">{{ artist.skill || 'Digital Artist' }}</span>
+          <span class="artist-badge badge rounded-pill mt-2 px-2.5 py-1">
+            <i class="fas fa-sparkles me-1 text-warning"></i> View Profile
+          </span>
+        </div>
+        }
+      </div>
+
+      @if (popupVisible) {
+      <div class="artist-popup d-none d-md-block" [ngStyle]="{ top: popupPosition.top + 'px', left: popupPosition.left + 'px', width: popupWidth + 'px' }" role="tooltip">
+        <strong>{{ popupData.name || $any(popupData).Name }}</strong>
+        <em>{{ popupData.skill || 'Digital Artist' }}</em>
+        <small>{{ popupData.desc || $any(popupData).bio || 'Custom pet portrait artist' }}</small>
+      </div>
+      }
+    </div>
+
+    <!-- ARTIST BRIEFING MODAL -->
+    @if (showArtistModal && selectedArtist) {
+    <div class="popup-overlay position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-2 p-md-3"
+      style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9999;" (click)="closeArtistModal()">
+      <div class="popup-card p-3 p-md-4 rounded-4 shadow-lg text-start position-relative"
+        style="max-width: 580px; width: 100%; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 100%); color: #ffffff; border: 1px solid rgba(192, 132, 252, 0.35); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(168, 85, 247, 0.25);"
+        (click)="$event.stopPropagation()">
+        
+        <!-- Top accent gradient bar -->
+        <div class="position-absolute top-0 start-0 w-100" style="height: 4px; background: linear-gradient(90deg, #a855f7, #c084fc, #e879f9);"></div>
+
+        <!-- Close button -->
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" (click)="closeArtistModal()"></button>
+
+        <!-- Artist Info Header -->
+        <div class="d-flex align-items-center gap-3 mb-3 mt-1">
+          <div class="position-relative flex-shrink-0">
+            <img [src]="formatImageUrl(selectedArtist?.Url || selectedArtist?.imageURL || selectedArtist?.img)" [alt]="selectedArtist?.Name || selectedArtist?.name"
+              class="rounded-circle shadow-sm artist-modal-avatar" style="width: 75px; height: 75px; object-fit: cover; border: 3px solid #c084fc;">
+            <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-2 border-dark rounded-circle" title="Available for commissions"></span>
+          </div>
+
+          <div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <h3 class="mb-0 fw-bold text-white fs-5 fs-md-4">{{ selectedArtist?.Name || selectedArtist?.name }}</h3>
+              <span class="badge text-white fw-bold px-2 py-0.5 rounded-pill fs-7" style="background: rgba(168, 85, 247, 0.3); border: 1px solid rgba(192, 132, 252, 0.5);" title="Verified Creator">👑 Verified</span>
+            </div>
+            <span class="badge text-white px-2.5 py-1 rounded-pill fw-semibold mt-1.5 d-inline-flex align-items-center gap-1 small" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(192, 132, 252, 0.4);">
+              <i class="fas fa-palette text-white"></i> {{ selectedArtist?.skill || selectedArtist?.specialty || 'Master Digital Artist' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Badges & Highlights Row (Properly Aligned with Drop Shadows) -->
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          @if (selectedArtist?.breed) {
+          <span class="badge text-white px-3 py-1.5 rounded-pill border border-secondary border-opacity-30 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <i class="fas fa-paw text-warning"></i> {{ selectedArtist.breed }}
+          </span>
+          }
+          @if (selectedArtist?.socialHandle) {
+          <span class="badge text-white px-3 py-1.5 rounded-pill border border-secondary border-opacity-30 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <i class="fab fa-instagram text-danger"></i> {{ selectedArtist.socialHandle }}
+          </span>
+          }
+          @if (selectedArtist?.favStyle) {
+          <span class="badge text-white px-3 py-1.5 rounded-pill border border-secondary border-opacity-30 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <i class="fas fa-brush text-info"></i> {{ selectedArtist.favStyle }}
+          </span>
+          }
+          @if (selectedArtist?.promoCode) {
+          <span class="badge text-white px-3 py-1.5 rounded-pill border border-purple border-opacity-40 d-inline-flex align-items-center gap-1" style="background: linear-gradient(135deg, #7c3aed, #ec4899); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);">
+            <i class="fas fa-ticket text-warning"></i> Code: {{ selectedArtist.promoCode }}
+          </span>
+          }
+          @if (selectedArtist?.location) {
+          <span class="badge text-white px-3 py-1.5 rounded-pill border border-secondary border-opacity-30 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <i class="fas fa-location-dot text-white"></i> {{ selectedArtist.location }}
+          </span>
+          }
+          <span class="badge text-white px-3 py-1.5 rounded-pill border border-secondary border-opacity-30 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <i class="fas fa-certificate text-white"></i> 100% Custom Artwork
+          </span>
+          <span class="badge text-white px-3 py-1.5 rounded-pill border border-secondary border-opacity-30 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <i class="fas fa-star text-warning"></i> 4.98★ Rating
+          </span>
+        </div>
+
+        <!-- Bio Briefing Box -->
+        <div class="mb-3 p-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border-left: 3px solid #c084fc; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <h6 class="fw-bold mb-1 small text-uppercase" style="color: #c084fc; letter-spacing: 0.8px;">
+            <i class="fas fa-user-pen me-1 text-white"></i> Artist Story & Bio
+          </h6>
+          <p class="text-white-50 mb-0 small" style="line-height: 1.6;">
+            {{ selectedArtist?.bio || selectedArtist?.desc || 'Featured Artist for Purrfect Pal Studio. Inspiring pet lovers worldwide with viral custom portraits.' }}
+          </p>
+        </div>
+
+        <!-- Stats / Workload Grid -->
+        <div class="row g-2 mb-3 text-center">
+          <div class="col-6">
+            <div class="p-2.5 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+              <small class="text-muted d-block mb-1">Completed Masterpieces</small>
+              <span class="fw-bold fs-5 text-white"><i class="fas fa-award me-1" style="color: #c084fc;"></i> {{ getArtistContribution(selectedArtist) }}+</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-2.5 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+              <small class="text-muted d-block mb-1">Status</small>
+              <span class="fw-bold fs-6 text-success"><i class="fas fa-circle-check me-1"></i> Available for Orders</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Artworks Portfolio Showcase -->
+        @if (getArtistSamples(selectedArtist).length > 0) {
+        <div class="mb-3">
+          <h6 class="fw-bold mb-2 small text-uppercase" style="color: #c084fc; letter-spacing: 0.8px;">
+            <i class="fas fa-images me-1 text-white"></i> Portfolio Showcase <small class="text-white-50 ms-1 fw-normal">(click to expand)</small>
+          </h6>
+          <div class="d-flex gap-2 overflow-x-auto pb-1" style="scrollbar-width: thin;">
+            @for (img of getArtistSamples(selectedArtist); track $index) {
+            <img [src]="formatImageUrl(img)" alt="Sample Artwork"
+              class="rounded-3 border border-secondary border-opacity-50 shadow-sm flex-shrink-0"
+              style="width: 75px; height: 75px; object-fit: cover; transition: transform 0.2s ease; cursor: pointer;"
+              (click)="openArtworkPreview(img, $event)"
+              onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'" />
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Actions: Order Yours CTA with Drop Shadow -->
+        <div>
+          <button class="btn w-100 rounded-pill fw-bold py-2.5 shadow-lg text-white d-flex align-items-center justify-content-center gap-2"
+            style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%); border: none; box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.6);" (click)="chooseArtist(selectedArtist)">
+            <i class="fas fa-shopping-bag text-white"></i> Order Yours
+          </button>
+        </div>
+
+      </div>
+    </div>
+    }
+
+    <!-- FULLSCREEN ARTWORK PREVIEW LIGHTBOX -->
+    @if (previewArtworkUrl) {
+    <div class="popup-overlay position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3"
+      style="background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 10000;"
+      (click)="closeArtworkPreview()">
+      <div class="position-relative text-center d-flex flex-column align-items-center justify-content-center" style="max-width: 90vw; max-height: 90vh;" (click)="$event.stopPropagation()">
+        <!-- Close button -->
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2 p-2.5 rounded-circle shadow-lg"
+          style="background-color: rgba(255,255,255,0.25); z-index: 10001; opacity: 1;" (click)="closeArtworkPreview()"></button>
+        <!-- Fullscreen Image -->
+        <img [src]="previewArtworkUrl" alt="Masterpiece Fullscreen Preview"
+          class="img-fluid rounded-4 shadow-lg border border-secondary border-opacity-50"
+          style="max-height: 82vh; max-width: 85vw; object-fit: contain; box-shadow: 0 0 60px rgba(168, 85, 247, 0.5);" />
+        <div class="mt-3 px-4 py-1.5 rounded-pill shadow-sm" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(192, 132, 252, 0.4); color: #ffffff;">
+          <i class="fas fa-sparkles text-warning me-1.5"></i> Authentic PurrfectPal Studio Masterpiece Preview
+        </div>
+      </div>
+    </div>
+    }
+
+</section>
+<!--About Us End-->
+
+<!-- Login Success Modal -->
+@if (showLoginModal) {
+<app-login-sucess-modal (close)="onCloseModal()"></app-login-sucess-modal>
+}
+
+
+
+
+<!-- Footer Start -->
+<footer class="container-fluid p-4">
+  <div class="row justify-content-between">
+    <div class="col-7 col-md-4 d-flex justify-content-center">
+      <div class="d-flex flex-column gap-2">
+        <a routerLink="/Home#home" class="navbar-brand d-flex align-items-center">
+          <img src="/assets/images/pps-logo.webp" appDisablerightclick draggable="false" oncontextmenu="return false;"
+            class="image-fluid" style="max-width: 150px; height: auto;" alt="Purrfect Pal Studio Logo" loading="lazy" decoding="async"> </a>
+        <h5 class="text-uppercase text-dark">Purrfect Pal Studio</h5>
+        <h6 class="text-dark"> Where Art Meets Heart – Bringing Your Pets to Life Through Art</h6>
+      </div>
+    </div>
+
+
+    <div class="col-5 col-md-3 d-flex justify-content-center">
+      <div class="d-flex flex-column" style="cursor: pointer;">
+        <a class="text-dark text-decoration-none mb-2" (click)="scrollToFragment('hero')">Home</a>
+        <a class="text-dark text-decoration-none mb-2" (click)="scrollToFragment('LegacyinPixels')">Memopix</a>
+        <a class="text-dark text-decoration-none mb-2"
+          (click)="scrollToFragment('Wisedetailing&Sharpness')">PixelPrecision</a>
+        <a class="text-dark text-decoration-none mb-2" (click)="scrollToFragment('Video-guide-section')">Tutorials</a>
+        <a class="text-dark text-decoration-none mb-2" (click)="scrollToFragment('testimonails')">Testimonials</a>
+        <a class="text-dark text-decoration-none mb-2" (click)="scrollToFragment('about-us-section')">Journey</a>
+        <a class="text-dark text-decoration-none mb-2" routerLink="/PrivacyPolicy">Privacy Policy</a>
+        <a class="text-dark text-decoration-none mb-2 " routerLink="/FaqPage">FAQ's</a>
+      </div>
+    </div>
+
+    <div class="col-12  col-md-4 social text-center my-auto">
+      <h4 class="text-dark mt-4">Connect with us</h4>
+      <div class="d-flex flex-row justify-content-center">
+        <a class="instagram" (click)="opensocialurl(0)"><i class="fa-brands fa-instagram"></i></a>
+        <a class="facebook" (click)="opensocialurl(1)"><i class="fa-brands fa-facebook"></i></a>
+        <a class="email" href="mailto:support@purrfectpal.studio"><i class="fa fa-envelope"></i></a>
+        <a class="tiktok" (click)="opensocialurl(2)"><i class="fa-brands fa-tiktok"></i></a>
+      </div>
+    </div>
+  </div>
+
+</footer>
+
+<!-- Footer End -->

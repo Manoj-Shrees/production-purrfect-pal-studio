@@ -1,0 +1,143 @@
+<!-- Header Start -->
+<header>
+  <nav class="navbar navbar-expand-lg py-2 fixed-top">
+    <div class="container-fluid align-items-center">
+      <a routerLink="/Home#home" class="navbar-brand d-flex align-items-center">
+        <img id="nav-logo" src="/assets/images/pps-logo.png" appDisablerightclick draggable="false"
+          oncontextmenu="return false;" alt="Logo" style="width: 60px;">
+        <span class="ms-2">Purrfect Pal Studio</span>
+      </a>
+
+      <button class="navbar-toggler" #buttonRef type="button" (click)="toggleMenu()" [class.active]="menuOpen">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <div class="navbar-collapse" [class.show]="menuOpen" [ngClass]="{ 'd-none': innerWidth < 1430 && !menuOpen }">
+        <ul class="navbar-nav ms-auto align-items-center gap-md-3">
+          <li class="nav-item">
+            <a routerLink="/Home#home" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/ProductPage" class="btn-shop">
+              <i class="fas fa-shopping-bag"></i> Shop Now
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+<!-- Header End -->
+
+
+<!-- Privacy Policy – Redesigned Content -->
+<div class="policy-wrapper">
+
+  <!-- Hero -->
+  <div class="policy-hero">
+    <span class="icon-deco">🔒</span>
+    <h1>Your <em>Privacy</em><br>Matters to Us</h1>
+    <p>We're committed to being transparent about how your data is collected, used, and protected.</p>
+    <div class="hero-divider">
+      <span></span>
+      <i class="fas fa-paw"></i>
+      <span></span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="policy-content">
+
+    <div class="last-updated">
+      <i class="fas fa-calendar-alt"></i> Last updated: 2025
+    </div>
+
+    <div class="accordion" id="policyAccordion">
+      @for (section of privacyPolicySections; track section; let i = $index) {
+        <div class="policy-card accordion-item border-0">
+
+          <h2 class="accordion-header" [id]="'heading' + i">
+            <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse"
+              [attr.data-bs-target]="'#collapse' + i"
+              aria-expanded="false"
+              [attr.aria-controls]="'collapse' + i">
+              <span class="item-num">{{ i + 1 }}</span>
+              <i class="fas item-icon" [class]="section.icon"></i>
+              {{ section.question }}
+            </button>
+          </h2>
+
+          <div [id]="'collapse' + i"
+            class="accordion-collapse collapse"
+            [attr.aria-labelledby]="'heading' + i"
+            data-bs-parent="#policyAccordion">
+            <div class="accordion-body">
+              @if (section.answer) {
+                <p>{{ section.answer }}</p>
+              }
+              @if (section.list) {
+                <ul class="policy-list">
+                  @for (item of section.list; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+
+    <!-- Contact callout -->
+    <div class="contact-callout">
+      <h3>Questions about your data?</h3>
+      <p>Our team is happy to help — reach out and we'll get back to you promptly.</p>
+      <a href="mailto:support@purrfectpal.studio">
+        <i class="fa fa-envelope"></i> support@purrfectpal.studio
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Footer Start -->
+<footer class="container-fluid p-4">
+  <div class="row justify-content-between">
+
+    <div class="col-7 col-md-4 d-flex justify-content-center">
+      <div class="d-flex flex-column gap-2">
+        <a routerLink="/Home#home" class="navbar-brand d-flex align-items-center">
+          <img src="/assets/images/pps-logo.png" appDisablerightclick draggable="false"
+            oncontextmenu="return false;" class="image-fluid" style="max-width: 150px;" alt="logo">
+        </a>
+        <h5 class="text-uppercase text-dark">Purrfect Pal Studio</h5>
+        <h6 class="text-dark">Where Art Meets Heart – Bringing Your Pets to Life Through Art</h6>
+      </div>
+    </div>
+
+    <div class="col-5 col-md-3 d-flex justify-content-center align-items-center">
+      <div class="d-flex flex-column text-start" style="cursor: pointer;">
+        <a class="text-dark text-decoration-none mb-2" routerLink="/Home#home">Home</a>
+        <a class="text-dark text-decoration-none mb-2" routerLink="/FaqPage">FAQ's</a>
+        <a class="text-dark text-decoration-none mb-2" routerLink="/ProductPage">Shop Now</a>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 social text-center my-auto mx-auto">
+      <h4 class="text-dark mt-4">Connect with us</h4>
+      <div class="d-flex flex-row justify-content-center">
+        <a class="instagram" (click)="opensocialurl(0)"><i class="fa-brands fa-instagram"></i></a>
+        <a class="facebook" (click)="opensocialurl(1)"><i class="fa-brands fa-facebook"></i></a>
+        <a class="email" href="mailto:support@purrfectpal.studio"><i class="fa fa-envelope"></i></a>
+        <a class="tiktok" (click)="opensocialurl(2)"><i class="fa-brands fa-tiktok"></i></a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+<!-- Footer End -->

@@ -1,0 +1,27 @@
+<div class="toast-container">
+  <div
+    *ngFor="let toast of toastService.toasts; let i = index; trackBy: trackById"
+    class="toast"
+    [ngStyle]="getStackStyle(i, toast.color)"
+    [@slidePop]
+    (click)="dismiss(toast)"
+  >
+    <!-- icon-wrap: SVG injected with explicit stroke/fill attributes, not CSS inheritance -->
+    <div class="icon-wrap" [innerHTML]="getIcon(toast.type)"></div>
+
+    <div class="toast-content">
+      <div class="toast-title">{{ toast.title }}</div>
+      <div class="toast-message">{{ toast.message }}</div>
+    </div>
+
+    <div class="toast-progress">
+     
+      <span
+        class="progress-bar"
+        *ngIf="toastService.isActive(toast)"
+        [style.animationDuration]="toast.duration + 'ms, 2s'"
+        (animationend)="$event.animationName === 'shrink' && dismiss(toast)"
+      ></span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,188 @@
+<section class="pixel-precision-section py-5 position-relative overflow-hidden">
+  <!-- HTML5 Magic Particle Animation Engine Canvas -->
+  <canvas #magicCanvas class="magic-particles-canvas position-absolute top-0 start-0 w-100 h-100 pointer-events-none" style="z-index: 1;"></canvas>
+
+  <!-- Ambient glowing aura -->
+  <div class="ambient-glow position-absolute top-50 start-50 translate-middle pointer-events-none" style="width: 680px; height: 680px; background: radial-gradient(circle, rgba(124, 58, 237, 0.16) 0%, rgba(236, 72, 153, 0.08) 50%, transparent 70%); filter: blur(60px); z-index: 0;"></div>
+
+  <!-- Floating Sparkle Orbs & Starburst Overlay -->
+  <div class="magic-sparkles-container pointer-events-none" aria-hidden="true">
+    <div class="magic-sparkle magic-sparkle-1"><i class="fas fa-sparkles text-warning"></i></div>
+    <div class="magic-sparkle magic-sparkle-2"><i class="fas fa-star text-purple"></i></div>
+    <div class="magic-sparkle magic-sparkle-3"><i class="fas fa-wand-magic-sparkles text-cyan"></i></div>
+    <div class="magic-sparkle magic-sparkle-4">✦</div>
+    <div class="magic-sparkle magic-sparkle-5">✧</div>
+    <div class="magic-sparkle magic-sparkle-6"><i class="fas fa-sparkles text-pink"></i></div>
+  </div>
+
+  <div class="container text-center position-relative" style="z-index: 2;">
+    <!-- Header -->
+    <div class="mb-4 text-center">
+      <div class="d-inline-flex align-items-center gap-2 px-3.5 py-1.5 rounded-pill bg-purple-subtle text-purple border border-purple-subtle mb-2 magic-badge" style="font-size: 0.78rem; font-weight: 800;">
+        <i class="fas fa-wand-magic-sparkles text-purple magic-wand-icon"></i> Magic Handcrafted Transformation
+      </div>
+      <h2 class="fw-bold display-6 mb-2 text-dark mt-1 precision-title">
+        Pixel<span class="precision-gradient-text">Precision</span> — Handcrafted Detail Viewer
+      </h2>
+      <p class="text-muted mb-0 mx-auto precision-subtitle">
+        Switch between art styles below. Touch &amp; drag or move your cursor across the portrait to activate the high-precision 4K reticle lens and inspect microscopic hand-drawn brushwork.
+      </p>
+    </div>
+
+    <!-- 3-Way Style Toggle Buttons with Liquid Slider & Magic Star Bursts -->
+    <div class="liquid-toggle-bar mb-4 mx-auto">
+      <div class="liquid-slider-bg" [style.transform]="getLiquidSliderTransform()" [style.width]="getLiquidSliderWidth()" [style.height]="getLiquidSliderHeight()"></div>
+      <button type="button" class="btn pill-toggle-btn" #btnRealistic
+              [class.active]="selectedStyle === 'realistic'"
+              (click)="selectStyle('realistic', $event)">
+        <i class="fas fa-paw me-1"></i> <span class="d-none d-sm-inline">Realistic Art</span><span class="d-inline d-sm-none">Realistic</span>
+      </button>
+
+      <button type="button" class="btn pill-toggle-btn" #btnCartoon
+              [class.active]="selectedStyle === 'cartoonised'"
+              (click)="selectStyle('cartoonised', $event)">
+        <i class="fas fa-wand-magic-sparkles me-1"></i> <span class="d-none d-sm-inline">Cartoon &amp; Pop</span><span class="d-inline d-sm-none">Cartoon</span>
+      </button>
+
+      <button type="button" class="btn pill-toggle-btn" #btnHuman
+              [class.active]="selectedStyle === 'human'"
+              (click)="selectStyle('human', $event)">
+        <i class="fas fa-users me-1"></i> <span class="d-none d-sm-inline">Couples &amp; Family</span><span class="d-inline d-sm-none">Couples</span>
+      </button>
+    </div>
+
+    <!-- Mobile View Mode Switcher with Liquid Slider (Visible < 768px) -->
+    <div class="d-flex d-md-none justify-content-center align-items-center mb-3 mobile-mode-switcher">
+      <div class="mobile-slider-bg" [style.transform]="mobileViewMode === 'reticle' ? 'translateX(100%)' : 'translateX(0%)'"></div>
+      <button type="button" class="btn btn-xs mobile-mode-btn" [class.active]="mobileViewMode === 'dual'" (click)="setMobileViewMode('dual')">
+        <i class="fas fa-columns me-2"></i> <span>Split Dual View</span>
+      </button>
+      <button type="button" class="btn btn-xs mobile-mode-btn" [class.active]="mobileViewMode === 'reticle'" (click)="setMobileViewMode('reticle')">
+        <i class="fas fa-crosshairs me-2"></i> <span>Reticle Lens View</span>
+      </button>
+    </div>
+
+    <!-- Interactive Viewer Card Container -->
+    <div class="precision-card shadow-lg rounded-4 p-3 p-md-4 border bg-white mx-auto" style="max-width: 900px;">
+
+      <!-- Dual Inspector Section -->
+      <div class="main-area" [class.show-reticle-only]="mobileViewMode === 'reticle'">
+
+        <!-- Original Image Box -->
+        <div class="inspector-box shadow-sm rounded-3 border position-relative inspector-box--reticle">
+          <!-- Touch & Hover Badges -->
+          <div class="inspector-label d-none d-md-inline-flex">
+            <i class="fas fa-crosshairs me-1 text-warning"></i> Hover to Inspect
+          </div>
+          <div class="inspector-label inspector-label--touch d-inline-flex d-md-none">
+            <i class="fas fa-hand-pointer me-1 pulse-icon text-warning"></i> Touch &amp; Drag Portrait
+          </div>
+
+          <div class="image-container" #imgContainer
+            (mouseenter)="onContainerMouseEnter()"
+            (mouseleave)="onContainerMouseLeave()"
+            (touchstart)="onContainerTouchStart($event)"
+            (touchmove)="onContainerTouchMove($event)"
+            (touchend)="onContainerTouchEnd()">
+            <img [src]="currentImageSrc" appDisablerightclick draggable="false"
+                 oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;"
+                 [alt]="selectedStyleLabel" loading="lazy" decoding="async"
+                 (load)="onImageLoaded()" (error)="onImageLoaded()"
+                 style="-webkit-user-drag: none; -webkit-touch-callout: none;" />
+
+            <!-- Anti-Screenshot Studio Proof Watermark -->
+            <div class="demo-proof-layer" aria-hidden="true"></div>
+
+            <!-- High-Precision Square Reticle Lens -->
+            <div class="lens square-reticle-lens" [class.is-visible]="isReticleVisible" #lens>
+              <div class="reticle-corner top-left"></div>
+              <div class="reticle-corner top-right"></div>
+              <div class="reticle-corner bottom-left"></div>
+              <div class="reticle-corner bottom-right"></div>
+              <div class="reticle-scan-line"></div>
+              <div class="reticle-center-dot"></div>
+            </div>
+
+            <!-- Preloader overlay while switching styles -->
+            @if (isImageLoading) {
+            <div class="inspector-loader-overlay">
+              <div class="loader-content">
+                <div class="spinner-wrapper">
+                  <div class="loader-spinner-ring"></div>
+                  <div class="loader-sparkle-center">
+                    <i class="fas fa-wand-magic-sparkles text-purple"></i>
+                  </div>
+                </div>
+                <span class="loader-text">Loading {{ selectedStyleLabel }}...</span>
+                <span class="loader-subtext">Rendering 4K Details</span>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Zoomed View Box -->
+        <div class="inspector-box shadow-sm rounded-3 border position-relative inspector-box--zoomed">
+          <div class="inspector-label inspector-label--purple">
+            <i class="fas fa-expand me-1"></i> {{ (zoomFactor * 100).toFixed(0) }}% High-Res Zoom &nbsp;<span class="badge-4k" style="margin-right: 5px;">4K</span>
+          </div>
+          <div class="zoomed" #zoomedPane>
+            <img [src]="currentImageSrc" appDisablerightclick draggable="false"
+                 oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;"
+                 [alt]="selectedStyleLabel + ' Zoomed'" #zoomImg loading="lazy" decoding="async"
+                 (load)="onImageLoaded()" (error)="onImageLoaded()"
+                 style="-webkit-user-drag: none; -webkit-touch-callout: none;" />
+
+            <!-- Anti-Screenshot Studio Proof Watermark on zoom pane -->
+            <div class="demo-proof-layer" aria-hidden="true"></div>
+
+            <!-- Zoom pane preloader overlay -->
+            @if (isImageLoading) {
+            <div class="inspector-loader-overlay inspector-loader-overlay--zoom">
+              <div class="loader-content">
+                <div class="spinner-wrapper">
+                  <div class="loader-spinner-ring"></div>
+                  <div class="loader-sparkle-center">
+                    <i class="fas fa-search-plus text-purple-light"></i>
+                  </div>
+                </div>
+                <span class="loader-text">Preparing 4K Zoom...</span>
+                <span class="loader-subtext">Optimizing Sharpness</span>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Mobile Zoom Level Pill Bar -->
+      <div class="d-flex align-items-center justify-content-center gap-2 mt-3 pt-2 border-top flex-wrap">
+        <span class="text-muted small fw-bold me-1"><i class="fas fa-search-plus text-purple me-1"></i>Zoom Factor:</span>
+        <button type="button" class="btn btn-xs zoom-factor-btn" [class.active]="zoomFactor === 1.5" (click)="setZoomFactor(1.5)">1.5x HD</button>
+        <button type="button" class="btn btn-xs zoom-factor-btn" [class.active]="zoomFactor === 2.0" (click)="setZoomFactor(2.0)">2.0x Ultra HD</button>
+        <button type="button" class="btn btn-xs zoom-factor-btn" [class.active]="zoomFactor === 3.0" (click)="setZoomFactor(3.0)">3.0x Micro</button>
+      </div>
+
+      <!-- Detail Meter Panel -->
+      <div class="detail-panel mt-4 p-3 rounded-3 border bg-light">
+        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+          <h5 class="mb-0 fw-bold fs-6 text-dark d-flex align-items-center gap-1.5 text-start">
+            <i class="fas fa-microscope text-purple"></i>
+            <span class="ps-2 text-purple-dark">{{ currentStyleFeature }}</span>
+          </h5>
+          <span class="badge bg-purple text-white px-3 py-1.5 rounded-pill shadow-xs" style="font-size: 0.76rem; letter-spacing: 0.3px;">{{ selectedStyleLabel }}</span>
+        </div>
+        <div class="detail-meter">
+          <div class="detail-meter-fill" #detailBar></div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between mt-2 flex-wrap gap-1" style="font-size: 0.82rem;">
+          <span class="text-muted"><i class="fas fa-info-circle me-1 text-purple"></i>Touch or move cursor across portrait to measure hand-drawn detail density</span>
+          <span class="text-muted fw-semibold">Handcrafted Detail Level: <strong #detailPercent class="text-purple fs-6">0%</strong></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
