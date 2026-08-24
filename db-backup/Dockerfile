@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
     git \
     curl \
+    openssl \
     ca-certificates \
     netcat-openbsd \
     tini \

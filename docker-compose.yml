@@ -32,9 +32,6 @@ services:
   backend-1:
     image: manojshrees/purrfectpalstudio-backend:latest
     container_name: backend-c-1
-    privileged: true
-    security_opt:
-      - label:disable
     restart: always
     expose:
       - "8080"
@@ -91,7 +88,6 @@ services:
       - uploads_data:/app/uploadedfiles
       - private_contracts_data:/app/private_contracts
       - ./backups:/app/backups
-      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       db:
         condition: service_healthy
@@ -101,9 +97,6 @@ services:
   backend-2:
     image: manojshrees/purrfectpalstudio-backend:latest
     container_name: backend-c-2
-    privileged: true
-    security_opt:
-      - label:disable
     restart: always
     expose:
       - "8080"
@@ -161,7 +154,6 @@ services:
       - uploads_data:/app/uploadedfiles
       - private_contracts_data:/app/private_contracts
       - ./backups:/app/backups
-      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       db:
         condition: service_healthy
@@ -239,6 +231,7 @@ services:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_REPO=${GITHUB_REPO}
       - GITHUB_BRANCH=${GITHUB_BRANCH}
+      - BACKUP_ENCRYPTION_KEY=${BACKUP_ENCRYPTION_KEY}
     volumes:
       - ./backups:/backups
       - uploads_data:/app/uploadedfiles:ro

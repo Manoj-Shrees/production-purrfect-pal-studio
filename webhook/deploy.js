@@ -4,16 +4,16 @@ const crypto = require('crypto');
 const { spawn } = require('child_process');
 
 // ── Secrets from environment (never hard-code tokens in source) ──────────────
-const SECRET = process.env.WEBHOOK_SECRET || 'Suw@s@77m@g@r!';
+const SECRET = process.env.WEBHOOK_SECRET || '';
 const GH_PAT = process.env.GITHUB_PAT || '';
-const DOCKER_USER = process.env.DOCKER_USER || 'manojshrees';
+const DOCKER_USER = process.env.DOCKER_USER || '';
 const DOCKER_PASS = process.env.DOCKER_PASS || '';
 
-// ── DB credentials (must match docker-compose.yml) ───────────────────────────
-const DB_HOST = 'db-c';
-const DB_USER = 'adminPPS';
-const DB_PASS = 'Toor@PPS@77admin*';
-const DB_NAME = 'purrfectpalstudiodb';
+// ── DB credentials (sourced from environment) ───────────────────────────────
+const DB_HOST = process.env.DB_HOST || 'db-c';
+const DB_USER = process.env.MYSQL_USER || process.env.DB_USER || 'adminPPS';
+const DB_PASS = process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD || '';
+const DB_NAME = process.env.MYSQL_DATABASE || process.env.DB_NAME || 'purrfectpalstudiodb';
 const BACKUP_DIR = '/backups';
 
 // ── Prevent concurrent deploys & manage logging ──────────────────────────────
@@ -72,9 +72,13 @@ function broadcast(eventType, dataText) {
   }
 }
 
-// ── Signature verification ────────────────────────────────────────────────────
+// ── Signature verification & Auth helper ─────────────────────────────────────
 function verifySignature(req, body) {
-  const signature = req.headers['x-hub-signature-256'];
+  if (!SECRET) {
+    console.error('[deploy] WEBHOOK_SECRET is not configured in environment.');
+    return false;
+  }
+  const signature = req.headers['x-hub-signature-256'] || req.headers['x-webhook-signature'];
   if (!signature) return false;
   const hmac = crypto.createHmac('sha256', SECRET).update(body).digest('hex');
   const expected = `sha256=${hmac}`;
@@ -85,6 +89,34 @@ function verifySignature(req, body) {
     Buffer.from(signature),
     Buffer.from(expected)
   );
+}
+
+function isAuthorizedRequest(req, expectedPayload = 'admin-stream') {
+  if (!SECRET) {
+    console.error('[deploy] WEBHOOK_SECRET is not configured in environment.');
+    return false;
+  }
+  const signature = req.headers['x-hub-signature-256'] || req.headers['x-webhook-signature'];
+  const authBearer = req.headers['authorization'];
+  
+  // Support Bearer token matching SECRET
+  if (authBearer && authBearer.startsWith('Bearer ')) {
+    const token = authBearer.slice(7).trim();
+    if (token.length === SECRET.length && crypto.timingSafeEqual(Buffer.from(token), Buffer.from(SECRET))) {
+      return true;
+    }
+  }
+  
+  // Support HMAC signature
+  if (signature) {
+    const hmac = crypto.createHmac('sha256', SECRET).update(expectedPayload).digest('hex');
+    const expected = `sha256=${hmac}`;
+    if (signature.length === expected.length && crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 // ── Decide whether to skip deploy (GitHub push events only) ──────────────────
@@ -155,6 +187,9 @@ function buildDeployScript() {
   const localEnv = loadEnvFile('/app/production-purrfect-pal-studio/.env');
   const dockerUser = localEnv.DOCKER_USER || DOCKER_USER;
   const dockerPass = localEnv.DOCKER_PASS || DOCKER_PASS;
+  const dbUser = localEnv.MYSQL_USER || localEnv.DB_USER || DB_USER;
+  const dbPass = localEnv.MYSQL_PASSWORD || localEnv.DB_PASSWORD || DB_PASS;
+  const dbName = localEnv.MYSQL_DATABASE || localEnv.DB_NAME || DB_NAME;
 
   const dockerLogin = dockerPass
     ? `echo "${dockerPass}" | docker login -u "${dockerUser}" --password-stdin`
@@ -172,12 +207,12 @@ echo "[deploy] ── Step 1: Database backup ───────────�
 TS=$(date +%F_%H-%M-%S)
 BACKUP_SQL="${BACKUP_DIR}/db_backup_$TS.sql"
 docker exec ${DB_HOST} mysqldump \\
-  -u ${DB_USER} --password='${DB_PASS}' \\
+  -u ${dbUser} --password='${dbPass}' \\
   --single-transaction \\
   --no-tablespaces \\
   --routines \\
   --triggers \\
-  ${DB_NAME} > "$BACKUP_SQL"
+  ${dbName} > "$BACKUP_SQL"
 BACKUP_BYTES=$(stat -c%s "$BACKUP_SQL" 2>/dev/null || stat -f%z "$BACKUP_SQL")
 echo "[deploy] DB dump size: $BACKUP_BYTES bytes"
 [ "$BACKUP_BYTES" -gt 1000 ] || (echo "[deploy] ERROR: DB backup is empty — aborting deploy!" && rm -f "$BACKUP_SQL" && exit 1)
@@ -220,23 +255,26 @@ docker compose up -d --force-recreate --no-deps backend-2 nginx
 sleep 6
 
 echo "[deploy] ── Step 6: Run SMTP diagnostics inside container ─────────"
-SMTP_LOG="/app/production-purrfect-pal-studio/admin-app/smtp-result-$(date +%s).txt"
 ACTIVE_CONTAINER=$(docker ps --format '{{.Names}}' | grep backend-c | head -n 1 || echo "backend-c-1")
 docker exec "$ACTIVE_CONTAINER" node -e "
-import('./src/middleware/emailTransporter.js').then(async ({ createEmailTransporter }) => {
-  const transporter = createEmailTransporter();
-  try {
-    console.log('EMAIL_USER/SMTP_USER:', process.env.EMAIL_USER || process.env.SMTP_USER ? '***set***' : '(EMPTY - missing from .env)');
-    console.log('Verifying SMTP connection...');
-    await transporter.verify();
-    console.log('SMTP_OK: Connection verified successfully');
-  } catch (err) {
-    console.error('SMTP_FAIL:', err.message);
+import('./src/middleware/emailTransporter.js').then(async (mod) => {
+  const createTransporter = mod.createEmailTransporter || mod.default?.createEmailTransporter || mod.default;
+  if (typeof createTransporter !== 'function') {
+    console.log('[SMTP] Note: createEmailTransporter function not found in module');
+    return;
   }
-}).catch(console.error);
-" > "${SMTP_LOG}" 2>&1 || true
-# Also write latest result to fixed path for easy checking
-cp "${SMTP_LOG}" /app/production-purrfect-pal-studio/admin-app/smtp-latest.txt 2>/dev/null || true
+  const transporter = createTransporter();
+  try {
+    console.log('[SMTP] Verifying SMTP connection...');
+    await transporter.verify();
+    console.log('[SMTP] ✅ SMTP_OK: Connection verified successfully');
+  } catch (err) {
+    console.error('[SMTP] ⚠️ SMTP_FAIL:', err.message);
+  }
+}).catch(err => {
+  console.error('[SMTP] ⚠️ SMTP diagnostic error:', err.message);
+});
+" 2>&1 || true
 
 echo "[deploy] ── Deploy complete ─────────────────────────────────────────"
 `.trim();
@@ -394,20 +432,10 @@ const server = http.createServer((req, res) => {
   // ── GET /deploy-stream — SSE logging endpoint ──────────────────────────────
   } else if (req.method === 'GET' && urlPath === '/deploy-stream') {
 
-    const authHeader = req.headers['x-hub-signature-256'];
-    const testHmac = crypto.createHmac('sha256', SECRET).update('admin-stream').digest('hex');
-    let authorized = false;
-    if (authHeader && authHeader.length === expected.length) {
-      authorized = crypto.timingSafeEqual(
-        Buffer.from(authHeader),
-        Buffer.from(expected)
-      );
-    }
-
-    if (!authorized) {
+    if (!isAuthorizedRequest(req, 'admin-stream')) {
       console.warn('[deploy] GET /deploy-stream rejected: unauthorized.');
       res.writeHead(403, { 'Content-Type': 'text/plain' });
-      return res.end('Forbidden: Invalid token');
+      return res.end('Forbidden: Invalid token or signature');
     }
 
     res.writeHead(200, {
@@ -445,11 +473,19 @@ const server = http.createServer((req, res) => {
 
   // ── GET /deploy-status ─────────────────────────────────────────────────────
   } else if (req.method === 'GET' && urlPath === '/deploy-status') {
+    if (!isAuthorizedRequest(req, 'deploy-status')) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ success: false, error: 'Forbidden: Unauthorized request' }));
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ inProgress: deployInProgress, logs: deployLogsHistory }));
 
   // ── GET /active-slot ───────────────────────────────────────────────────────
   } else if (req.method === 'GET' && urlPath === '/active-slot') {
+    if (!isAuthorizedRequest(req, 'active-slot')) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ success: false, error: 'Forbidden: Unauthorized request' }));
+    }
     const fs = require('fs');
     const CONF_PATH = '/app/production-purrfect-pal-studio/nginx/conf.d/active_backend.conf';
     try {
@@ -470,94 +506,109 @@ const server = http.createServer((req, res) => {
 
   // ── POST /switch-slot ──────────────────────────────────────────────────────
   } else if (req.method === 'POST' && urlPath === '/switch-slot') {
-    const fs = require('fs');
-    const { exec } = require('child_process');
-    const CONF_PATH = '/app/production-purrfect-pal-studio/nginx/conf.d/active_backend.conf';
-    try {
-      let content = '';
-      if (fs.existsSync(CONF_PATH)) {
-        content = fs.readFileSync(CONF_PATH, 'utf8');
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      if (!verifySignature(req, body) && !isAuthorizedRequest(req, 'switch-slot')) {
+        console.warn('[deploy] Rejected POST /switch-slot: unauthorized.');
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: false, error: 'Forbidden: Invalid signature or token' }));
       }
-      const backend2Active = /^\s*server\s+backend-2:8080;/m.test(content) && !/^\s*#\s*server\s+backend-2:8080;/m.test(content);
-      const currentSlot = backend2Active ? 'backend-2' : 'backend-1';
-      const newSlot = currentSlot === 'backend-1' ? 'backend-2' : 'backend-1';
-      
-      let newConfig = '';
-      if (newSlot === 'backend-1') {
-        newConfig = `# Active upstream configuration — blue slot
+
+      const fs = require('fs');
+      const { exec } = require('child_process');
+      const CONF_PATH = '/app/production-purrfect-pal-studio/nginx/conf.d/active_backend.conf';
+      try {
+        let content = '';
+        if (fs.existsSync(CONF_PATH)) {
+          content = fs.readFileSync(CONF_PATH, 'utf8');
+        }
+        const backend2Active = /^\s*server\s+backend-2:8080;/m.test(content) && !/^\s*#\s*server\s+backend-2:8080;/m.test(content);
+        const currentSlot = backend2Active ? 'backend-2' : 'backend-1';
+        const newSlot = currentSlot === 'backend-1' ? 'backend-2' : 'backend-1';
+        
+        let newConfig = '';
+        if (newSlot === 'backend-1') {
+          newConfig = `# Active upstream configuration — blue slot
 upstream backend {
     server backend-1:8080;
     # server backend-2:8080;
     keepalive 32;
 }
 `;
-      } else {
-        newConfig = `# Active upstream configuration — green slot
+        } else {
+          newConfig = `# Active upstream configuration — green slot
 upstream backend {
     # server backend-1:8080;
     server backend-2:8080;
     keepalive 32;
 }
 `;
-      }
-      fs.writeFileSync(CONF_PATH, newConfig, 'utf8');
-      
-      // Reload Nginx — try docker exec first (requires docker.sock mount),
-      // fall back to docker kill -s HUP which also works when socket is available.
-      const reloadCmd = `docker exec nginx-proxy nginx -s reload 2>&1 || docker kill -s HUP nginx-proxy 2>&1`;
-      exec(reloadCmd, { timeout: 15000 }, (err, stdout, stderr) => {
-        const combinedOut = [stdout, stderr].filter(Boolean).join(' ').trim();
-        if (err) {
-          const detail = combinedOut || err.message;
-          console.error('[deploy] Failed to reload Nginx:', detail);
-          res.writeHead(500, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({
-            success: false,
-            error: `Nginx reload failed: ${detail}. Check that the webhook container has access to /var/run/docker.sock and nginx-proxy is the correct container name.`
-          }));
         }
-        console.log('[deploy] Nginx reloaded successfully. Output:', combinedOut || '(none)');
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: true,
-          active: newSlot,
-          message: `Successfully redirected client traffic to ${newSlot}`
-        }));
-      });
-    } catch (err) {
-      console.error('[deploy] Error switching active slot:', err.message);
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: false, error: err.message }));
-    }
+        fs.writeFileSync(CONF_PATH, newConfig, 'utf8');
+        
+        // Reload Nginx — try docker exec first, fall back to docker kill -s HUP
+        const reloadCmd = `docker exec nginx-proxy nginx -s reload 2>&1 || docker kill -s HUP nginx-proxy 2>&1`;
+        exec(reloadCmd, { timeout: 15000 }, (err, stdout, stderr) => {
+          const combinedOut = [stdout, stderr].filter(Boolean).join(' ').trim();
+          if (err) {
+            const detail = combinedOut || err.message;
+            console.error('[deploy] Failed to reload Nginx:', detail);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({
+              success: false,
+              error: `Nginx reload failed: ${detail}.`
+            }));
+          }
+          console.log('[deploy] Nginx reloaded successfully. Output:', combinedOut || '(none)');
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: true,
+            active: newSlot,
+            message: `Successfully redirected client traffic to ${newSlot}`
+          }));
+        });
+      } catch (err) {
+        console.error('[deploy] Error switching active slot:', err.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
 
   // ── POST /docker-login ─────────────────────────────────────────────────────
   } else if (req.method === 'POST' && urlPath === '/docker-login') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', () => {
-      if (!verifySignature(req, body)) {
-        res.writeHead(401);
-        return res.end('Unauthorized');
+      if (!verifySignature(req, body) && !isAuthorizedRequest(req, 'docker-login')) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: false, error: 'Unauthorized' }));
       }
       try {
         const { username, secret } = JSON.parse(body || '{}');
-        if (!username || !secret) {
+        if (!username || !secret || typeof username !== 'string' || typeof secret !== 'string') {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          return res.end(JSON.stringify({ success: false, error: 'Username and secret (password/PAT) are required' }));
+          return res.end(JSON.stringify({ success: false, error: 'Valid username and secret are required' }));
         }
 
-        // Perform live Docker login verification
-        const { exec } = require('child_process');
-        const loginCmd = `echo "${secret.replace(/"/g, '\\"')}" | docker login -u "${username.replace(/"/g, '\\"')}" --password-stdin 2>&1`;
+        // Perform live Docker login verification using spawn with direct stdin piping (safe against injection)
+        const loginProc = spawn('docker', ['login', '-u', username, '--password-stdin']);
+        let procOutput = '';
 
-        exec(loginCmd, { timeout: 15000 }, (err, stdout, stderr) => {
-          const output = [stdout, stderr].filter(Boolean).join(' ').trim();
-          if (err || output.includes('Error') || output.includes('incorrect') || output.includes('unauthorized')) {
-            console.error('[deploy] Docker login verification failed:', output || err?.message);
+        loginProc.stdout.on('data', d => { procOutput += d.toString(); });
+        loginProc.stderr.on('data', d => { procOutput += d.toString(); });
+
+        loginProc.stdin.write(secret + '\n');
+        loginProc.stdin.end();
+
+        loginProc.on('close', (code) => {
+          const output = procOutput.trim();
+          if (code !== 0 || output.includes('Error') || output.includes('incorrect') || output.includes('unauthorized')) {
+            console.error('[deploy] Docker login verification failed:', output);
             res.writeHead(400, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({
               success: false,
-              error: `Docker Hub authentication failed: ${output || 'Invalid username or password'}`
+              error: `Docker Hub authentication failed: ${output || 'Invalid credentials'}`
             }));
           }
 
@@ -598,6 +649,12 @@ upstream backend {
             success: true,
             message: 'Docker Hub credentials verified and saved successfully!'
           }));
+        });
+
+        loginProc.on('error', (err) => {
+          console.error('[deploy] Error executing docker login process:', err.message);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: err.message }));
         });
       } catch (err) {
         console.error('[deploy] Error updating docker login:', err.message);

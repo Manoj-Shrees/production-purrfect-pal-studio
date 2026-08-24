@@ -50,16 +50,25 @@ tempDbPath="/tmp/db_dump_$(date +%Y%m%d_%H%M%S).sql"
 
 log "Running mysqldump → $tempDbPath ..."
 
+CNF_FILE="/tmp/.my_$TS.cnf"
+cat > "$CNF_FILE" << EOF
+[client]
+host="$MYSQL_HOST"
+user="$MYSQL_USER"
+password="$MYSQL_PASSWORD"
+EOF
+chmod 600 "$CNF_FILE"
+
 mysqldump \
-  -h "$MYSQL_HOST" \
-  -u "$MYSQL_USER" \
-  -p"$MYSQL_PASSWORD" \
+  --defaults-extra-file="$CNF_FILE" \
   --skip-ssl \
   --single-transaction \
   --no-tablespaces \
   --routines \
   --triggers \
   "$MYSQL_DATABASE" > "$tempDbPath" 2>"$DUMP_STDERR"
+
+rm -f "$CNF_FILE"
 
 if [ -s "$DUMP_STDERR" ]; then
   log "--- dump stderr ---"
@@ -68,7 +77,7 @@ if [ -s "$DUMP_STDERR" ]; then
   log "--- end dump stderr ---"
 fi
 
-log "Archiving database dump + uploads and splitting into 100MB chunks..."
+log "Archiving & encrypting (AES-256-CBC) database dump + uploads into 100MB chunks..."
 
 if [ ! -d "/app/uploadedfiles" ]; then
   log "ERROR: /app/uploadedfiles directory is missing or volume not mounted."
@@ -76,7 +85,10 @@ if [ ! -d "/app/uploadedfiles" ]; then
   exit 1
 fi
 
-tar -czf - -C /app uploadedfiles -C /tmp "$(basename "$tempDbPath")" | split -b 100M - "$FILEPATH.part_"
+ENCRYPTION_PASS="${BACKUP_ENCRYPTION_KEY:-$MYSQL_PASSWORD}"
+tar -czf - -C /app uploadedfiles -C /tmp "$(basename "$tempDbPath")" \
+  | openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:"$ENCRYPTION_PASS" \
+  | split -b 100M - "$FILEPATH.part_"
 
 rm -f "$tempDbPath"
 
@@ -166,17 +178,17 @@ cat > "$CLONE_DIR/README.md" << EOF
 ## Restore Instructions
 
 \`\`\`bash
-# 1. Download backup chunks from this repo, then combine them:
-cat ${FILENAME}.part_* > ${FILENAME}
+# 1. Download backup chunks from this repo, combine and decrypt them (AES-256-CBC):
+cat ${FILENAME}.part_* | openssl enc -d -aes-256-cbc -pbkdf2 -pass pass:"<YOUR_BACKUP_ENCRYPTION_KEY_OR_DB_PASS>" > ${FILENAME}.tar.gz
 
 # 2. Extract the archive:
 mkdir -p /tmp/restore_extract
-tar -xzf ${FILENAME} -C /tmp/restore_extract
+tar -xzf ${FILENAME}.tar.gz -C /tmp/restore_extract
 
 # 3. Restore database into running DB container:
 docker exec -i db-c mysql \\
-  -u adminPPS --password='Toor@PPS@77admin*' \\
-  purrfectpalstudiodb < /tmp/restore_extract/db_dump_*.sql
+  -u \${MYSQL_USER:-adminPPS} --password="<YOUR_DB_PASSWORD>" \\
+  \${MYSQL_DATABASE:-purrfectpalstudiodb} < /tmp/restore_extract/db_dump_*.sql
 
 # 4. Copy uploaded files back to uploads volume:
 cp -R /tmp/restore_extract/uploadedfiles/* /app/uploadedfiles/

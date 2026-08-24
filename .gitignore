@@ -1,8 +1,14 @@
 # Secrets – never commit
 .env
+*.pem
+*.key
+certs/
+letsencrypt/
+certbot_www/
 
-# Local backups
+# Local backups & logs
 backups/
+*.log
 
 # macOS
 .DS_Store
