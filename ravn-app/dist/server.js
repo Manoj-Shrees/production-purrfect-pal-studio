@@ -4,7 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
-import { testDbConnection } from './db/connection.js';
+import { testDbConnection, initDatabaseTables } from './db/connection.js';
 import { CryptoService } from './services/cryptoService.js';
 import { apiRouter } from './routes/api.js';
 import { DownloadController } from './controllers/downloadController.js';
@@ -68,6 +68,7 @@ const server = app.listen(config.port, async () => {
     const dbOk = await testDbConnection();
     if (dbOk) {
         console.log('✅ MySQL 8.0 Database Connected & Ready');
+        await initDatabaseTables();
     }
     else {
         console.warn('⚠️  MySQL Database connection pending or failed (check credentials/container)');
