@@ -2108,18 +2108,18 @@
 
         <!-- 1-Click Launch & Download Buttons -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
-          <a id="successOneClickBtn" href="#" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; display: block; text-decoration: none; box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);">
+          <button id="successOneClickBtn" onclick="launchMacDeepLink()" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; display: block; border: none; cursor: pointer; box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);">
             ⚡️ 1-Click Activate Ravn for Mac
-          </a>
+          </button>
           <div style="display: flex; gap: 8px;">
             <a href="/assets/macos/Ravn-Universal.dmg" class="btn btn-secondary" style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Download Ravn DMG
             </a>
-            <a href="ravn://update" class="btn btn-secondary" style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
+            <button type="button" onclick="launchMacDeepLink()" class="btn btn-secondary" style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
               Open in App
-            </a>
+            </button>
           </div>
         </div>
 
@@ -3228,18 +3228,31 @@
       document.getElementById('successCustomerEmail').textContent = email;
       
       const deepLink = `ravn://activate?key=${encodeURIComponent(licenseKey)}&email=${encodeURIComponent(email)}`;
-      document.getElementById('successOneClickBtn').href = deepLink;
+      const oneClickBtn = document.getElementById('successOneClickBtn');
+      if (oneClickBtn) {
+        oneClickBtn.setAttribute('data-deeplink', deepLink);
+      }
 
       document.getElementById('checkoutStepSelect').style.display = 'none';
       document.getElementById('checkoutStepPayment').style.display = 'none';
       document.getElementById('checkoutStepSuccess').style.display = 'block';
+    }
 
-      // Seamless instant deep link launch into macOS app
-      try {
-        setTimeout(() => {
-          window.location.href = deepLink;
-        }, 700);
-      } catch (e) {}
+    function launchMacDeepLink(customUrl) {
+      const oneClickBtn = document.getElementById('successOneClickBtn');
+      const key = document.getElementById('successLicenseKeyVal') ? document.getElementById('successLicenseKeyVal').textContent.trim() : '';
+      const email = document.getElementById('successCustomerEmail') ? document.getElementById('successCustomerEmail').textContent.trim() : '';
+      
+      const url = customUrl || (oneClickBtn ? oneClickBtn.getAttribute('data-deeplink') : '') || `ravn://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`;
+      
+      // Use hidden iframe to safely launch macOS app protocol without Safari "address is invalid" navigation abort
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+      document.body.appendChild(iframe);
+      setTimeout(() => {
+        try { document.body.removeChild(iframe); } catch(e) {}
+      }, 2500);
     }
 
     function copySuccessLicenseKey() {
