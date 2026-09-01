@@ -100,4 +100,37 @@ export class LicenseController {
       publicKey,
     });
   }
+
+  /**
+   * POST /api/v1/license/start-trial
+   * Instantly provisions an Ed25519-signed 7-day trial license without requiring payment
+   */
+  static async startTrial(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, name } = req.body;
+      if (!email || !email.includes('@')) {
+        res.status(400).json({ success: false, error: 'A valid email address is required to receive your trial license.' });
+        return;
+      }
+
+      const license = await LicenseService.createLicense({
+        email: email.trim().toLowerCase(),
+        name: name ? String(name).trim() : undefined,
+        planType: 'trial',
+        maxDevices: 1,
+      });
+
+      res.status(200).json({
+        success: true,
+        licenseKey: license.licenseKey,
+        plan: 'trial',
+        days: 7,
+        expiresAt: license.expiresAt,
+        message: 'Your 7-Day Free Trial license has been successfully minted.',
+      });
+    } catch (err: any) {
+      console.error('[LicenseController.startTrial] Error:', err);
+      res.status(500).json({ success: false, error: 'Could not generate trial license: ' + err.message });
+    }
+  }
 }

@@ -15,6 +15,7 @@ apiRouter.post('/v1/license/activate', express.json(), LicenseController.activat
 apiRouter.post('/v1/license/deactivate', express.json(), LicenseController.deactivate);
 apiRouter.post('/v1/license/lookup', express.json(), LicenseController.lookup);
 apiRouter.get('/v1/license/public-key', LicenseController.getPublicKey);
+apiRouter.post('/v1/license/start-trial', express.json(), LicenseController.startTrial);
 // ── 3. Stripe Checkout & Customer Portal ──
 apiRouter.get('/v1/checkout/config', StripeController.getConfig);
 apiRouter.post('/v1/checkout/create-intent', express.json(), StripeController.createPaymentIntent);

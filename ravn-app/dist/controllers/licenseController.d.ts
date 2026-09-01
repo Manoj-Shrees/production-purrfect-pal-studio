@@ -18,4 +18,9 @@ export declare class LicenseController {
      * Returns the server's Ed25519 public key for client-side offline verification
      */
     static getPublicKey(_req: Request, res: Response): Promise<void>;
+    /**
+     * POST /api/v1/license/start-trial
+     * Instantly provisions an Ed25519-signed 7-day trial license without requiring payment
+     */
+    static startTrial(req: Request, res: Response): Promise<void>;
 }
