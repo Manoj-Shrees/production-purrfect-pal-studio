@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Successful — Ravn for Mac</title>
+  <link rel="icon" type="image/png" href="/assets/app-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --border-card: rgba(255, 255, 255, 0.1);
+      --accent-blue: #38bdf8;
+      --accent-purple: #818cf8;
+      --accent-green: #34d399;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.2) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.15) 0%, transparent 50%);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .success-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 24px;
+      padding: 44px 36px;
+      max-width: 580px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .check-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(52, 211, 153, 0.15);
+      border: 2px solid var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 32px;
+      color: var(--accent-green);
+      box-shadow: 0 0 30px rgba(52, 211, 153, 0.3);
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 40%, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .license-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .license-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent-blue);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .key-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 1px;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-purple);
+    }
+
+    .btn-action-primary {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-action-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6);
+    }
+
+    .btn-action-secondary {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-secondary:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .steps-list {
+      text-align: left;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-top: 16px;
+      padding-left: 20px;
+    }
+
+    .steps-list li {
+      margin-bottom: 6px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="success-card">
+    <div class="check-icon">✓</div>
+    <h1>Payment Complete!</h1>
+    <p class="subtitle">Thank you for supporting Ravn. Your cryptographically signed license has been provisioned.</p>
+
+    <div class="license-box" id="licenseBox">
+      <div class="license-label">
+        <span id="planNameLabel">⚡️ Your License Key</span>
+        <span id="seatInfoLabel" style="color: var(--text-muted); font-weight: normal;">Ed25519 Signed</span>
+      </div>
+      <div class="key-display" id="keyContainer">
+        <span id="licenseKeyText"><div class="spinner"></div> Generating key...</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyLicenseKey()">Copy Key</button>
+      </div>
+    </div>
+
+    <button class="btn-action-primary" id="activateBtn" onclick="launchMacActivation()">
+      ⚡️ 1-Click Activate in Ravn for Mac
+    </button>
+
+    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
+      <a href="/assets/macos/Ravn-Universal.dmg" class="btn-action-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Ravn DMG
+      </a>
+      <a href="/activate.html" class="btn-action-secondary" id="portalLink">License Portal ↗</a>
+      <a href="/" class="btn-action-secondary">Home</a>
+    </div>
+
+    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+      <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-align: left; margin-bottom: 6px;">
+        💡 Instructions:
+      </div>
+      <ol class="steps-list">
+        <li>Click <strong>1-Click Activate</strong> above to instantly unlock Ravn on this Mac.</li>
+        <li>Haven't installed Ravn yet? Download the DMG package above — your license is permanently saved in your email and can be activated anytime.</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    let currentKey = '';
+    let currentEmail = '';
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+
+      if (!sessionId) {
+        document.getElementById('licenseKeyText').textContent = 'RAVN-PRO-LIFETIME-ACTIVE';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/v1/checkout/session-status?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+
+        if (data.success && data.licenseKey) {
+          currentKey = data.licenseKey;
+          currentEmail = data.customerEmail || '';
+          document.getElementById('licenseKeyText').textContent = data.licenseKey;
+          if (data.planTier) {
+            document.getElementById('planNameLabel').textContent = `⚡️ Ravn ${data.planTier.toUpperCase()} License`;
+          }
+          document.getElementById('portalLink').href = `/activate.html?key=${encodeURIComponent(data.licenseKey)}&email=${encodeURIComponent(currentEmail)}`;
+
+          // Seamless auto 1-click activation deep link
+          setTimeout(() => {
+            launchMacActivation();
+          }, 800);
+        } else {
+          document.getElementById('licenseKeyText').textContent = 'Receipt sent to email inbox';
+        }
+      } catch (err) {
+        document.getElementById('licenseKeyText').textContent = 'Receipt sent to email inbox';
+      }
+    });
+
+    function copyLicenseKey() {
+      const text = currentKey || document.getElementById('licenseKeyText').textContent;
+      if (!text || text.includes('...')) return;
+      navigator.clipboard.writeText(text);
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Key'; }, 2500);
+    }
+
+    function launchMacActivation() {
+      const key = currentKey || document.getElementById('licenseKeyText').textContent;
+      const url = `ravn://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(currentEmail)}`;
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#030712"/>
+    </linearGradient>
+    
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="45%" stop-color="#3b82f6"/>
+      <stop offset="85%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+
+    <linearGradient id="boltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+      <stop offset="50%" stop-color="rgba(255,255,255,0.08)"/>
+      <stop offset="100%" stop-color="rgba(139,92,246,0.3)"/>
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="ambient" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0.2  0 1 0 0 0.4  0 0 1 0 0.9  0 0 0 0.6 0"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base with Glass Border -->
+  <rect x="6" y="6" width="108" height="108" rx="26" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="2"/>
+  
+  <!-- Subtle inner specular glow -->
+  <rect x="8" y="8" width="104" height="48" rx="24" fill="white" opacity="0.04"/>
+
+  <!-- Glowing Shadow behind Wing & Lightning Bolt -->
+  <g filter="url(#ambient)" opacity="0.8">
+    <path d="M78 24 C55 36 34 54 28 84 C38 78 48 74 60 72 L46 94 L88 56 L64 56 L82 32 Z" fill="#38bdf8"/>
+  </g>
+
+  <!-- Wing Feathers Layer -->
+  <g opacity="0.85">
+    <!-- Feather 1 -->
+    <path d="M68 28 C78 36 88 48 92 64 C86 58 78 54 70 52 C74 42 72 34 68 28 Z" fill="url(#wingGrad)" opacity="0.6"/>
+    <!-- Feather 2 -->
+    <path d="M74 40 C84 50 90 62 90 76 C84 70 76 66 68 64 C73 54 75 46 74 40 Z" fill="url(#wingGrad)" opacity="0.5"/>
+    <!-- Feather 3 -->
+    <path d="M62 56 C72 64 78 76 76 88 C70 82 64 78 56 76 C60 68 62 62 62 56 Z" fill="url(#wingGrad)" opacity="0.4"/>
+  </g>
+
+  <!-- Main Sleek Raven Wing Silhouette -->
+  <path d="M42 32 C58 32 74 42 82 56 C74 54 66 52 58 52 C64 62 68 72 66 84 C56 76 46 72 36 70 C30 54 34 40 42 32 Z" 
+        fill="url(#wingGrad)" 
+        opacity="0.9"/>
+
+  <!-- Supersonic Lightning Bolt (Front & Center) -->
+  <path d="M62 26 L36 64 L54 64 L32 94 L76 54 L56 54 L72 26 Z" 
+        fill="url(#boltGrad)" 
+        filter="url(#glow)" 
+        stroke="rgba(255,255,255,0.7)" 
+        stroke-width="1.2" 
+        stroke-linejoin="round"/>
+
+  <!-- Core Lightning Spark highlight -->
+  <path d="M60 30 L39 62 L53 62 L36 90 L71 56 L55 56 L69 30 Z" 
+        fill="#ffffff" 
+        opacity="0.65"/>
+</svg>

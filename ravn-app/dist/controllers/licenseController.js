@@ -1,0 +1,91 @@
+import { LicenseService } from '../services/licenseService.js';
+import { CryptoService } from '../services/cryptoService.js';
+export class LicenseController {
+    /**
+     * POST /api/v1/license/activate
+     */
+    static async activate(req, res) {
+        try {
+            const { licenseKey, email, deviceId, deviceName, osVersion, appVersion } = req.body;
+            if (!licenseKey || !deviceId) {
+                res.status(400).json({
+                    success: false,
+                    error: 'Missing required parameters: licenseKey and deviceId are required.',
+                });
+                return;
+            }
+            const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+            const result = await LicenseService.activateLicense({
+                licenseKey,
+                email: email || '',
+                deviceId,
+                deviceName,
+                osVersion,
+                appVersion,
+                ipAddress,
+            });
+            if (!result.success) {
+                res.status(400).json(result);
+                return;
+            }
+            res.status(200).json(result);
+        }
+        catch (err) {
+            console.error('[LicenseController.activate] Error:', err);
+            res.status(500).json({ success: false, error: 'Internal activation error: ' + err.message });
+        }
+    }
+    /**
+     * POST /api/v1/license/deactivate
+     */
+    static async deactivate(req, res) {
+        try {
+            const { licenseKey, deviceId } = req.body;
+            if (!licenseKey || !deviceId) {
+                res.status(400).json({ success: false, error: 'licenseKey and deviceId are required.' });
+                return;
+            }
+            const result = await LicenseService.deactivateLicense(licenseKey, deviceId);
+            res.status(200).json(result);
+        }
+        catch (err) {
+            console.error('[LicenseController.deactivate] Error:', err);
+            res.status(500).json({ success: false, error: 'Deactivation error: ' + err.message });
+        }
+    }
+    /**
+     * POST /api/v1/license/lookup
+     * Returns license details, plan, active devices, and signature status for the web portal
+     */
+    static async lookup(req, res) {
+        try {
+            const { licenseKey, email } = req.body;
+            if (!licenseKey) {
+                res.status(400).json({ success: false, error: 'licenseKey is required.' });
+                return;
+            }
+            const result = await LicenseService.getLicenseDetails(licenseKey, email);
+            if (!result.found) {
+                res.status(404).json({ success: false, error: result.error || 'License key not found.' });
+                return;
+            }
+            res.status(200).json({ success: true, ...result });
+        }
+        catch (err) {
+            console.error('[LicenseController.lookup] Error:', err);
+            res.status(500).json({ success: false, error: 'Lookup error: ' + err.message });
+        }
+    }
+    /**
+     * GET /api/v1/license/public-key
+     * Returns the server's Ed25519 public key for client-side offline verification
+     */
+    static async getPublicKey(_req, res) {
+        const publicKey = CryptoService.getPublicKey();
+        res.status(200).json({
+            algorithm: 'Ed25519',
+            format: 'raw-32-base64',
+            publicKey,
+        });
+    }
+}

@@ -1,0 +1,3134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ravn — The Gigabit Download Accelerator & Media Studio for macOS</title>
+  <meta name="description" content="Ravn is the ultra-fast macOS download manager with 48 turbo streams, 16 glassmorphic themes, GPU media transcoding, spatial 3D VR conversion, and tamper-proof cryptographic licensing.">
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+  <link rel="shortcut icon" href="/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+  
+  <style>
+    :root {
+      --bg-base: #070709;
+      --bg-gradient-top: #1e1b4b;
+      --accent-blue: #38bdf8;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-orange: #f97316;
+      --accent-cyan: #06b6d4;
+      --glass-bg: rgba(255, 255, 255, 0.035);
+      --glass-border: rgba(255, 255, 255, 0.09);
+      --glass-border-hover: rgba(255, 255, 255, 0.22);
+      --glass-glow: rgba(139, 92, 246, 0.35);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    /* Theme Variations (Interactive Live Switcher) */
+    body.theme-tokyo {
+      --bg-base: #070709;
+      --bg-gradient-top: #1e1b4b;
+      --accent-blue: #38bdf8;
+      --accent-purple: #8b5cf6;
+      --glass-glow: rgba(139, 92, 246, 0.35);
+    }
+
+    body.theme-obsidian {
+      --bg-base: #000000;
+      --bg-gradient-top: #111827;
+      --accent-blue: #60a5fa;
+      --accent-purple: #94a3b8;
+      --glass-glow: rgba(255, 255, 255, 0.15);
+    }
+
+    body.theme-synthwave {
+      --bg-base: #0a0414;
+      --bg-gradient-top: #4a044e;
+      --accent-blue: #f43f5e;
+      --accent-purple: #d946ef;
+      --glass-glow: rgba(217, 70, 239, 0.45);
+    }
+
+    body.theme-emerald {
+      --bg-base: #021a12;
+      --bg-gradient-top: #064e3b;
+      --accent-blue: #34d399;
+      --accent-purple: #10b981;
+      --glass-glow: rgba(16, 185, 129, 0.4);
+    }
+
+    body.theme-frost {
+      --bg-base: #030f1c;
+      --bg-gradient-top: #0c4a6e;
+      --accent-blue: #38bdf8;
+      --accent-purple: #7dd3fc;
+      --glass-glow: rgba(56, 189, 248, 0.4);
+    }
+
+    body.theme-cybergold {
+      --bg-base: #120d02;
+      --bg-gradient-top: #78350f;
+      --accent-blue: #f59e0b;
+      --accent-purple: #fbbf24;
+      --glass-glow: rgba(245, 158, 11, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(circle at 50% 0%, var(--bg-gradient-top) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 90% 60%, rgba(139, 92, 246, 0.08) 0%, transparent 45%);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Ambient Lighting */
+    .ambient-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 { width: 600px; height: 600px; background: var(--glass-glow); top: -150px; left: 15%; transition: all 0.4s ease; }
+    .glow-2 { width: 500px; height: 500px; background: rgba(59, 130, 246, 0.20); top: 120px; right: 10%; }
+
+    /* Navigation Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(7, 7, 9, 0.85);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 14px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand-logo-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 18px var(--glass-glow);
+      transition: transform 0.2s ease;
+      object-fit: cover;
+    }
+
+    .brand-logo-img:hover {
+      transform: scale(1.06);
+    }
+
+    .brand-name {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: white;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 60px 0 50px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border-hover);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .badge-pill span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+    }
+
+    h1 {
+      font-size: clamp(38px, 6.5vw, 68px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.08;
+      margin-bottom: 22px;
+      background: linear-gradient(180deg, #ffffff 10%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-p {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--text-muted);
+      max-width: 740px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+
+    .cta-button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: white;
+      box-shadow: 0 8px 30px var(--glass-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px var(--glass-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--glass-border-hover);
+      transform: translateY(-2px);
+    }
+
+    .download-meta {
+      font-size: 12.5px;
+      color: #64748b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .download-meta a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .download-meta a:hover {
+      text-decoration: underline;
+    }
+
+    /* Live Interactive Theme Switcher Bar */
+    .theme-switcher-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 40px auto 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      padding: 6px 12px;
+      border-radius: 100px;
+      max-width: fit-content;
+      backdrop-filter: blur(16px);
+      flex-wrap: wrap;
+    }
+
+    .theme-chip {
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-chip.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+
+    .theme-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* macOS Window Preview Mockup */
+    .app-window-preview {
+      margin: 30px auto 70px;
+      max-width: 980px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      box-shadow: 
+        0 30px 80px -15px rgba(0, 0, 0, 0.8),
+        0 0 50px -10px var(--glass-glow);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .window-titlebar {
+      height: 38px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+    }
+
+    .traffic-lights {
+      display: flex;
+      gap: 6px;
+    }
+
+    .traffic-light {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .tl-red { background: #ff5f56; }
+    .tl-yellow { background: #ffbd2e; }
+    .tl-green { background: #27c93f; }
+
+    .window-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      margin: 0 auto;
+      padding-right: 48px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .window-body {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 20px;
+      min-height: 360px;
+    }
+
+    @media (max-width: 768px) {
+      .window-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mock-sidebar {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mock-item {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mock-item.active {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .mock-main {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mock-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .mock-progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .mock-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 10px;
+      width: 78%;
+      animation: pulseWidth 3s infinite alternate;
+    }
+
+    @keyframes pulseWidth {
+      0% { width: 65%; }
+      100% { width: 92%; }
+    }
+
+    /* Section Header */
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 12px;
+    }
+
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* Interactive Speed Benchmark Calculator */
+    .benchmark-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px);
+      border-radius: 24px;
+      padding: 36px;
+      margin-bottom: 80px;
+    }
+
+    .preset-btns {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0 30px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 8px 18px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn.active {
+      background: var(--accent-blue);
+      color: #030712;
+      font-weight: 700;
+      border-color: var(--accent-blue);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 700px) {
+      .comparison-grid { grid-template-columns: 1fr; }
+    }
+
+    .comp-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .comp-box.ravn-box {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.04);
+    }
+
+    .comp-speed {
+      font-size: 36px;
+      font-weight: 900;
+      margin: 10px 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Features Grid (3 Columns Desktop) */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    @media (max-width: 900px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .feature-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Pricing Section (3 Columns Desktop) */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    @media (max-width: 960px) {
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+    }    .pricing-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 36px;
+      position: relative;
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 20px 40px -15px var(--glass-glow);
+    }
+
+    .pricing-card.featured {
+      background: rgba(139, 92, 246, 0.05);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 0 40px -10px rgba(139, 92, 246, 0.3);
+    }
+
+    .tag-featured {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 18px;
+      border-radius: 100px;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+      z-index: 10;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    } }
+
+    .plan-name {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .plan-price {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 6px;
+    }
+
+    .plan-price span {
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    .plan-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      min-height: 38px;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 32px;
+      flex: 1;
+    }
+
+    .plan-features li {
+      font-size: 13.5px;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-features li svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--accent-emerald);
+      flex-shrink: 0;
+    }
+
+    /* License Portal */
+    .portal-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 680px;
+      margin: 0 auto 80px;
+      text-align: center;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .input-row { grid-template-columns: 1fr; }
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: white;
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .status-box {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: none;
+    }
+
+    /* FAQ Accordion */
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+
+    .faq-item:hover {
+      border-color: var(--glass-border-hover);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .faq-q {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .faq-a {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 300px;
+      opacity: 1;
+      margin-top: 14px;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+      color: var(--accent-blue);
+    }
+
+    .faq-icon {
+      transition: transform 0.25s ease, color 0.25s ease;
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 1;
+      color: #94a3b8;
+    }
+
+    /* System Specs */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+
+    .spec-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: left;
+    }
+
+    .spec-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .spec-val {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: white;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 32px 40px;
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      backdrop-filter: blur(20px);
+      background: rgba(7, 7, 9, 0.85);
+      margin-top: auto;
+    }
+
+    /* Modal System */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #0b0d14;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 540px;
+      padding: 32px;
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 50px -10px var(--glass-glow);
+      transform: scale(0.94) translateY(10px);
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #cbd5e1;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      z-index: 60;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-header {
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Plan Picker Options in Modal */
+    .plan-picker-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .plan-card-option {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .plan-card-option:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .plan-card-option.selected {
+      border-color: var(--accent-blue);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(139, 92, 246, 0.08));
+      box-shadow: 0 0 24px -4px rgba(56, 189, 248, 0.35);
+    }
+
+    .plan-card-option.selected.featured-annual {
+      border-color: #10b981;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.08));
+      box-shadow: 0 0 24px -4px rgba(16, 185, 129, 0.4);
+    }
+
+    .plan-card-option.selected.lifetime-option {
+      border-color: #f59e0b;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.08));
+      box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.4);
+    }
+
+    .plan-icon-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .plan-card-option.selected .plan-icon-badge {
+      transform: scale(1.08);
+    }
+
+    .plan-option-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .plan-radio-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .plan-card-option.selected .plan-radio-circle {
+      border-color: var(--accent-blue);
+      background: var(--accent-blue);
+    }
+
+    .plan-radio-circle::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #030712;
+      opacity: 0;
+    }
+
+    .plan-card-option.selected .plan-radio-circle::after {
+      opacity: 1;
+    }
+
+    .plan-option-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .plan-option-badge {
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      padding: 2.5px 8px;
+      border-radius: 100px;
+      margin-left: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      vertical-align: middle;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .plan-option-badge.badge-monthly {
+      background: rgba(148, 163, 184, 0.16);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .plan-option-badge.badge-annual {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: #022c22;
+      font-weight: 900;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .plan-option-badge.badge-lifetime {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #ffffff;
+      font-weight: 900;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .plan-option-badge.badge-seat {
+      background: rgba(139, 92, 246, 0.2);
+      color: #c4b5fd;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+    }
+
+    .plan-option-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      text-align: right;
+    }
+
+    .plan-option-sub {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .modal-input-group {
+      margin-bottom: 20px;
+    }
+
+    .modal-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .modal-input:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    .modal-trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 11px;
+      color: #64748b;
+      flex-wrap: wrap;
+    }
+
+    .pay-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 9px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 11px;
+      font-weight: 700;
+      color: #f8fafc;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .pay-chip:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    .pay-chip.pay-apple {
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
+    .pay-chip.pay-gpay {
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
+    .pay-chip.pay-afterpay {
+      background: rgba(110, 231, 183, 0.1);
+      border-color: rgba(110, 231, 183, 0.35);
+      color: #6ee7b7;
+    }
+    .pay-chip.pay-klarna {
+      background: rgba(244, 114, 182, 0.1);
+      border-color: rgba(244, 114, 182, 0.35);
+      color: #f472b6;
+    }
+    .pay-chip.pay-visa {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: rgba(56, 189, 248, 0.28);
+      padding: 4px 8px;
+    }
+    .pay-chip.pay-mastercard {
+      background: rgba(249, 115, 22, 0.08);
+      border-color: rgba(249, 115, 22, 0.28);
+      padding: 4px 8px;
+    }
+    .pay-chip.pay-amex {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.28);
+      padding: 4px 8px;
+    }
+    .pay-chip.pay-link {
+      background: rgba(52, 211, 153, 0.08);
+      border-color: rgba(52, 211, 153, 0.28);
+      color: #34d399;
+    }
+
+    /* Currency & Country Selector Styles */
+    .currency-picker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #cbd5e1;
+      transition: all 0.2s ease;
+    }
+    .currency-picker-pill:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .currency-select-inline {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
+    .currency-select-inline option {
+      background: #0f172a;
+      color: white;
+    }
+    .country-auto-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #34d399;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body class="theme-tokyo">
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Header with Official App Icon -->
+  <header>
+    <a href="/" class="brand-group">
+      <img src="/assets/app-icon.png" alt="Ravn App Icon" class="brand-logo-img">
+      <span class="brand-name">Ravn</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#speed-bench" class="nav-link">Speed Test</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="/activate.html" class="nav-link">License Portal</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+    </nav>
+
+    <div class="nav-actions" style="display: flex; align-items: center; gap: 10px;">
+      <a href="/assets/macos/Ravn-Universal.dmg" class="btn btn-secondary" style="padding: 8px 14px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download DMG
+      </a>
+
+      <div class="currency-picker-pill">
+        <span>🌐</span>
+        <select class="currency-select-inline" id="navCurrencySelect" onchange="changeCurrency(this.value)" title="Select Billing Currency">
+          <option value="usd">🇺🇸 United States (USD - $)</option>
+          <option value="eur">🇪🇺 Eurozone (EUR - €)</option>
+          <option value="gbp">🇬🇧 United Kingdom (GBP - £)</option>
+          <option value="aud">🇦🇺 Australia (AUD - A$)</option>
+          <option value="cad">🇨🇦 Canada (CAD - CA$)</option>
+          <option value="jpy">🇯🇵 Japan (JPY - ¥)</option>
+          <option value="inr">🇮🇳 India (INR - ₹)</option>
+          <option value="npr">🇳🇵 Nepal (NPR - Rs)</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="openCheckoutModal('annual')" style="padding: 9px 18px; font-size: 13px;">
+        Get Ravn Pro
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge-pill">
+        <span class="dot"></span>
+        RAVN v2.5.0 • MACOS SONOMA & SEQUOIA READY
+      </div>
+
+      <h1>Uncap Gigabit Speed.<br>Media Studio & Glass Themes.</h1>
+      
+      <p class="hero-p">
+        The ultimate native macOS download accelerator. Turbo-boost downloads with 48 parallel streams, convert spatial 3D VR videos, transcode with GPU FFmpeg, and personalize with 16 artisan glass themes.
+      </p>
+
+      <div class="cta-button-group">
+        <button class="btn btn-primary" onclick="openCheckoutModal('annual')" style="padding: 16px 32px; font-size: 15.5px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg viewBox="0 0 170 170" width="16" height="16" fill="currentColor"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.6-7.79-11.72-14.24-5.35-8.37-9.56-17.75-12.63-28.13-3.07-10.38-4.61-20.35-4.61-29.9 0-11.41 2.74-21.14 8.23-29.21 5.48-8.06 12.59-12.24 21.32-12.52 4.47 0 9.47 1.25 15.01 3.75 5.53 2.5 9.38 3.86 11.54 4.09 1.76-.23 5.79-1.64 12.08-4.24 6.29-2.6 11.59-3.72 15.91-3.36 12.28.98 21.68 5.72 28.2 14.24-10.88 6.63-16.21 15.54-16 26.71.21 8.81 3.51 16.14 9.9 21.99 6.39 5.86 14.07 9.17 23.05 9.95-2.23 6.63-4.91 13.06-8.05 19.31zm-32.99-106.91c0 5.88-2.19 11.45-6.58 16.7-4.38 5.25-9.75 8.65-16.1 10.2-.4-1.09-.6-2.28-.6-3.57 0-5.65 2.29-11.33 6.87-17.04 4.58-5.71 10.14-9.08 16.69-10.12.08 1.27.12 2.54.12 3.83z"/></svg>
+          Get Ravn Pro (7-Day Free Trial)
+        </button>
+        <a href="/assets/macos/Ravn-Universal.dmg" class="btn btn-secondary" style="padding: 16px 26px; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Free DMG
+        </a>
+        <a href="#pricing" class="btn btn-secondary" style="padding: 16px 24px; font-size: 15px;">
+          View All Plans
+        </a>
+      </div>
+
+      <div class="download-meta">
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <svg viewBox="0 0 170 170" width="13" height="13" fill="currentColor"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.6-7.79-11.72-14.24-5.35-8.37-9.56-17.75-12.63-28.13-3.07-10.38-4.61-20.35-4.61-29.9 0-11.41 2.74-21.14 8.23-29.21 5.48-8.06 12.59-12.24 21.32-12.52 4.47 0 9.47 1.25 15.01 3.75 5.53 2.5 9.38 3.86 11.54 4.09 1.76-.23 5.79-1.64 12.08-4.24 6.29-2.6 11.59-3.72 15.91-3.36 12.28.98 21.68 5.72 28.2 14.24-10.88 6.63-16.21 15.54-16 26.71.21 8.81 3.51 16.14 9.9 21.99 6.39 5.86 14.07 9.17 23.05 9.95-2.23 6.63-4.91 13.06-8.05 19.31zm-32.99-106.91c0 5.88-2.19 11.45-6.58 16.7-4.38 5.25-9.75 8.65-16.1 10.2-.4-1.09-.6-2.28-.6-3.57 0-5.65 2.29-11.33 6.87-17.04 4.58-5.71 10.14-9.08 16.69-10.12.08 1.27.12 2.54.12 3.83z"/></svg>
+          macOS 14.0+ Universal (Apple Silicon M1/M2/M3/M4 & Intel)
+        </span>
+        <span>•</span>
+        <span>48 Parallel Streams</span>
+        <span>•</span>
+        <span>Ed25519 Cryptographic Licensing</span>
+      </div>
+
+      <!-- Live Theme Switcher Chips -->
+      <div class="theme-switcher-bar">
+        <span style="font-size: 11.5px; font-weight: 700; color: #64748b; margin-right: 6px;">LIVE THEME:</span>
+        <button class="theme-chip active" onclick="switchTheme('tokyo')"><span class="theme-dot" style="background: #38bdf8;"></span> Tokyo Night</button>
+        <button class="theme-chip" onclick="switchTheme('obsidian')"><span class="theme-dot" style="background: #ffffff;"></span> OLED Obsidian</button>
+        <button class="theme-chip" onclick="switchTheme('synthwave')"><span class="theme-dot" style="background: #d946ef;"></span> Synthwave 84</button>
+        <button class="theme-chip" onclick="switchTheme('emerald')"><span class="theme-dot" style="background: #34d399;"></span> Matrix Emerald</button>
+        <button class="theme-chip" onclick="switchTheme('frost')"><span class="theme-dot" style="background: #7dd3fc;"></span> Nordic Frost</button>
+        <button class="theme-chip" onclick="switchTheme('cybergold')"><span class="theme-dot" style="background: #f59e0b;"></span> Cyber Gold</button>
+      </div>
+
+      <!-- App Window Mockup with Official App Icon -->
+      <div class="app-window-preview">
+        <div class="window-titlebar">
+          <div class="traffic-lights">
+            <div class="traffic-light tl-red"></div>
+            <div class="traffic-light tl-yellow"></div>
+            <div class="traffic-light tl-green"></div>
+          </div>
+          <div class="window-title" id="mockWindowTitle">
+            <img src="/assets/app-icon.png" alt="Ravn" style="width: 15px; height: 15px; border-radius: 3px;">
+            <span>Ravn — Gigabit Accelerator • Tokyo Night Theme (48 Streams Active)</span>
+          </div>
+        </div>
+        <div class="window-body">
+          <div class="mock-sidebar">
+            <div class="mock-item active">
+              <span>⚡️ Active Downloads</span>
+              <span style="font-size: 10px; background: rgba(59,130,246,0.3); padding: 2px 6px; border-radius: 10px;">3</span>
+            </div>
+            <div class="mock-item"><span>✅ Completed</span> <span>142</span></div>
+            <div class="mock-item"><span>🎬 Media Studio</span></div>
+            <div class="mock-item"><span>🥽 Spatial 3D VR</span></div>
+            <div class="mock-item"><span>📡 RSS Auto-Feeds</span></div>
+            <div class="mock-item"><span>🎨 16 Themes & Sound</span></div>
+          </div>
+
+          <div class="mock-main">
+            <div class="mock-card">
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 13px; margin-bottom: 2px;">Ubuntu-24.04-desktop-arm64.iso</div>
+                <div style="font-size: 10.5px; color: #64748b;">48 Streams • 112.4 MB/s • 3.8 GB of 4.2 GB</div>
+                <div class="mock-progress-bar"><div class="mock-progress-fill"></div></div>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: #34d399;">112.4 MB/s</span>
+            </div>
+
+            <div class="mock-card">
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 13px; margin-bottom: 2px;">Apple-VisionPro-Spatial-Demo-8K.mov</div>
+                <div style="font-size: 10.5px; color: #64748b;">ProRes 422 HQ • 32 Streams • 88.6 MB/s</div>
+                <div class="mock-progress-bar"><div class="mock-progress-fill" style="width: 52%;"></div></div>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent-blue);">88.6 MB/s</span>
+            </div>
+
+            <div class="mock-card">
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 13px; margin-bottom: 2px;">Xcode_16_Universal_Release.xip</div>
+                <div style="font-size: 10.5px; color: #64748b;">48 Streams • 142.1 MB/s • Completed</div>
+                <div class="mock-progress-bar"><div class="mock-progress-fill" style="width: 100%; background: #10b981;"></div></div>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: #10b981;">DONE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Speed Benchmark Calculator -->
+  <section class="container" id="speed-bench">
+    <div class="benchmark-card">
+      <div class="section-header" style="margin-bottom: 20px;">
+        <h2 class="section-title" style="font-size: 26px;">⚡️ Speed Multiplier Benchmark</h2>
+        <p class="section-subtitle">See how much time Ravn's 48-stream parallel engine saves vs standard browsers.</p>
+      </div>
+
+      <div class="preset-btns">
+        <button class="preset-btn" onclick="updateBenchmark(5, this)">5 GB (Linux ISO)</button>
+        <button class="preset-btn active" onclick="updateBenchmark(25, this)">25 GB (4K Movie)</button>
+        <button class="preset-btn" onclick="updateBenchmark(80, this)">80 GB (AAA Game)</button>
+        <button class="preset-btn" onclick="updateBenchmark(200, this)">200 GB (ML Model)</button>
+      </div>
+
+      <div class="comparison-grid">
+        <div class="comp-box">
+          <div style="font-size: 13px; font-weight: 700; color: #94a3b8;">STANDARD BROWSER (SINGLE STREAM)</div>
+          <div class="comp-speed" style="color: #ef4444;" id="browserTime">35m 12s</div>
+          <div style="font-size: 12px; color: #64748b;">Average Speed: ~12 MB/s</div>
+        </div>
+
+        <div class="comp-box ravn-box">
+          <div style="font-size: 13px; font-weight: 700; color: var(--accent-blue);">RAVN TURBO (48 PARALLEL STREAMS)</div>
+          <div class="comp-speed" style="color: #34d399;" id="ravnTime">3m 20s</div>
+          <div style="font-size: 12px; color: #34d399; font-weight: 700;" id="multiplierText">🚀 10.5x FASTER (Gigabit Saturation)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="container" id="features">
+    <div class="section-header">
+      <h2 class="section-title">Engineered for Uncompromising Power</h2>
+      <p class="section-subtitle">Everything you need to capture, accelerate, organize, and transcode content on macOS.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrapper" style="background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <h3 class="feature-title">Turbo 48-Stream Multi-Segment</h3>
+        <p class="feature-desc">Dual-probe HEAD/GET engine splits large files into up to 48 parallel HTTP chunks, saturating your fiber optic bandwidth.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper" style="background: rgba(139, 92, 246, 0.12); border-color: rgba(139, 92, 246, 0.35); color: #a78bfa;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+          </svg>
+        </div>
+        <h3 class="feature-title">16 Artisan Glass Themes</h3>
+        <p class="feature-desc">Tokyo Night, OLED Obsidian, Synthwave 84, Matrix Emerald, Nordic Frost, and a live Custom Spectrum Studio with fluid spring physics.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper" style="background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.35); color: #34d399;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            <line x1="5" y1="10" x2="5" y2="14"></line>
+            <line x1="8.5" y1="8" x2="8.5" y2="16"></line>
+            <line x1="12" y1="11" x2="12" y2="13"></line>
+          </svg>
+        </div>
+        <h3 class="feature-title">Media Studio & Stem Splitter</h3>
+        <p class="feature-desc">Hardware-accelerated FFmpeg transcoder (ProRes 422, MKV, FLAC, WAV) plus AI audio stem separation into Vocals, Drums, and Bass.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper" style="background: rgba(6, 182, 212, 0.12); border-color: rgba(6, 182, 212, 0.35); color: #22d3ee;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="4"></rect>
+            <circle cx="8" cy="12" r="2.5"></circle>
+            <circle cx="16" cy="12" r="2.5"></circle>
+            <path d="M10.5 14.5a2 2 0 0 0 3 0"></path>
+          </svg>
+        </div>
+        <h3 class="feature-title">Spatial Video & VR 3D</h3>
+        <p class="feature-desc">Convert standard 2D video into stereoscopic Apple Vision Pro & Meta Quest 3 3D formats with custom IPD adjustment.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper" style="background: rgba(249, 115, 22, 0.12); border-color: rgba(249, 115, 22, 0.35); color: #fb923c;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 11a9 9 0 0 1 9 9"></path>
+            <path d="M4 4a16 16 0 0 1 16 16"></path>
+            <circle cx="5" cy="19" r="1.5" fill="currentColor"></circle>
+          </svg>
+        </div>
+        <h3 class="feature-title">Automated RSS Feeds</h3>
+        <p class="feature-desc">Subscribe to torrent, podcast, or video RSS feeds and auto-download matching items with smart RegEx keyword filters.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper" style="background: rgba(244, 63, 94, 0.12); border-color: rgba(244, 63, 94, 0.35); color: #fb7185;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+        </div>
+        <h3 class="feature-title">Ed25519 Cryptographic Licensing</h3>
+        <p class="feature-desc">Asymmetric mathematical signatures verified offline with Apple CryptoKit. Impossible to forge or tamper.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="container" id="pricing">
+    <div class="section-header">
+      <h2 class="section-title">Simple, Transparent Pricing</h2>
+      <p class="section-subtitle">Pick the plan that suits you. Free updates, instant activation, and zero lock-in.</p>
+      
+      <div style="margin-top: 14px;">
+        <div id="detectedCountryBadge" class="country-auto-badge">
+          <span>📍 Auto-detected Location: <strong id="detectedCountryText">Detecting country...</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Monthly Plan -->
+      <div class="pricing-card">
+        <div class="plan-name">Ravn Pro Monthly</div>
+        <div class="plan-price" id="pricingMonthlyVal">$4.99 <span>/ month</span></div>
+        <div class="plan-desc">Flexible month-to-month subscription. Cancel anytime with one click.</div>
+        <ul class="plan-features">
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 32 Parallel Multi-Segment Streams</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 16 Active Simultaneous Downloads</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> All 16 Artisan Glass Themes</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>1 Active Mac Seat</strong> (Transfer Anytime)</li>
+        </ul>
+        <button class="btn btn-secondary" onclick="openCheckoutModal('monthly')">Choose Monthly</button>
+      </div>
+
+      <!-- Annual Plan (Featured) -->
+      <div class="pricing-card featured">
+        <div class="tag-featured">SAVE 33% • 7-DAY FREE TRIAL</div>
+        <div class="plan-name">Ravn Pro Annual</div>
+        <div class="plan-price" id="pricingAnnualVal">$39.99 <span>/ year ($3.33/mo)</span></div>
+        <div class="plan-desc">Our most popular plan. Includes a 7-day risk-free trial.</div>
+        <ul class="plan-features">
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>7-Day Free Trial Included</strong></li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 32 Parallel Multi-Segment Streams</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Media Studio & Spatial 3D VR Converter</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>1 Active Mac Seat</strong> (Transfer Anytime)</li>
+        </ul>
+        <button class="btn btn-primary" onclick="openCheckoutModal('annual')">Start 7-Day Free Trial</button>
+      </div>
+
+      <!-- Lifetime Plan -->
+      <div class="pricing-card" style="border: 1px solid rgba(245, 158, 11, 0.4); position: relative; overflow: visible;">
+        <div class="tag-featured" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; box-shadow: 0 0 18px rgba(245, 158, 11, 0.5);">💎 ULTRA LIFETIME PASS</div>
+        <div class="plan-name">Ravn Ultra Lifetime</div>
+        <div class="plan-price" id="pricingLifetimeVal">$79.99 <span>one-time</span></div>
+        <div class="plan-desc">Pay once, own forever. Includes all future major upgrades for life.</div>
+        <ul class="plan-features">
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>48 Turbo Parallel Streams</strong></li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Lifetime Updates & VIP Priority Support</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>2 Active Mac Seats</strong> (Transfer Anytime)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Zero Recurring Fees Ever</li>
+        </ul>
+        <button class="btn btn-secondary" onclick="openCheckoutModal('lifetime')" style="border-color: rgba(245, 158, 11, 0.5); color: #fbbf24;">Get Lifetime Pass ↗</button>
+      </div>
+    </div>
+
+    <!-- Extra Mac Seats Add-on Banner with Generous Spacing -->
+    <div style="margin-top: 48px; margin-bottom: 24px; padding: 22px 32px; background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.18); border-radius: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="font-size: 32px;">💻</div>
+        <div>
+          <div style="font-size: 16px; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px;">
+            Need More Than 2 Macs?
+            <span style="font-size: 10px; font-weight: 800; padding: 2px 8px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 20px; color: #60a5fa;">SEAT EXPANSION</span>
+          </div>
+          <div style="font-size: 13px; color: #94a3b8; margin-top: 3px;">Expand your active machine limit. Add extra Mac slots for just <span id="seatAddonPriceVal" style="font-weight: 700; color: white;">$19.99</span> per machine (one-time add-on).</div>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="openCheckoutModal('seat_addon')" style="padding: 11px 22px; font-size: 13.5px; font-weight: 700;">
+        + Add Extra Mac Seat ↗
+      </button>
+    </div>
+  </section>
+
+  <!-- License Key Portal -->
+  <section class="container" id="portal">
+    <div class="portal-card">
+      <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 10px;">License Key & Activation Portal</h3>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 24px;">
+        Lookup your registered license, check device usage, or verify cryptographic Ed25519 signature.
+      </p>
+
+      <div class="input-row">
+        <input type="text" id="portalKey" class="input-field" placeholder="RAVN-XXXX-XXXX-XXXX" style="font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">
+        <input type="email" id="portalEmail" class="input-field" placeholder="Registered email address">
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; padding: 13px;" onclick="checkPortalLicense()">Verify License & Devices</button>
+      <div id="portalStatus" class="status-box"></div>
+    </div>
+  </section>
+
+  <!-- FAQ Accordion Section -->
+  <section class="container" id="faq">
+    <div class="section-header">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-subtitle">Everything you need to know about licensing, platform compatibility, and features.</p>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">
+          <span>Which macOS versions and Macs are supported?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          Ravn is compiled as a Universal 2 binary with native support for all Apple Silicon chips (M1, M1 Pro/Max, M2, M3, M4) and Intel x86_64 processors. Minimum requirement is macOS 14.0 Sonoma or macOS 15.0+ Sequoia.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">
+          <span>How does the 7-Day Free Trial work?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          When you choose the Annual plan, you get 7 full days of unrestricted access to all Pro features (32 streams, Media Studio, Spatial VR). You can cancel anytime before the trial ends in your account portal with zero charges.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">
+          <span>How does the offline cryptographic license work?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          Ravn uses Ed25519 asymmetric cryptography. When your license is activated, a mathematically signed token is issued that the macOS client verifies locally using Apple's native CryptoKit framework. You can use Ravn completely offline on airplanes or without internet.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">
+          <span>How do I capture downloads from Chrome & Safari?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          Ravn includes native browser integration extensions for Safari, Google Chrome, Brave, Arc, and Firefox that automatically route downloads directly to Ravn with 1 click.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- System Specs -->
+  <section class="container" id="specs">
+    <div class="section-header">
+      <h2 class="section-title">System Requirements & Release Specs</h2>
+      <p class="section-subtitle">Optimized for Apple Silicon M-series and Intel x86_64 architectures.</p>
+    </div>
+
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="spec-label">SUPPORTED OS</div>
+        <div class="spec-val">macOS 14.0 Sonoma & macOS 15.0+ Sequoia</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">ARCHITECTURE</div>
+        <div class="spec-val">Universal 2 (arm64 + x86_64)</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">LATEST VERSION</div>
+        <div class="spec-val">v2.5.0 (Build 250) • Stable</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">FILE SIZE</div>
+        <div class="spec-val">~28.4 MB (Disk Image)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer with Official App Icon -->
+  <footer>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="/assets/app-icon.png" alt="Ravn App Icon" style="width: 24px; height: 24px; border-radius: 6px;">
+        <span>&copy; 2026 Ravn Download Manager. All rights reserved.</span>
+      </div>
+      <div style="display: flex; gap: 20px;">
+        <a href="/activate.html" class="nav-link">License Portal</a>
+        <button onclick="updatePriceDisplay()" style="background: none; border: none; color: #64748b; font-size: 12px; cursor: pointer; text-decoration: underline;">Refresh Currency</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ╔══════════════════════════════════════════════════════════╗ -->
+  <!-- ║ CUSTOM 100% IN-PAGE STRIPE CHECKOUT MODAL                ║ -->
+  <!-- ╚══════════════════════════════════════════════════════════╝ -->
+  <div class="modal-overlay" id="checkoutModalOverlay" onclick="handleBackdropClick(event, 'checkoutModalOverlay')">
+    <div class="modal-box" id="checkoutModalBox" style="max-width: 540px;">
+      <button class="modal-close-btn" onclick="closeCheckoutModal()" title="Close">&times;</button>
+      
+      <!-- STEP 1: Plan & Email Selection -->
+      <div id="checkoutStepSelect">
+        <div class="modal-header" style="padding-right: 44px;">
+          <div class="modal-title">
+            <span>⚡️ Upgrade to Ravn Pro</span>
+          </div>
+          <p class="modal-subtitle">Unlock 48 turbo streams, GPU Media Studio, Spatial 3D VR, and 16 glass themes.</p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 6px 12px; background: rgba(255, 255, 255, 0.04); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">Billing Currency:</span>
+            <select class="currency-select-inline" id="modalCurrencySelect" onchange="changeCountryOrCurrency(this)" style="font-size: 11px; max-width: 230px;">
+              <option value="usd">🇺🇸 United States (USD - $)</option>
+              <option value="eur">🇪🇺 Eurozone (EUR - €)</option>
+              <option value="gbp">🇬🇧 United Kingdom (GBP - £)</option>
+              <option value="aud">🇦🇺 Australia (AUD - A$)</option>
+              <option value="cad">🇨🇦 Canada (CAD - CA$)</option>
+              <option value="jpy">🇯🇵 Japan (JPY - ¥)</option>
+              <option value="inr">🇮🇳 India (INR - ₹)</option>
+              <option value="npr">🇳🇵 Nepal (NPR - Rs)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="plan-picker-group">
+          <!-- Monthly Option -->
+          <div class="plan-card-option" id="planOptionMonthly" onclick="selectModalPlan('monthly')">
+            <div class="plan-option-left">
+              <div class="plan-radio-circle"></div>
+              <div class="plan-icon-badge" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <div>
+                <div class="plan-option-name">Ravn Pro Monthly <span class="plan-option-badge badge-monthly">1 MAC SEAT</span></div>
+                <div class="plan-option-sub">Flexible month-to-month • Gigabit Turbo Engine</div>
+              </div>
+            </div>
+            <div class="plan-option-price" id="modalMonthlyPriceVal">$4.99 <span style="font-size: 11px; font-weight: normal; color: #64748b;">/mo</span></div>
+          </div>
+
+          <!-- Annual Option (Featured) -->
+          <div class="plan-card-option selected featured-annual" id="planOptionAnnual" onclick="selectModalPlan('annual')">
+            <div class="plan-option-left">
+              <div class="plan-radio-circle"></div>
+              <div class="plan-icon-badge" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(56, 189, 248, 0.25)); border-color: rgba(16, 185, 129, 0.5); color: #34d399; box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <div>
+                <div class="plan-option-name">Ravn Pro Annual <span class="plan-option-badge badge-annual">🔥 7-DAY FREE TRIAL</span></div>
+                <div class="plan-option-sub" id="modalAnnualSubText">Save 33% • A$4.99/mo billed annually • 1 Mac Seat</div>
+              </div>
+            </div>
+            <div class="plan-option-price" id="modalAnnualPriceVal">$39.99 <span style="font-size: 11px; font-weight: normal; color: #64748b;">/yr</span></div>
+          </div>
+
+          <!-- Lifetime Option -->
+          <div class="plan-card-option lifetime-option" id="planOptionLifetime" onclick="selectModalPlan('lifetime')">
+            <div class="plan-option-left">
+              <div class="plan-radio-circle"></div>
+              <div class="plan-icon-badge" style="background: rgba(245, 158, 11, 0.18); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3v6l-5 12"/><path d="M13 3v6l5 12"/></svg>
+              </div>
+              <div>
+                <div class="plan-option-name">Ravn Ultra Lifetime <span class="plan-option-badge badge-lifetime">💎 2 MACS INCLUDED</span></div>
+                <div class="plan-option-sub">Pay once, own forever • All future updates</div>
+              </div>
+            </div>
+            <div class="plan-option-price" id="modalLifetimePriceVal">$79.99 <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span></div>
+          </div>
+
+          <!-- Extra Mac Seat Add-on Option -->
+          <div class="plan-card-option" id="planOptionSeatAddon" onclick="selectModalPlan('seat_addon')">
+            <div class="plan-option-left">
+              <div class="plan-radio-circle"></div>
+              <div class="plan-icon-badge" style="background: rgba(139, 92, 246, 0.18); border-color: rgba(139, 92, 246, 0.4); color: #a78bfa;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div>
+                <div class="plan-option-name">Extra Mac Seat Add-on <span class="plan-option-badge badge-seat">+1 MAC SLOT</span></div>
+                <div class="plan-option-sub">Expand your active machine seat limit</div>
+              </div>
+            </div>
+            <div class="plan-option-price" id="modalSeatAddonPriceVal">$19.99 <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span></div>
+          </div>
+        </div>
+
+        <div class="modal-input-group">
+          <label class="modal-label" for="checkoutEmailInput">Customer Email Address (for key delivery & receipts):</label>
+          <input type="email" id="checkoutEmailInput" class="modal-input" placeholder="alex@example.com" required onkeydown="if(event.key==='Enter'){event.preventDefault();startInPagePayment();}">
+        </div>
+
+        <button class="btn btn-primary" id="checkoutSubmitBtn" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800;" onclick="startInPagePayment()">
+          Continue to Payment ➔
+        </button>
+
+        <div id="checkoutModalError" style="display: none; color: #ef4444; font-size: 12px; font-weight: 600; text-align: center; margin-top: 10px;"></div>
+
+        <!-- Payment Methods Trust Row with Authentic SVG Badges -->
+        <div class="modal-trust-row">
+          <span class="pay-chip pay-apple" title="Apple Pay">
+            <svg viewBox="0 0 170 170" width="13" height="13" fill="currentColor"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.6-7.79-11.72-14.24-5.35-8.37-9.56-17.75-12.63-28.13-3.07-10.38-4.61-20.35-4.61-29.9 0-11.41 2.74-21.14 8.23-29.21 5.48-8.06 12.59-12.24 21.32-12.52 4.47 0 9.47 1.25 15.01 3.75 5.53 2.5 9.38 3.86 11.54 4.09 1.76-.23 5.79-1.64 12.08-4.24 6.29-2.6 11.59-3.72 15.91-3.36 12.28.98 21.68 5.72 28.2 14.24-10.88 6.63-16.21 15.54-16 26.71.21 8.81 3.51 16.14 9.9 21.99 6.39 5.86 14.07 9.17 23.05 9.95-2.23 6.63-4.91 13.06-8.05 19.31zm-32.99-106.91c0 5.88-2.19 11.45-6.58 16.7-4.38 5.25-9.75 8.65-16.1 10.2-.4-1.09-.6-2.28-.6-3.57 0-5.65 2.29-11.33 6.87-17.04 4.58-5.71 10.14-9.08 16.69-10.12.08 1.27.12 2.54.12 3.83z"/></svg>
+            Apple Pay
+          </span>
+          <span class="pay-chip pay-gpay" title="Google Pay">
+            <svg viewBox="0 0 24 24" width="13" height="13">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.97 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.93 6.72-4.93z"/>
+            </svg>
+            Pay
+          </span>
+          <span class="pay-chip pay-afterpay" title="Afterpay / Clearpay">
+            <svg width="14" height="11" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 16l-5-6 5-6M17 4l5 6-5 6M2 10h20"/>
+            </svg>
+            afterpay ▾
+          </span>
+          <span class="pay-chip pay-klarna" title="Klarna">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M5.5 3h3.2v18H5.5V3zm6.3 0h3.2v8.5l4.8-8.5h3.7l-5.6 9.8 6.1 8.2h-3.9l-5.1-7v7h-3.2V3z"/>
+            </svg>
+            Klarna.
+          </span>
+          <span class="pay-chip pay-visa" title="Visa">
+            <svg width="22" height="11" viewBox="0 0 48 24" fill="none">
+              <path d="M19.2 22.8L23.4 1.2H28.8L24.6 22.8H19.2ZM37.2 1.8C35.8 1.4 33.6 1 31 1C24.4 1 19.8 4.4 19.8 9.2C19.8 12.8 23 14.8 25.4 16C27.8 17.2 28.6 18 28.6 19.2C28.6 21 26.4 21.8 24.2 21.8C21.8 21.8 20.4 21.4 18.6 20.6L17.8 20.2L17 24.2C18.6 25 21.4 25.6 24.2 25.6C31.2 25.6 35.8 22.2 35.8 17.2C35.8 13.2 33.2 11.2 29.8 9.6C27.8 8.6 26.6 7.8 26.6 6.8C26.6 5.4 28.2 4.8 30.2 4.8C32 4.8 33.4 5.2 34.6 5.8L35.2 6.2L37.2 1.8ZM47.6 1.2H43.4C42 1.2 41 1.6 40.4 3L32.4 22.8H37.8L38.8 19.8H45.4L46 22.8H50.8L47.6 1.2ZM40.4 15.6L43.2 7.6L44.8 15.6H40.4ZM14.8 1.2L9.6 15.8L9 12.8C8 8.6 4.4 4 0 1.6L4.6 22.8H10.2L18.4 1.2H14.8Z" fill="#38bdf8"/>
+            </svg>
+          </span>
+          <span class="pay-chip pay-mastercard" title="Mastercard">
+            <svg width="20" height="12" viewBox="0 0 32 20">
+              <circle cx="11" cy="10" r="9" fill="#eb001b" fill-opacity="0.9"/>
+              <circle cx="21" cy="10" r="9" fill="#f79e1b" fill-opacity="0.9"/>
+            </svg>
+          </span>
+          <span class="pay-chip pay-amex" title="American Express">
+            <svg width="20" height="11" viewBox="0 0 32 20">
+              <rect width="32" height="20" rx="3" fill="#2563eb" fill-opacity="0.3" stroke="#3b82f6" stroke-width="1.2"/>
+              <text x="16" y="14" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="900" fill="#93c5fd" text-anchor="middle">AMEX</text>
+            </svg>
+          </span>
+          <span class="pay-chip pay-link" title="Link 1-Click">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            Link
+          </span>
+        </div>
+      </div>
+
+      <!-- STEP 2: In-Page Stripe Payment Element -->
+      <div id="checkoutStepPayment" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-right: 44px; gap: 8px;">
+          <button onclick="backToStepSelect()" style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); color: #cbd5e1; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; transition: all 0.2s ease;">
+            ← Change Plan
+          </button>
+          <div id="paymentPlanBadge" style="font-size: 11.5px; font-weight: 800; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.35); box-shadow: 0 0 12px rgba(56, 189, 248, 0.2); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis;">
+            Ravn Pro Annual
+          </div>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 14px; padding: 12px 16px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
+            <span style="color: #94a3b8;">Customer:</span>
+            <span id="paymentCustomerEmailDisplay" style="color: white; font-weight: 600; font-family: 'JetBrains Mono', monospace;">alex@example.com</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12.5px;">
+            <span style="color: #94a3b8;">Total Due:</span>
+            <span id="paymentTotalAmountDisplay" style="color: #34d399; font-weight: 800; font-size: 14.5px;">A$59.99 (7 Days Free)</span>
+          </div>
+        </div>
+
+        <!-- Express Checkout ( Apple Pay / Google Pay / Link 1-Click) -->
+        <div id="express-checkout-container" style="display: none; margin-bottom: 14px;">
+          <div id="express-checkout-element" style="min-height: 46px;"></div>
+          <div style="display: flex; align-items: center; margin: 12px 0 10px; gap: 10px;">
+            <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+            <span style="font-size: 10px; font-weight: 800; color: #64748b; letter-spacing: 0.8px;">OR PAY WITH CARD / BNPL</span>
+            <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+          </div>
+        </div>
+
+        <!-- Stripe Payment Element Mount Point -->
+        <div id="payment-element" style="margin-bottom: 16px; min-height: 180px;"></div>
+
+        <button class="btn btn-primary" id="confirmPaymentBtn" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; position: relative; z-index: 5;" onclick="confirmInPagePayment()">
+          🔒 Pay & Mint License ➔
+        </button>
+
+        <div id="paymentElementError" style="display: none; color: #ef4444; font-size: 12px; font-weight: 600; text-align: center; margin-top: 10px;"></div>
+
+        <!-- Trust row on Step 2 with identical rich SVG icons -->
+        <div class="modal-trust-row">
+          <span class="pay-chip pay-apple" title="Apple Pay">
+            <svg viewBox="0 0 170 170" width="13" height="13" fill="currentColor"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.6-7.79-11.72-14.24-5.35-8.37-9.56-17.75-12.63-28.13-3.07-10.38-4.61-20.35-4.61-29.9 0-11.41 2.74-21.14 8.23-29.21 5.48-8.06 12.59-12.24 21.32-12.52 4.47 0 9.47 1.25 15.01 3.75 5.53 2.5 9.38 3.86 11.54 4.09 1.76-.23 5.79-1.64 12.08-4.24 6.29-2.6 11.59-3.72 15.91-3.36 12.28.98 21.68 5.72 28.2 14.24-10.88 6.63-16.21 15.54-16 26.71.21 8.81 3.51 16.14 9.9 21.99 6.39 5.86 14.07 9.17 23.05 9.95-2.23 6.63-4.91 13.06-8.05 19.31zm-32.99-106.91c0 5.88-2.19 11.45-6.58 16.7-4.38 5.25-9.75 8.65-16.1 10.2-.4-1.09-.6-2.28-.6-3.57 0-5.65 2.29-11.33 6.87-17.04 4.58-5.71 10.14-9.08 16.69-10.12.08 1.27.12 2.54.12 3.83z"/></svg>
+            Apple Pay
+          </span>
+          <span class="pay-chip pay-gpay" title="Google Pay">
+            <svg viewBox="0 0 24 24" width="13" height="13">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.97 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.93 6.72-4.93z"/>
+            </svg>
+            Pay
+          </span>
+          <span class="pay-chip pay-afterpay" title="Afterpay / Clearpay">
+            <svg width="14" height="11" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 16l-5-6 5-6M17 4l5 6-5 6M2 10h20"/>
+            </svg>
+            afterpay ▾
+          </span>
+          <span class="pay-chip pay-klarna" title="Klarna">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M5.5 3h3.2v18H5.5V3zm6.3 0h3.2v8.5l4.8-8.5h3.7l-5.6 9.8 6.1 8.2h-3.9l-5.1-7v7h-3.2V3z"/>
+            </svg>
+            Klarna.
+          </span>
+          <span class="pay-chip pay-visa" title="Visa">
+            <svg width="22" height="11" viewBox="0 0 48 24" fill="none">
+              <path d="M19.2 22.8L23.4 1.2H28.8L24.6 22.8H19.2ZM37.2 1.8C35.8 1.4 33.6 1 31 1C24.4 1 19.8 4.4 19.8 9.2C19.8 12.8 23 14.8 25.4 16C27.8 17.2 28.6 18 28.6 19.2C28.6 21 26.4 21.8 24.2 21.8C21.8 21.8 20.4 21.4 18.6 20.6L17.8 20.2L17 24.2C18.6 25 21.4 25.6 24.2 25.6C31.2 25.6 35.8 22.2 35.8 17.2C35.8 13.2 33.2 11.2 29.8 9.6C27.8 8.6 26.6 7.8 26.6 6.8C26.6 5.4 28.2 4.8 30.2 4.8C32 4.8 33.4 5.2 34.6 5.8L35.2 6.2L37.2 1.8ZM47.6 1.2H43.4C42 1.2 41 1.6 40.4 3L32.4 22.8H37.8L38.8 19.8H45.4L46 22.8H50.8L47.6 1.2ZM40.4 15.6L43.2 7.6L44.8 15.6H40.4ZM14.8 1.2L9.6 15.8L9 12.8C8 8.6 4.4 4 0 1.6L4.6 22.8H10.2L18.4 1.2H14.8Z" fill="#38bdf8"/>
+            </svg>
+          </span>
+          <span class="pay-chip pay-mastercard" title="Mastercard">
+            <svg width="20" height="12" viewBox="0 0 32 20">
+              <circle cx="11" cy="10" r="9" fill="#eb001b" fill-opacity="0.9"/>
+              <circle cx="21" cy="10" r="9" fill="#f79e1b" fill-opacity="0.9"/>
+            </svg>
+          </span>
+          <span class="pay-chip pay-amex" title="American Express">
+            <svg width="20" height="11" viewBox="0 0 32 20">
+              <rect width="32" height="20" rx="3" fill="#2563eb" fill-opacity="0.3" stroke="#3b82f6" stroke-width="1.2"/>
+              <text x="16" y="14" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="900" fill="#93c5fd" text-anchor="middle">AMEX</text>
+            </svg>
+          </span>
+          <span class="pay-chip pay-link" title="Link 1-Click">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            Link
+          </span>
+        </div>
+      </div>
+
+      <!-- STEP 3: Instant Success & 1-Click Mac Activation -->
+      <div id="checkoutStepSuccess" style="display: none; text-align: center; padding: 10px 0;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; color: #10b981;">
+          ✓
+        </div>
+
+        <h3 style="font-size: 22px; font-weight: 800; color: white; margin-bottom: 6px;">Payment Successful!</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">Your Ed25519 cryptographic license key has been generated and minted.</p>
+
+        <!-- License Display Box -->
+        <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 14px; padding: 18px; margin-bottom: 20px; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 700; color: #38bdf8; letter-spacing: 0.8px;">CRYPTOGRAPHIC LICENSE KEY</span>
+            <span id="successPlanTag" style="font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; background: rgba(16, 185, 129, 0.2); color: #34d399;">PRO ACTIVE</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <code id="successLicenseKeyVal" style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 800; color: white; letter-spacing: 1px;">RAVN-XXXX-XXXX-XXXX</code>
+            <button class="btn btn-secondary" onclick="copySuccessLicenseKey()" style="padding: 6px 12px; font-size: 11.5px;">Copy</button>
+          </div>
+        </div>
+
+        <!-- 1-Click Launch & Download Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+          <a id="successOneClickBtn" href="#" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 800; display: block; text-decoration: none; box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);">
+            ⚡️ 1-Click Activate Ravn for Mac
+          </a>
+          <div style="display: flex; gap: 8px;">
+            <a href="/assets/macos/Ravn-Universal.dmg" class="btn btn-secondary" style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Ravn DMG
+            </a>
+            <a href="ravn://update" class="btn btn-secondary" style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+              Open in App
+            </a>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
+          A copy of your cryptographic license key has also been emailed to <strong id="successCustomerEmail" style="color: #cbd5e1;"></strong>.<br>
+          <span style="color: #94a3b8; font-size: 11.5px;">Haven't installed Ravn yet? Download the DMG above — your key can be activated anytime.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════════════════════════════════════════════════╗ -->
+  <!-- ║ PORTAL MODAL                                             ║ -->
+  <!-- ╚══════════════════════════════════════════════════════════╝ -->
+  <div class="modal-overlay" id="portalModalOverlay" onclick="handleBackdropClick(event, 'portalModalOverlay')">
+    <div class="modal-box" id="portalModalBox">
+      <button class="modal-close-btn" onclick="closePortalModal()" title="Close">&times;</button>
+      
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🔑 License Verification Portal</span>
+        </div>
+        <p class="modal-subtitle">Verify your cryptographic Ed25519 digital signature and view active machine activations.</p>
+      </div>
+
+      <div class="modal-input-group">
+        <label class="modal-label" for="portalModalKey">License Key:</label>
+        <input type="text" id="portalModalKey" class="modal-input" placeholder="RAVN-XXXX-XXXX-XXXX" style="font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">
+      </div>
+
+      <div class="modal-input-group">
+        <label class="modal-label" for="portalModalEmail">Registered Email Address:</label>
+        <input type="email" id="portalModalEmail" class="modal-input" placeholder="name@example.com">
+      </div>
+
+      <button class="btn btn-primary" id="portalModalSubmitBtn" style="width: 100%; padding: 13px; font-size: 14px;" onclick="checkPortalModalLicense()">
+        Verify Digital Signature & Devices
+      </button>
+
+      <div id="portalModalStatus" class="status-box" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+
+  <script>
+    let selectedModalPlanTier = 'annual';
+    let currentCurrency = 'usd';
+
+    const CURRENCIES = {
+      // North America
+      usd: { code: 'usd', symbol: '$', name: 'USD ($)', country: 'United States', flag: '🇺🇸', monthly: '$4.99', monthlyNum: '$4.99', annual: '$39.99', annualMonthly: '$3.33', lifetime: '$79.99', seatAddon: '$19.99' },
+      cad: { code: 'cad', symbol: 'CA$', name: 'CAD (CA$)', country: 'Canada', flag: '🇨🇦', monthly: 'CA$6.79', monthlyNum: 'CA$6.79', annual: 'CA$54.99', annualMonthly: 'CA$4.58', lifetime: 'CA$109.99', seatAddon: 'CA$26.99' },
+      mxn: { code: 'mxn', symbol: 'MX$', name: 'MXN (MX$)', country: 'Mexico', flag: '🇲🇽', monthly: 'MX$99', monthlyNum: 'MX$99', annual: 'MX$799', annualMonthly: 'MX$66.58', lifetime: 'MX$1,599', seatAddon: 'MX$399' },
+      
+      // Europe
+      eur: { code: 'eur', symbol: '€', name: 'EUR (€)', country: 'European Union', flag: '🇪🇺', monthly: '€4.59', monthlyNum: '€4.59', annual: '€36.99', annualMonthly: '€3.08', lifetime: '€74.99', seatAddon: '€18.99' },
+      gbp: { code: 'gbp', symbol: '£', name: 'GBP (£)', country: 'United Kingdom', flag: '🇬🇧', monthly: '£3.99', monthlyNum: '£3.99', annual: '£31.99', annualMonthly: '£2.66', lifetime: '£64.99', seatAddon: '£15.99' },
+      chf: { code: 'chf', symbol: 'CHF', name: 'CHF (CHF)', country: 'Switzerland', flag: '🇨🇭', monthly: '4.49 CHF', monthlyNum: '4.49 CHF', annual: '35.99 CHF', annualMonthly: '2.99 CHF', lifetime: '69.99 CHF', seatAddon: '17.99 CHF' },
+      sek: { code: 'sek', symbol: 'kr', name: 'SEK (kr)', country: 'Sweden', flag: '🇸🇪', monthly: '52.99 kr', monthlyNum: '52.99 kr', annual: '429.99 kr', annualMonthly: '35.83 kr', lifetime: '859.99 kr', seatAddon: '214.99 kr' },
+      nok: { code: 'nok', symbol: 'kr', name: 'NOK (kr)', country: 'Norway', flag: '🇳🇴', monthly: '54.99 kr', monthlyNum: '54.99 kr', annual: '439.99 kr', annualMonthly: '36.66 kr', lifetime: '879.99 kr', seatAddon: '219.99 kr' },
+      dkk: { code: 'dkk', symbol: 'kr', name: 'DKK (kr)', country: 'Denmark', flag: '🇩🇰', monthly: '34.99 kr', monthlyNum: '34.99 kr', annual: '279.99 kr', annualMonthly: '23.33 kr', lifetime: '559.99 kr', seatAddon: '139.99 kr' },
+      pln: { code: 'pln', symbol: 'zł', name: 'PLN (zł)', country: 'Poland', flag: '🇵🇱', monthly: '19.99 zł', monthlyNum: '19.99 zł', annual: '159.99 zł', annualMonthly: '13.33 zł', lifetime: '319.99 zł', seatAddon: '79.99 zł' },
+      czk: { code: 'czk', symbol: 'Kč', name: 'CZK (Kč)', country: 'Czech Republic', flag: '🇨🇿', monthly: '115 Kč', monthlyNum: '115 Kč', annual: '929 Kč', annualMonthly: '77.41 Kč', lifetime: '1,859 Kč', seatAddon: '465 Kč' },
+      try: { code: 'try', symbol: '₺', name: 'TRY (₺)', country: 'Turkey', flag: '🇹🇷', monthly: '₺169', monthlyNum: '₺169', annual: '₺1,349', annualMonthly: '₺112.41', lifetime: '₺2,699', seatAddon: '₺679' },
+
+      // Asia-Pacific & Oceania
+      aud: { code: 'aud', symbol: 'A$', name: 'AUD (A$)', country: 'Australia', flag: '🇦🇺', monthly: 'A$7.49', monthlyNum: 'A$7.49', annual: 'A$59.99', annualMonthly: 'A$4.99', lifetime: 'A$119.99', seatAddon: 'A$29.99' },
+      nzd: { code: 'nzd', symbol: 'NZ$', name: 'NZD (NZ$)', country: 'New Zealand', flag: '🇳🇿', monthly: 'NZ$7.99', monthlyNum: 'NZ$7.99', annual: 'NZ$64.99', annualMonthly: 'NZ$5.41', lifetime: 'NZ$129.99', seatAddon: 'NZ$32.99' },
+      jpy: { code: 'jpy', symbol: '¥', name: 'JPY (¥)', country: 'Japan', flag: '🇯🇵', monthly: '¥750', monthlyNum: '¥750', annual: '¥5,990', annualMonthly: '¥499', lifetime: '¥11,990', seatAddon: '¥2,990' },
+      inr: { code: 'inr', symbol: '₹', name: 'INR (₹)', country: 'India', flag: '🇮🇳', monthly: '₹419', monthlyNum: '₹419', annual: '₹3,299', annualMonthly: '₹275', lifetime: '₹6,699', seatAddon: '₹1,699' },
+      sgd: { code: 'sgd', symbol: 'S$', name: 'SGD (S$)', country: 'Singapore', flag: '🇸🇬', monthly: 'S$6.69', monthlyNum: 'S$6.69', annual: 'S$53.99', annualMonthly: 'S$4.49', lifetime: 'S$107.99', seatAddon: 'S$26.99' },
+      hkd: { code: 'hkd', symbol: 'HK$', name: 'HKD (HK$)', country: 'Hong Kong', flag: '🇭🇰', monthly: 'HK$38.99', monthlyNum: 'HK$38.99', annual: 'HK$312.99', annualMonthly: 'HK$26.08', lifetime: 'HK$624.99', seatAddon: 'HK$156.99' },
+      twd: { code: 'twd', symbol: 'NT$', name: 'TWD (NT$)', country: 'Taiwan', flag: '🇹🇼', monthly: 'NT$159', monthlyNum: 'NT$159', annual: 'NT$1,280', annualMonthly: 'NT$106.67', lifetime: 'NT$2,560', seatAddon: 'NT$640' },
+      krw: { code: 'krw', symbol: '₩', name: 'KRW (₩)', country: 'South Korea', flag: '🇰🇷', monthly: '₩6,800', monthlyNum: '₩6,800', annual: '₩54,900', annualMonthly: '₩4,575', lifetime: '₩109,000', seatAddon: '₩27,900' },
+      myr: { code: 'myr', symbol: 'RM', name: 'MYR (RM)', country: 'Malaysia', flag: '🇲🇾', monthly: 'RM 21.99', monthlyNum: 'RM 21.99', annual: 'RM 179.99', annualMonthly: 'RM 14.99', lifetime: 'RM 359.99', seatAddon: 'RM 89.99' },
+      thb: { code: 'thb', symbol: '฿', name: 'THB (฿)', country: 'Thailand', flag: '🇹🇭', monthly: '฿179', monthlyNum: '฿179', annual: '฿1,449', annualMonthly: '฿120.75', lifetime: '฿2,899', seatAddon: '฿729' },
+      php: { code: 'php', symbol: '₱', name: 'PHP (₱)', country: 'Philippines', flag: '🇵🇭', monthly: '₱279', monthlyNum: '₱279', annual: '₱2,249', annualMonthly: '₱187.41', lifetime: '₱4,499', seatAddon: '₱1,129' },
+      idr: { code: 'idr', symbol: 'Rp', name: 'IDR (Rp)', country: 'Indonesia', flag: '🇮🇩', monthly: 'Rp 79.000', monthlyNum: 'Rp 79.000', annual: 'Rp 639.000', annualMonthly: 'Rp 53.250', lifetime: 'Rp 1.279.000', seatAddon: 'Rp 319.000' },
+      vnd: { code: 'vnd', symbol: '₫', name: 'VND (₫)', country: 'Vietnam', flag: '🇻🇳', monthly: '₫125,000', monthlyNum: '₫125,000', annual: '₫999,000', annualMonthly: '₫83,250', lifetime: '₫1,999,000', seatAddon: '₫499,000' },
+
+      // Middle East & Africa
+      aed: { code: 'aed', symbol: 'AED', name: 'AED (AED)', country: 'United Arab Emirates', flag: '🇦🇪', monthly: 'AED 18.49', monthlyNum: 'AED 18.49', annual: 'AED 146.99', annualMonthly: 'AED 12.24', lifetime: 'AED 293.99', seatAddon: 'AED 73.99' },
+      sar: { code: 'sar', symbol: 'SAR', name: 'SAR (SAR)', country: 'Saudi Arabia', flag: '🇸🇦', monthly: 'SAR 18.99', monthlyNum: 'SAR 18.99', annual: 'SAR 149.99', annualMonthly: 'SAR 12.49', lifetime: 'SAR 299.99', seatAddon: 'SAR 74.99' },
+      ils: { code: 'ils', symbol: '₪', name: 'ILS (₪)', country: 'Israel', flag: '🇮🇱', monthly: '₪18.99', monthlyNum: '₪18.99', annual: '₪149.99', annualMonthly: '₪12.49', lifetime: '₪299.99', seatAddon: '₪74.99' },
+      zar: { code: 'zar', symbol: 'R', name: 'ZAR (R)', country: 'South Africa', flag: '🇿🇦', monthly: 'R 89.99', monthlyNum: 'R 89.99', annual: 'R 729.99', annualMonthly: 'R 60.83', lifetime: 'R 1,459.99', seatAddon: 'R 369.99' },
+
+      // Latin America
+      brl: { code: 'brl', symbol: 'R$', name: 'BRL (R$)', country: 'Brazil', flag: '🇧🇷', monthly: 'R$27.99', monthlyNum: 'R$27.99', annual: 'R$219.99', annualMonthly: 'R$18.33', lifetime: 'R$439.99', seatAddon: 'R$99.99' },
+      ars: { code: 'ars', symbol: '$', name: 'ARS ($)', country: 'Argentina', flag: '🇦🇷', monthly: '$4,999', monthlyNum: '$4,999', annual: '$39,999', annualMonthly: '$3,333', lifetime: '$79,999', seatAddon: '$19,999' },
+      clp: { code: 'clp', symbol: 'CLP$', name: 'CLP (CLP$)', country: 'Chile', flag: '🇨🇱', monthly: 'CLP$ 4,800', monthlyNum: 'CLP$ 4,800', annual: 'CLP$ 38,900', annualMonthly: 'CLP$ 3,241', lifetime: 'CLP$ 77,900', seatAddon: 'CLP$ 19,500' },
+      cop: { code: 'cop', symbol: 'COP$', name: 'COP (COP$)', country: 'Colombia', flag: '🇨🇴', monthly: 'COP$ 19,900', monthlyNum: 'COP$ 19,900', annual: 'COP$ 159,900', annualMonthly: 'COP$ 13,325', lifetime: 'COP$ 319,900', seatAddon: 'COP$ 79,900' },
+    };
+
+    // Complete Global Country-to-Currency Map (200+ Countries & Territories matching macOS App)
+    const countryToCurrencyMap = {
+      // North America
+      'US': { curr: 'usd', country: 'United States' },
+      'CA': { curr: 'cad', country: 'Canada' },
+      'MX': { curr: 'mxn', country: 'Mexico' },
+
+      // Caribbean & Central America
+      'BS': { curr: 'usd', country: 'Bahamas' },
+      'BB': { curr: 'usd', country: 'Barbados' },
+      'BM': { curr: 'usd', country: 'Bermuda' },
+      'KY': { curr: 'usd', country: 'Cayman Islands' },
+      'JM': { curr: 'usd', country: 'Jamaica' },
+      'TT': { curr: 'usd', country: 'Trinidad and Tobago' },
+      'DO': { curr: 'usd', country: 'Dominican Republic' },
+      'PR': { curr: 'usd', country: 'Puerto Rico' },
+      'VI': { curr: 'usd', country: 'U.S. Virgin Islands' },
+      'VG': { curr: 'usd', country: 'British Virgin Islands' },
+      'AW': { curr: 'usd', country: 'Aruba' },
+      'CW': { curr: 'usd', country: 'Curaçao' },
+      'LC': { curr: 'usd', country: 'Saint Lucia' },
+      'VC': { curr: 'usd', country: 'Saint Vincent & Grenadines' },
+      'GD': { curr: 'usd', country: 'Grenada' },
+      'AG': { curr: 'usd', country: 'Antigua and Barbuda' },
+      'KN': { curr: 'usd', country: 'Saint Kitts and Nevis' },
+      'DM': { curr: 'usd', country: 'Dominica' },
+      'TC': { curr: 'usd', country: 'Turks and Caicos' },
+      'HT': { curr: 'usd', country: 'Haiti' },
+      'GY': { curr: 'usd', country: 'Guyana' },
+      'SR': { curr: 'usd', country: 'Suriname' },
+      'GF': { curr: 'eur', country: 'French Guiana' },
+      'BZ': { curr: 'usd', country: 'Belize' },
+      'GT': { curr: 'usd', country: 'Guatemala' },
+      'HN': { curr: 'usd', country: 'Honduras' },
+      'SV': { curr: 'usd', country: 'El Salvador' },
+      'NI': { curr: 'usd', country: 'Nicaragua' },
+      'CR': { curr: 'usd', country: 'Costa Rica' },
+      'PA': { curr: 'usd', country: 'Panama' },
+
+      // Europe & European Microstates / Small Nations
+      'GB': { curr: 'gbp', country: 'United Kingdom' },
+      'DE': { curr: 'eur', country: 'Germany' },
+      'FR': { curr: 'eur', country: 'France' },
+      'IT': { curr: 'eur', country: 'Italy' },
+      'ES': { curr: 'eur', country: 'Spain' },
+      'NL': { curr: 'eur', country: 'Netherlands' },
+      'BE': { curr: 'eur', country: 'Belgium' },
+      'AT': { curr: 'eur', country: 'Austria' },
+      'IE': { curr: 'eur', country: 'Ireland' },
+      'PT': { curr: 'eur', country: 'Portugal' },
+      'FI': { curr: 'eur', country: 'Finland' },
+      'GR': { curr: 'eur', country: 'Greece' },
+      'EE': { curr: 'eur', country: 'Estonia' },
+      'LV': { curr: 'eur', country: 'Latvia' },
+      'LT': { curr: 'eur', country: 'Lithuania' },
+      'SK': { curr: 'eur', country: 'Slovakia' },
+      'SI': { curr: 'eur', country: 'Slovenia' },
+      'LU': { curr: 'eur', country: 'Luxembourg' },
+      'CY': { curr: 'eur', country: 'Cyprus' },
+      'MT': { curr: 'eur', country: 'Malta' },
+      'MC': { curr: 'eur', country: 'Monaco' },
+      'AD': { curr: 'eur', country: 'Andorra' },
+      'SM': { curr: 'eur', country: 'San Marino' },
+      'VA': { curr: 'eur', country: 'Vatican City' },
+      'LI': { curr: 'chf', country: 'Liechtenstein' },
+      'CH': { curr: 'chf', country: 'Switzerland' },
+      'SE': { curr: 'sek', country: 'Sweden' },
+      'NO': { curr: 'nok', country: 'Norway' },
+      'DK': { curr: 'dkk', country: 'Denmark' },
+      'PL': { curr: 'pln', country: 'Poland' },
+      'CZ': { curr: 'czk', country: 'Czech Republic' },
+      'TR': { curr: 'try', country: 'Turkey' },
+      'IS': { curr: 'eur', country: 'Iceland' },
+      'GI': { curr: 'gbp', country: 'Gibraltar' },
+      'IM': { curr: 'gbp', country: 'Isle of Man' },
+      'JE': { curr: 'gbp', country: 'Jersey' },
+      'GG': { curr: 'gbp', country: 'Guernsey' },
+      'FO': { curr: 'dkk', country: 'Faroe Islands' },
+      'GL': { curr: 'dkk', country: 'Greenland' },
+      'HR': { curr: 'eur', country: 'Croatia' },
+      'BG': { curr: 'eur', country: 'Bulgaria' },
+      'RO': { curr: 'eur', country: 'Romania' },
+      'HU': { curr: 'eur', country: 'Hungary' },
+      'RS': { curr: 'eur', country: 'Serbia' },
+      'BA': { curr: 'eur', country: 'Bosnia and Herzegovina' },
+      'ME': { curr: 'eur', country: 'Montenegro' },
+      'MK': { curr: 'eur', country: 'North Macedonia' },
+      'AL': { curr: 'eur', country: 'Albania' },
+      'XK': { curr: 'eur', country: 'Kosovo' },
+      'MD': { curr: 'eur', country: 'Moldova' },
+      'UA': { curr: 'eur', country: 'Ukraine' },
+      'GE': { curr: 'usd', country: 'Georgia' },
+      'AM': { curr: 'usd', country: 'Armenia' },
+      'AZ': { curr: 'usd', country: 'Azerbaijan' },
+
+      // Asia-Pacific, South Asia & Island Nations
+      'AU': { curr: 'aud', country: 'Australia' },
+      'NZ': { curr: 'nzd', country: 'New Zealand' },
+      'JP': { curr: 'jpy', country: 'Japan' },
+      'IN': { curr: 'inr', country: 'India' },
+      'NP': { curr: 'npr', country: 'Nepal' },
+      'BT': { curr: 'inr', country: 'Bhutan' },
+      'LK': { curr: 'usd', country: 'Sri Lanka' },
+      'MV': { curr: 'usd', country: 'Maldives' },
+      'BD': { curr: 'usd', country: 'Bangladesh' },
+      'PK': { curr: 'usd', country: 'Pakistan' },
+      'AF': { curr: 'usd', country: 'Afghanistan' },
+      'SG': { curr: 'sgd', country: 'Singapore' },
+      'HK': { curr: 'hkd', country: 'Hong Kong' },
+      'MO': { curr: 'usd', country: 'Macau' },
+      'TW': { curr: 'twd', country: 'Taiwan' },
+      'KR': { curr: 'krw', country: 'South Korea' },
+      'MY': { curr: 'myr', country: 'Malaysia' },
+      'BN': { curr: 'sgd', country: 'Brunei' },
+      'TH': { curr: 'thb', country: 'Thailand' },
+      'PH': { curr: 'php', country: 'Philippines' },
+      'ID': { curr: 'idr', country: 'Indonesia' },
+      'VN': { curr: 'vnd', country: 'Vietnam' },
+      'KH': { curr: 'usd', country: 'Cambodia' },
+      'LA': { curr: 'usd', country: 'Laos' },
+      'MM': { curr: 'usd', country: 'Myanmar' },
+      'MN': { curr: 'usd', country: 'Mongolia' },
+      'TL': { curr: 'usd', country: 'Timor-Leste' },
+      'KZ': { curr: 'usd', country: 'Kazakhstan' },
+      'UZ': { curr: 'usd', country: 'Uzbekistan' },
+      'KG': { curr: 'usd', country: 'Kyrgyzstan' },
+      'TJ': { curr: 'usd', country: 'Tajikistan' },
+      'TM': { curr: 'usd', country: 'Turkmenistan' },
+
+      // Middle East & Gulf States
+      'AE': { curr: 'aed', country: 'United Arab Emirates' },
+      'SA': { curr: 'sar', country: 'Saudi Arabia' },
+      'QA': { curr: 'aed', country: 'Qatar' },
+      'KW': { curr: 'aed', country: 'Kuwait' },
+      'BH': { curr: 'aed', country: 'Bahrain' },
+      'OM': { curr: 'aed', country: 'Oman' },
+      'TR': { curr: 'try', country: 'Turkey' },
+      'IL': { curr: 'ils', country: 'Israel' },
+      'PS': { curr: 'ils', country: 'Palestine' },
+      'JO': { curr: 'usd', country: 'Jordan' },
+      'LB': { curr: 'usd', country: 'Lebanon' },
+      'IQ': { curr: 'usd', country: 'Iraq' },
+      'YE': { curr: 'usd', country: 'Yemen' },
+
+      // Pacific & Oceania Island Nations
+      'FJ': { curr: 'aud', country: 'Fiji' },
+      'PG': { curr: 'aud', country: 'Papua New Guinea' },
+      'WS': { curr: 'nzd', country: 'Samoa' },
+      'AS': { curr: 'usd', country: 'American Samoa' },
+      'TO': { curr: 'nzd', country: 'Tonga' },
+      'PF': { curr: 'eur', country: 'French Polynesia / Tahiti' },
+      'NC': { curr: 'eur', country: 'New Caledonia' },
+      'VU': { curr: 'aud', country: 'Vanuatu' },
+      'SB': { curr: 'aud', country: 'Solomon Islands' },
+      'GU': { curr: 'usd', country: 'Guam' },
+      'PW': { curr: 'usd', country: 'Palau' },
+      'FM': { curr: 'usd', country: 'Micronesia' },
+      'MH': { curr: 'usd', country: 'Marshall Islands' },
+      'CK': { curr: 'nzd', country: 'Cook Islands' },
+      'KI': { curr: 'aud', country: 'Kiribati' },
+      'NR': { curr: 'aud', country: 'Nauru' },
+      'TV': { curr: 'aud', country: 'Tuvalu' },
+      'MP': { curr: 'usd', country: 'Northern Mariana Islands' },
+
+      // South America & Latin America
+      'BR': { curr: 'brl', country: 'Brazil' },
+      'AR': { curr: 'ars', country: 'Argentina' },
+      'CL': { curr: 'clp', country: 'Chile' },
+      'CO': { curr: 'cop', country: 'Colombia' },
+      'PE': { curr: 'usd', country: 'Peru' },
+      'EC': { curr: 'usd', country: 'Ecuador' },
+      'UY': { curr: 'usd', country: 'Uruguay' },
+      'PY': { curr: 'usd', country: 'Paraguay' },
+      'BO': { curr: 'usd', country: 'Bolivia' },
+
+      // Africa & Island Nations
+      'ZA': { curr: 'zar', country: 'South Africa' },
+      'MU': { curr: 'usd', country: 'Mauritius' },
+      'SC': { curr: 'usd', country: 'Seychelles' },
+      'MG': { curr: 'usd', country: 'Madagascar' },
+      'CV': { curr: 'eur', country: 'Cape Verde' },
+      'RE': { curr: 'eur', country: 'Réunion' },
+      'KE': { curr: 'usd', country: 'Kenya' },
+      'NG': { curr: 'usd', country: 'Nigeria' },
+      'GH': { curr: 'usd', country: 'Ghana' },
+      'EG': { curr: 'usd', country: 'Egypt' },
+      'MA': { curr: 'eur', country: 'Morocco' },
+      'TN': { curr: 'eur', country: 'Tunisia' },
+      'DZ': { curr: 'eur', country: 'Algeria' },
+      'ET': { curr: 'usd', country: 'Ethiopia' },
+      'TZ': { curr: 'usd', country: 'Tanzania' },
+      'UG': { curr: 'usd', country: 'Uganda' },
+      'RW': { curr: 'usd', country: 'Rwanda' },
+      'NA': { curr: 'zar', country: 'Namibia' },
+      'BW': { curr: 'zar', country: 'Botswana' },
+      'LS': { curr: 'zar', country: 'Lesotho' },
+      'SZ': { curr: 'zar', country: 'Eswatini' },
+      'ZW': { curr: 'usd', country: 'Zimbabwe' },
+      'ZM': { curr: 'usd', country: 'Zambia' },
+      'MZ': { curr: 'usd', country: 'Mozambique' },
+      'SN': { curr: 'eur', country: 'Senegal' },
+      'CI': { curr: 'eur', country: 'Ivory Coast' },
+      'CM': { curr: 'eur', country: 'Cameroon' },
+      'AO': { curr: 'usd', country: 'Angola' },
+      'CD': { curr: 'usd', country: 'DR Congo' },
+    };
+
+    // Auto-detect Country & Currency
+    function autoDetectLocationAndCurrency() {
+      // 1. Populate all dropdown selects immediately
+      populateCountryDropdowns();
+
+      // 2. Check if user previously picked a currency
+      const saved = localStorage.getItem('ravn_selected_currency');
+      if (saved && CURRENCIES[saved]) {
+        applyCurrency(saved, false);
+        return;
+      }
+
+      try {
+        const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '').toLowerCase();
+        const lang = (navigator.language || navigator.userLanguage || 'en-US').toLowerCase();
+        const langs = (navigator.languages || []).map(l => l.toLowerCase());
+        let detected = 'usd';
+
+        if (tz.includes('kathmandu') || lang.endsWith('-np')) {
+          detected = 'npr';
+        }
+        else if (tz.includes('thimphu') || lang.endsWith('-bt')) {
+          detected = 'inr';
+        }
+        else if (tz.includes('colombo') || lang.endsWith('-lk')) {
+          detected = 'usd';
+        }
+        else if (tz.includes('dhaka') || lang.endsWith('-bd')) {
+          detected = 'usd';
+        }
+        else if (tz.includes('karachi') || lang.endsWith('-pk')) {
+          detected = 'usd';
+        }
+        else if (tz.includes('monaco') || tz.includes('andorra') || tz.includes('san_marino') || tz.includes('vatican') || tz.includes('malta') || tz.includes('nicosia') || tz.includes('reykjavik')) {
+          detected = 'eur';
+        }
+        else if (tz.includes('vaduz') || tz.includes('liechtenstein')) {
+          detected = 'chf';
+        }
+        else if (tz.includes('gibraltar') || tz.includes('isle_of_man') || tz.includes('jersey') || tz.includes('guernsey')) {
+          detected = 'gbp';
+        }
+        else if (tz.includes('doha') || tz.includes('qatar') || tz.includes('muscat') || tz.includes('oman') || tz.includes('dubai') || lang.endsWith('-ae')) {
+          detected = 'aed';
+        }
+        else if (tz.includes('kuwait') || tz.includes('bahrain') || tz.includes('riyadh') || lang.endsWith('-sa')) {
+          detected = 'sar';
+        }
+        else if (tz.includes('fiji') || tz.includes('port_moresby') || tz.includes('vanuatu') || tz.includes('solomon')) {
+          detected = 'aud';
+        }
+        else if (tz.includes('samoa') || tz.includes('tonga') || tz.includes('chatham') || tz.includes('rarotonga')) {
+          detected = 'nzd';
+        }
+        else if (tz.includes('tahiti') || tz.includes('noumea') || tz.includes('reunion') || tz.includes('cayenne')) {
+          detected = 'eur';
+        }
+        else if (
+          tz.includes('australia') || tz.includes('sydney') || tz.includes('melbourne') ||
+          tz.includes('brisbane') || tz.includes('perth') || tz.includes('adelaide') ||
+          tz.includes('darwin') || tz.includes('hobart') || tz.includes('canberra') ||
+          tz.includes('lord_howe') || lang.endsWith('-au') || langs.some(l => l.includes('-au'))
+        ) {
+          detected = 'aud';
+        }
+        else if (tz.includes('auckland') || tz.includes('wellington') || tz.includes('pacific/chatham') || lang.endsWith('-nz') || langs.some(l => l.includes('-nz'))) {
+          detected = 'nzd';
+        }
+        else if (tz.includes('london') || tz.includes('gb') || lang.endsWith('-gb') || langs.some(l => l.includes('-gb'))) {
+          detected = 'gbp';
+        }
+        else if (tz.includes('zurich') || tz.includes('switzerland') || lang.endsWith('-ch')) {
+          detected = 'chf';
+        }
+        else if (tz.includes('tokyo') || lang.endsWith('-jp') || lang.startsWith('ja')) {
+          detected = 'jpy';
+        }
+        else if (tz.includes('calcutta') || tz.includes('kolkata') || tz.includes('delhi') || tz.includes('mumbai') || lang.endsWith('-in')) {
+          detected = 'inr';
+        }
+        else if (tz.includes('singapore') || lang.endsWith('-sg')) {
+          detected = 'sgd';
+        }
+        else if (tz.includes('hong_kong') || lang.endsWith('-hk')) {
+          detected = 'hkd';
+        }
+        else if (tz.includes('taipei') || lang.endsWith('-tw')) {
+          detected = 'twd';
+        }
+        else if (tz.includes('seoul') || tz.includes('korea') || lang.startsWith('ko')) {
+          detected = 'krw';
+        }
+        else if (tz.includes('kuala_lumpur') || lang.endsWith('-my')) {
+          detected = 'myr';
+        }
+        else if (tz.includes('bangkok') || lang.endsWith('-th') || lang.startsWith('th')) {
+          detected = 'thb';
+        }
+        else if (tz.includes('manila') || lang.endsWith('-ph') || lang.startsWith('fil')) {
+          detected = 'php';
+        }
+        else if (tz.includes('jakarta') || tz.includes('makassar') || tz.includes('pontianak') || tz.includes('jayapura') || lang.endsWith('-id')) {
+          detected = 'idr';
+        }
+        else if (tz.includes('ho_chi_minh') || tz.includes('hanoi') || tz.includes('saigon') || lang.endsWith('-vn') || lang.startsWith('vi')) {
+          detected = 'vnd';
+        }
+        else if (tz.includes('jerusalem') || tz.includes('tel_aviv') || lang.endsWith('-il') || lang.startsWith('he')) {
+          detected = 'ils';
+        }
+        else if (tz.includes('johannesburg') || lang.endsWith('-za')) {
+          detected = 'zar';
+        }
+        else if (tz.includes('sao_paulo') || tz.includes('brazil') || lang.endsWith('-br')) {
+          detected = 'brl';
+        }
+        else if (tz.includes('buenos_aires') || tz.includes('argentina') || lang.endsWith('-ar')) {
+          detected = 'ars';
+        }
+        else if (tz.includes('santiago') || lang.endsWith('-cl')) {
+          detected = 'clp';
+        }
+        else if (tz.includes('bogota') || lang.endsWith('-co')) {
+          detected = 'cop';
+        }
+
+        applyCurrency(detected, true);
+
+        if (window.fetch) {
+          fetch('https://api.country.is/', { signal: AbortSignal.timeout(1200) })
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.country) {
+                const info = countryToCurrencyMap[data.country.toUpperCase()];
+                if (info && !localStorage.getItem('ravn_selected_currency')) {
+                  applyCurrency(info.curr, true, info.country);
+                }
+              }
+            })
+            .catch(() => {
+              fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(1500) })
+                .then(res => res.json())
+                .then(data => {
+                  if (data && data.country_code) {
+                    const info = countryToCurrencyMap[data.country_code.toUpperCase()];
+                    if (info && !localStorage.getItem('ravn_selected_currency')) {
+                      applyCurrency(info.curr, true, data.country_name || info.country);
+                    }
+                  }
+                })
+                .catch(() => {});
+            });
+        }
+      } catch (e) {
+        applyCurrency('usd', false);
+      }
+    }
+
+    function populateCountryDropdowns() {
+      const navSelect = document.getElementById('navCurrencySelect');
+      const modalSelect = document.getElementById('modalCurrencySelect');
+      if (!navSelect && !modalSelect) return;
+
+      const countryEntries = Object.keys(countryToCurrencyMap).map(code => ({
+        code,
+        name: countryToCurrencyMap[code].country,
+        curr: countryToCurrencyMap[code].curr
+      })).sort((a, b) => a.name.localeCompare(b.name));
+
+      let html = '';
+      for (const item of countryEntries) {
+        const cInfo = CURRENCIES[item.curr] || CURRENCIES.usd;
+        const flag = cInfo.flag || '🌐';
+        html += `<option value="${item.curr}" data-country="${item.name}">${flag} ${item.name} (${cInfo.code.toUpperCase()} - ${cInfo.symbol})</option>`;
+      }
+
+      if (navSelect) {
+        navSelect.innerHTML = html;
+        navSelect.setAttribute('onchange', 'changeCountryOrCurrency(this)');
+      }
+      if (modalSelect) {
+        modalSelect.innerHTML = html;
+        modalSelect.setAttribute('onchange', 'changeCountryOrCurrency(this)');
+      }
+    }
+
+    function changeCountryOrCurrency(selectEl) {
+      const currCode = selectEl.value;
+      const selectedOption = selectEl.options[selectEl.selectedIndex];
+      const countryName = selectedOption ? selectedOption.getAttribute('data-country') : null;
+      localStorage.setItem('ravn_selected_currency', currCode);
+      if (countryName) {
+        localStorage.setItem('ravn_selected_country_name', countryName);
+      }
+      applyCurrency(currCode, false, countryName);
+    }
+
+    function applyCurrency(currCode, isAuto = false, customCountryName = null) {
+      currentCurrency = CURRENCIES[currCode] ? currCode : 'usd';
+      const c = CURRENCIES[currentCurrency];
+
+      // Update dropdown selects
+      const navSelect = document.getElementById('navCurrencySelect');
+      if (navSelect && navSelect.value !== currentCurrency) navSelect.value = currentCurrency;
+      const modalSelect = document.getElementById('modalCurrencySelect');
+      if (modalSelect && modalSelect.value !== currentCurrency) modalSelect.value = currentCurrency;
+
+      // Update country detection badge
+      const badge = document.getElementById('detectedCountryBadge');
+      const text = document.getElementById('detectedCountryText');
+      if (badge && text) {
+        const countryLabel = customCountryName || localStorage.getItem('ravn_selected_country_name') || c.country;
+        text.textContent = `${c.flag} ${countryLabel} • Pricing automatically set to ${c.code.toUpperCase()} (${c.symbol})`;
+        badge.style.display = 'inline-flex';
+      }
+
+      // Update Pricing Section Cards
+      const pMonthly = document.getElementById('pricingMonthlyVal');
+      if (pMonthly) pMonthly.innerHTML = `${c.monthly} <span>/ month</span>`;
+      const pAnnual = document.getElementById('pricingAnnualVal');
+      if (pAnnual) pAnnual.innerHTML = `${c.annual} <span>/ year (${c.annualMonthly}/mo)</span>`;
+      const pLifetime = document.getElementById('pricingLifetimeVal');
+      if (pLifetime) pLifetime.innerHTML = `${c.lifetime} <span>one-time</span>`;
+      const pSeatAddon = document.getElementById('seatAddonPriceVal');
+      if (pSeatAddon) pSeatAddon.textContent = c.seatAddon;
+
+      // Update Modal Option Prices
+      const mMonthly = document.getElementById('modalMonthlyPriceVal');
+      if (mMonthly) mMonthly.innerHTML = `${c.monthly} <span style="font-size: 11px; font-weight: normal; color: #64748b;">/mo</span>`;
+      const mAnnual = document.getElementById('modalAnnualPriceVal');
+      if (mAnnual) mAnnual.innerHTML = `${c.annual} <span style="font-size: 11px; font-weight: normal; color: #64748b;">/yr</span>`;
+      const mAnnualSub = document.getElementById('modalAnnualSubText');
+      if (mAnnualSub) mAnnualSub.textContent = `Save 33% • ${c.annualMonthly}/mo billed annually`;
+      const mLifetime = document.getElementById('modalLifetimePriceVal');
+      if (mLifetime) mLifetime.innerHTML = `${c.lifetime} <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span>`;
+      const mSeatAddon = document.getElementById('modalSeatAddonPriceVal');
+      if (mSeatAddon) mSeatAddon.innerHTML = `${c.seatAddon} <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span>`;
+
+      // Refresh submit button text
+      selectModalPlan(selectedModalPlanTier);
+    }
+
+    function changeCurrency(currCode) {
+      localStorage.setItem('ravn_selected_currency', currCode);
+      applyCurrency(currCode, false);
+    }
+
+    // Execute immediately on script load as well as DOMContentLoaded
+    populateCountryDropdowns();
+    autoDetectLocationAndCurrency();
+    document.addEventListener('DOMContentLoaded', () => {
+      populateCountryDropdowns();
+      autoDetectLocationAndCurrency();
+    });
+
+    // Live Theme Switcher
+    function switchTheme(themeName) {
+      document.body.className = 'theme-' + themeName;
+      document.querySelectorAll('.theme-chip').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const titles = {
+        'tokyo': 'Ravn — Gigabit Accelerator • Tokyo Night Theme (48 Streams Active)',
+        'obsidian': 'Ravn — Gigabit Accelerator • OLED Obsidian Theme (48 Streams Active)',
+        'synthwave': 'Ravn — Gigabit Accelerator • Synthwave 84 Theme (48 Streams Active)',
+        'emerald': 'Ravn — Gigabit Accelerator • Matrix Emerald Theme (48 Streams Active)',
+        'frost': 'Ravn — Gigabit Accelerator • Nordic Frost Theme (48 Streams Active)',
+        'cybergold': 'Ravn — Gigabit Accelerator • Cyber Gold Theme (48 Streams Active)'
+      };
+      const titleSpan = document.querySelector('#mockWindowTitle span');
+      if (titleSpan) {
+        titleSpan.textContent = titles[themeName] || titles['tokyo'];
+      }
+    }
+
+    // Benchmark Calculator
+    function updateBenchmark(sizeGb, btn) {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Standard browser @ 12 MB/s
+      const browserSeconds = (sizeGb * 1024) / 12;
+      const bMin = Math.floor(browserSeconds / 60);
+      const bSec = Math.floor(browserSeconds % 60);
+      document.getElementById('browserTime').textContent = `${bMin}m ${bSec}s`;
+
+      // Ravn Turbo @ 125 MB/s
+      const ravnSeconds = (sizeGb * 1024) / 125;
+      const rMin = Math.floor(ravnSeconds / 60);
+      const rSec = Math.floor(ravnSeconds % 60);
+      document.getElementById('ravnTime').textContent = `${rMin}m ${rSec}s`;
+
+      const multiplier = (browserSeconds / ravnSeconds).toFixed(1);
+      document.getElementById('multiplierText').textContent = `🚀 ${multiplier}x FASTER (Gigabit Saturation)`;
+    }
+
+    // FAQ Accordion Toggle
+    function toggleFaq(item) {
+      item.classList.toggle('open');
+    }
+
+    // ── MODAL & 100% IN-PAGE STRIPE CHECKOUT SYSTEM ──
+    let stripeInstance = null;
+    let stripeElements = null;
+    let paymentElementInstance = null;
+    let currentClientSecret = null;
+    let isCurrentSubscription = false;
+    let currentCustomerEmail = '';
+
+    function openCheckoutModal(planTier) {
+      selectedModalPlanTier = planTier || 'annual';
+      selectModalPlan(selectedModalPlanTier);
+      
+      // Reset steps
+      const s1 = document.getElementById('checkoutStepSelect');
+      const s2 = document.getElementById('checkoutStepPayment');
+      const s3 = document.getElementById('checkoutStepSuccess');
+      const errBox = document.getElementById('checkoutModalError');
+      if (s1) s1.style.display = 'block';
+      if (s2) s2.style.display = 'none';
+      if (s3) s3.style.display = 'none';
+      if (errBox) errBox.style.display = 'none';
+      
+      const overlay = document.getElementById('checkoutModalOverlay');
+      if (overlay) overlay.classList.add('active');
+      setTimeout(() => {
+        const input = document.getElementById('checkoutEmailInput');
+        if (input) input.focus();
+      }, 100);
+    }
+
+    function closeCheckoutModal() {
+      const overlay = document.getElementById('checkoutModalOverlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function backToStepSelect() {
+      const s1 = document.getElementById('checkoutStepSelect');
+      const s2 = document.getElementById('checkoutStepPayment');
+      const s3 = document.getElementById('checkoutStepSuccess');
+      if (s1) s1.style.display = 'block';
+      if (s2) s2.style.display = 'none';
+      if (s3) s3.style.display = 'none';
+    }
+
+    window.openCheckoutModal = openCheckoutModal;
+    window.closeCheckoutModal = closeCheckoutModal;
+    window.backToStepSelect = backToStepSelect;
+
+    function selectModalPlan(planTier) {
+      selectedModalPlanTier = planTier;
+      document.querySelectorAll('.plan-card-option').forEach(el => el.classList.remove('selected'));
+      
+      const target = {
+        'monthly': 'planOptionMonthly',
+        'annual': 'planOptionAnnual',
+        'lifetime': 'planOptionLifetime',
+        'seat_addon': 'planOptionSeatAddon'
+      }[planTier] || 'planOptionAnnual';
+
+      const el = document.getElementById(target);
+      if (el) el.classList.add('selected');
+
+      const submitBtn = document.getElementById('checkoutSubmitBtn');
+      const c = CURRENCIES[currentCurrency] || CURRENCIES.usd;
+
+      if (submitBtn) {
+        if (planTier === 'annual') {
+          submitBtn.textContent = `Continue with 7-Day Free Trial (${c.annual}/yr) ➔`;
+        } else if (planTier === 'lifetime') {
+          submitBtn.textContent = `Continue to Lifetime Pass (${c.lifetime}) ➔`;
+        } else if (planTier === 'seat_addon') {
+          submitBtn.textContent = `Continue to Seat Add-on (${c.seatAddon}) ➔`;
+        } else {
+          submitBtn.textContent = `Continue to Monthly Subscription (${c.monthly}) ➔`;
+        }
+      }
+    }
+
+    async function startInPagePayment() {
+      const emailInput = document.getElementById('checkoutEmailInput');
+      const email = emailInput ? emailInput.value.trim() : '';
+      const errorBox = document.getElementById('checkoutModalError');
+      const submitBtn = document.getElementById('checkoutSubmitBtn');
+      const confirmBtn = document.getElementById('confirmPaymentBtn');
+
+      if (!email || !email.includes('@')) {
+        if (errorBox) {
+          errorBox.textContent = 'Please enter a valid email address for your license receipt.';
+          errorBox.style.display = 'block';
+        }
+        if (emailInput) emailInput.focus();
+        return;
+      }
+
+      if (errorBox) errorBox.style.display = 'none';
+      currentCustomerEmail = email;
+      const originalText = submitBtn ? submitBtn.textContent : 'Continue to Payment ➔';
+      if (submitBtn) {
+        submitBtn.textContent = 'Initializing Secure Payment...';
+        submitBtn.disabled = true;
+      }
+
+      try {
+        const res = await fetch('/api/v1/checkout/create-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            planTier: selectedModalPlanTier,
+            email,
+            currency: currentCurrency
+          })
+        });
+
+        const data = await res.json();
+        if (!data.success || !data.clientSecret) {
+          throw new Error(data.error || 'Failed to initialize payment element');
+        }
+
+        currentClientSecret = data.clientSecret;
+        isCurrentSubscription = !!data.isSubscription;
+
+        // Initialize Stripe.js if not already done
+        if (!stripeInstance) {
+          const pubKey = (data.publishableKey && data.publishableKey !== 'pk_test_mock')
+            ? data.publishableKey
+            : 'pk_live_51QZ0jqCr1bc7EQACqZqkOVdRA8KTakavMewoC7IaQkM5rhBV3R38YPaAfhvyxtc75Gljnu4SVkT22t8Xe6n1cfHc00N8sGTGOa';
+          if (window.Stripe) {
+            stripeInstance = window.Stripe(pubKey);
+          } else {
+            throw new Error('Stripe.js failed to load. Please check your internet connection.');
+          }
+        }
+
+        // Setup custom dark glass theme for Stripe Elements with vivid card & tab icons
+        const appearance = {
+          theme: 'night',
+          variables: {
+            colorPrimary: '#38bdf8',
+            colorBackground: '#0b1120',
+            colorText: '#f8fafc',
+            colorTextSecondary: '#94a3b8',
+            colorDanger: '#ef4444',
+            colorIcon: '#38bdf8',
+            colorIconCardError: '#ef4444',
+            fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+            borderRadius: '12px',
+            spacingUnit: '4px',
+            gridRowSpacing: '14px',
+          },
+          rules: {
+            '.Input': {
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              boxShadow: 'none',
+              backgroundColor: 'rgba(15, 23, 42, 0.75)',
+              color: '#f8fafc',
+              fontSize: '14px',
+              padding: '12px 14px',
+            },
+            '.Input:focus': {
+              border: '1px solid #38bdf8',
+              boxShadow: '0 0 0 3px rgba(56, 189, 248, 0.3)',
+            },
+            '.Tab': {
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+              color: '#94a3b8',
+              padding: '10px 14px',
+            },
+            '.Tab:hover': {
+              border: '1px solid rgba(56, 189, 248, 0.4)',
+              backgroundColor: 'rgba(56, 189, 248, 0.08)',
+              color: '#ffffff',
+            },
+            '.Tab--selected': {
+              borderColor: '#38bdf8',
+              backgroundColor: 'rgba(56, 189, 248, 0.18)',
+              color: '#38bdf8',
+              boxShadow: '0 0 14px rgba(56, 189, 248, 0.25)',
+            },
+            '.TabIcon': {
+              color: '#38bdf8',
+            },
+            '.TabLabel': {
+              fontWeight: '700',
+            },
+            '.Label': {
+              color: '#94a3b8',
+              fontSize: '12px',
+              fontWeight: '600',
+              marginBottom: '6px',
+            },
+            '.Block': {
+              backgroundColor: 'rgba(15, 23, 42, 0.65)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '12px',
+            }
+          }
+        };
+
+        stripeElements = stripeInstance.elements({
+          clientSecret: currentClientSecret,
+          appearance,
+        });
+
+        // 1. Transition view to step 2 FIRST so the DOM element is visible before mounting
+        document.getElementById('checkoutStepSelect').style.display = 'none';
+        document.getElementById('checkoutStepPayment').style.display = 'block';
+        document.getElementById('checkoutStepSuccess').style.display = 'none';
+
+        // 2. Update displays
+        const c = CURRENCIES[currentCurrency] || CURRENCIES.usd;
+        const planTitles = {
+          'annual': `Ravn Pro Annual (7-Day Trial)`,
+          'lifetime': `Ravn Ultra Lifetime Pass`,
+          'monthly': `Ravn Pro Monthly`,
+          'seat_addon': `Extra Mac Seat Add-on`
+        };
+        const planAmounts = {
+          'annual': c.annual,
+          'lifetime': c.lifetime,
+          'monthly': c.monthly,
+          'seat_addon': c.seatAddon
+        };
+
+        document.getElementById('paymentPlanBadge').textContent = planTitles[selectedModalPlanTier] || 'Ravn Pro';
+        document.getElementById('paymentCustomerEmailDisplay').textContent = email;
+        document.getElementById('paymentTotalAmountDisplay').textContent = selectedModalPlanTier === 'annual' ? `${c.annual} (7 Days Free)` : planAmounts[selectedModalPlanTier];
+
+        // 3. Mount Express Checkout (Apple Pay / Google Pay / Link 1-click)
+        const expressContainer = document.getElementById('express-checkout-container');
+        const expressElContainer = document.getElementById('express-checkout-element');
+        if (expressContainer && expressElContainer) {
+          expressElContainer.innerHTML = '';
+          expressContainer.style.display = 'none';
+          try {
+            const expressCheckoutElement = stripeElements.create('expressCheckout', {
+              buttonTheme: {
+                applePay: 'black',
+                googlePay: 'black',
+              },
+              buttonHeight: 46,
+            });
+
+            expressCheckoutElement.on('ready', ({ availablePaymentMethods }) => {
+              if (availablePaymentMethods && (availablePaymentMethods.applePay || availablePaymentMethods.googlePay || availablePaymentMethods.link)) {
+                expressContainer.style.display = 'block';
+              }
+            });
+
+            expressCheckoutElement.on('confirm', async (event) => {
+              confirmInPagePayment(event);
+            });
+
+            expressCheckoutElement.mount('#express-checkout-element');
+          } catch (e) {
+            console.log('[Express Checkout Init Note]', e);
+          }
+        }
+
+        // 4. Mount Payment Element with priority tab ordering
+        const paymentElementContainer = document.getElementById('payment-element');
+        paymentElementContainer.innerHTML = '';
+        paymentElementInstance = stripeElements.create('payment', {
+          layout: 'tabs',
+          wallets: {
+            applePay: 'auto',
+            googlePay: 'auto',
+          },
+          paymentMethodOrder: ['apple_pay', 'google_pay', 'card', 'afterpay_clearpay', 'klarna', 'link'],
+        });
+        paymentElementInstance.mount('#payment-element');
+
+        paymentElementInstance.on('ready', () => {
+          if (confirmBtn) {
+            confirmBtn.style.display = 'block';
+            confirmBtn.disabled = false;
+            if (selectedModalPlanTier === 'annual') {
+              confirmBtn.textContent = `🔒 Start 7-Day Free Trial (${c.annual}/yr) ➔`;
+            } else if (selectedModalPlanTier === 'lifetime') {
+              confirmBtn.textContent = `🔒 Pay Once (${c.lifetime}) & Mint License ➔`;
+            } else if (selectedModalPlanTier === 'seat_addon') {
+              confirmBtn.textContent = `🔒 Pay Once (${c.seatAddon}) & Mint License ➔`;
+            } else {
+              confirmBtn.textContent = `🔒 Complete Payment (${c.monthly}) & Mint License ➔`;
+            }
+          }
+        });
+
+        paymentElementInstance.on('loaderror', (event) => {
+          console.error('[Stripe Elements Load Error]', event);
+          const msg = event?.error?.message || 'Stripe publishable key (pk_live_...) is not configured in .env.';
+          const container = document.getElementById('payment-element');
+          if (container) {
+            container.innerHTML = `
+              <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 16px; text-align: center;">
+                <div style="font-size: 13px; font-weight: 700; color: #ef4444; margin-bottom: 6px;">Stripe Publishable Key Needed</div>
+                <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 12px;">${msg}<br>For in-page checkout, set <code>STRIPE_PUBLISHABLE_KEY=pk_live_...</code> in your <code>.env</code>.</div>
+                <button class="btn btn-primary" onclick="fallbackToHostedCheckout()" style="padding: 10px 18px; font-size: 13px; width: 100%; font-weight: 800;">
+                  Proceed with Hosted Stripe Checkout ↗
+                </button>
+              </div>
+            `;
+          }
+          if (confirmBtn) confirmBtn.style.display = 'none';
+        });
+
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.style.display = 'block';
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    }
+
+    async function fallbackToHostedCheckout() {
+      try {
+        const res = await fetch('/api/v1/checkout/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            planTier: selectedModalPlanTier,
+            email: currentCustomerEmail,
+            currency: currentCurrency
+          })
+        });
+        const data = await res.json();
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          alert('Error initializing Stripe session: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Network error contacting Stripe server: ' + err.message);
+      }
+    }
+
+    async function confirmInPagePayment() {
+      const confirmBtn = document.getElementById('confirmPaymentBtn');
+      const errBox = document.getElementById('paymentElementError');
+      errBox.style.display = 'none';
+
+      if (!stripeInstance || !stripeElements) return;
+
+      const originalBtnText = confirmBtn.textContent;
+      confirmBtn.textContent = 'Processing Payment with Stripe...';
+      confirmBtn.disabled = true;
+
+      try {
+        let result;
+        if (isCurrentSubscription) {
+          result = await stripeInstance.confirmSetup({
+            elements: stripeElements,
+            confirmParams: {
+              return_url: window.location.href,
+            },
+            redirect: 'if_required',
+          });
+        } else {
+          result = await stripeInstance.confirmPayment({
+            elements: stripeElements,
+            confirmParams: {
+              return_url: window.location.href,
+            },
+            redirect: 'if_required',
+          });
+        }
+
+        if (result.error) {
+          errBox.textContent = result.error.message;
+          errBox.style.display = 'block';
+          confirmBtn.textContent = originalBtnText;
+          confirmBtn.disabled = false;
+          return;
+        }
+
+        confirmBtn.textContent = 'Minting Cryptographic License Key...';
+
+        // Fetch freshly minted license key from backend
+        const confirmRes = await fetch('/api/v1/checkout/confirm-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paymentIntentId: result.paymentIntent ? result.paymentIntent.id : undefined,
+            setupIntentId: result.setupIntent ? result.setupIntent.id : undefined,
+            email: currentCustomerEmail,
+            planTier: selectedModalPlanTier,
+          })
+        });
+
+        const licenseData = await confirmRes.json();
+        if (licenseData.licenseKey) {
+          // Render Step 3: Success Screen
+          document.getElementById('successLicenseKeyVal').textContent = licenseData.licenseKey;
+          document.getElementById('successPlanTag').textContent = (licenseData.plan || 'PRO').toUpperCase() + (licenseData.plan === 'lifetime' ? ' • 2 MACS' : ' • 1 MAC');
+          document.getElementById('successCustomerEmail').textContent = currentCustomerEmail;
+          
+          const deepLink = `ravn://activate?key=${encodeURIComponent(licenseData.licenseKey)}&email=${encodeURIComponent(currentCustomerEmail)}`;
+          document.getElementById('successOneClickBtn').href = deepLink;
+
+          document.getElementById('checkoutStepPayment').style.display = 'none';
+          document.getElementById('checkoutStepSuccess').style.display = 'block';
+
+          // Seamless instant deep link launch into macOS app
+          try {
+            setTimeout(() => {
+              window.location.href = deepLink;
+            }, 700);
+          } catch (e) {}
+        } else {
+          throw new Error('License generation error: ' + (licenseData.error || 'Unknown error'));
+        }
+
+      } catch (err) {
+        errBox.textContent = 'Payment Error: ' + err.message;
+        errBox.style.display = 'block';
+        confirmBtn.textContent = originalBtnText;
+        confirmBtn.disabled = false;
+      }
+    }
+
+    function copySuccessLicenseKey() {
+      const key = document.getElementById('successLicenseKeyVal').textContent;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(key);
+        alert('Copied license key to clipboard: ' + key);
+      }
+    }
+
+    function openPortalModal() {
+      const overlay = document.getElementById('portalModalOverlay');
+      overlay.classList.add('active');
+      setTimeout(() => {
+        const input = document.getElementById('portalModalKey');
+        if (input) input.focus();
+      }, 100);
+    }
+
+    function closePortalModal() {
+      document.getElementById('portalModalOverlay').classList.remove('active');
+    }
+
+    function handleBackdropClick(event, overlayId) {
+      if (event.target.id === overlayId) {
+        if (overlayId === 'checkoutModalOverlay') closeCheckoutModal();
+        if (overlayId === 'portalModalOverlay') closePortalModal();
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCheckoutModal();
+        closePortalModal();
+      }
+    });
+
+    // Portal License Validator (in-page)
+    async function checkPortalLicense() {
+      const key = document.getElementById('portalKey').value.trim();
+      const email = document.getElementById('portalEmail').value.trim();
+      const statusBox = document.getElementById('portalStatus');
+      await verifyLicenseHelper(key, email, statusBox);
+    }
+
+    // Portal License Validator (in-modal)
+    async function checkPortalModalLicense() {
+      const key = document.getElementById('portalModalKey').value.trim();
+      const email = document.getElementById('portalModalEmail').value.trim();
+      const statusBox = document.getElementById('portalModalStatus');
+      const submitBtn = document.getElementById('portalModalSubmitBtn');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying with Server...';
+      await verifyLicenseHelper(key, email, statusBox);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Verify Digital Signature & Devices';
+    }
+
+    async function verifyLicenseHelper(key, email, statusBox) {
+      if (!key) {
+        statusBox.style.display = 'block';
+        statusBox.style.background = 'rgba(239, 68, 68, 0.15)';
+        statusBox.style.color = '#ef4444';
+        statusBox.textContent = 'Please enter your license key.';
+        return;
+      }
+
+      statusBox.style.display = 'block';
+      statusBox.style.background = 'rgba(255, 255, 255, 0.05)';
+      statusBox.style.color = '#94a3b8';
+      statusBox.textContent = 'Verifying cryptographic Ed25519 signature with backend...';
+
+      try {
+        const res = await fetch('/api/v1/license/activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            licenseKey: key,
+            email: email,
+            deviceId: 'web_portal_check_' + Math.random().toString(36).substring(7),
+            deviceName: 'Web Browser'
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          statusBox.style.background = 'rgba(16, 185, 129, 0.15)';
+          statusBox.style.color = '#10b981';
+          statusBox.innerHTML = '✅ <strong>Valid ' + (data.plan ? data.plan.toUpperCase() : 'PRO') + ' License</strong>.<br>' + 
+            (data.activationsRemaining !== undefined ? 'Active Device Slots Remaining: ' + data.activationsRemaining : 'Tamper-proof signature verified.');
+        } else {
+          statusBox.style.background = 'rgba(239, 68, 68, 0.15)';
+          statusBox.style.color = '#ef4444';
+          statusBox.textContent = '❌ ' + (data.message || data.error);
+        }
+      } catch (err) {
+        statusBox.style.background = 'rgba(239, 68, 68, 0.15)';
+        statusBox.style.color = '#ef4444';
+        statusBox.textContent = 'Failed to communicate with licensing server: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

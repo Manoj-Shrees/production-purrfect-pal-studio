@@ -160,6 +160,43 @@ services:
     networks:
       - pps-network
 
+
+  # ── Ravn macOS Accelerator & Licensing API ───────────
+
+  ravn-api:
+    image: manojshrees/ravn-api:latest
+    container_name: ravn-api-c
+    restart: always
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - LICENSE_PRIVATE_KEY=${LICENSE_PRIVATE_KEY}
+      - LICENSE_PUBLIC_KEY=${LICENSE_PUBLIC_KEY}
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - APP_BASE_URL=https://ravn.purrfectpal.studio
+    volumes:
+      - ./ravn-app/public/assets/macos:/app/public/assets/macos:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pps-network
+
   # ── Nginx ────────────────────────────────────
 
   nginx:
@@ -189,10 +226,12 @@ services:
       - ./artist-app/dist:/usr/share/nginx/html/artist-app:ro
       - ./admin-app:/usr/share/nginx/html/admin-app:ro
       - ./promotions/dist:/usr/share/nginx/html/promotions-app:ro
+      - ./ravn-app/public:/usr/share/nginx/html/ravn-app:ro
       - uploads_data:/usr/share/nginx/html/uploadedfiles:ro
     depends_on:
       - backend-1
       - backend-2
+      - ravn-api
       - db
     networks:
       - pps-network

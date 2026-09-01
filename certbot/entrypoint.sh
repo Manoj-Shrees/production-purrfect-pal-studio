@@ -26,6 +26,8 @@ CERTBOT_DOMAINS="
   -d www.artist.${DOMAIN}
   -d promotions.${DOMAIN}
   -d www.promotions.${DOMAIN}
+  -d ravn.${DOMAIN}
+  -d www.ravn.${DOMAIN}
 "
 
 # ── helpers ───────────────────────────────────────────────────────────────────

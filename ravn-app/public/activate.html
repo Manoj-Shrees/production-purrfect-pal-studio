@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>License & Device Activation Portal — Ravn for Mac</title>
+  <meta name="description" content="Manage your Ravn Download Manager license, verify cryptographic Ed25519 digital signatures, activate your Mac, and manage active device seats.">
+  <link rel="icon" type="image/png" href="/assets/app-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --bg-card: rgba(18, 24, 38, 0.75);
+      --bg-surface: rgba(255, 255, 255, 0.03);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #818cf8;
+      --accent-green: #34d399;
+      --accent-orange: #fbbf24;
+      --accent-red: #f87171;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 50%);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-card);
+      backdrop-filter: blur(16px);
+      background: rgba(10, 13, 20, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-logo img {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid var(--border-card);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-mac-activate {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      font-size: 15px;
+      padding: 13px 24px;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-mac-activate:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #f87171;
+    }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      flex: 1;
+      padding: 48px 0 80px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 8px #34d399;
+    }
+
+    h1 {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 12px;
+    }
+
+    .page-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── LOOKUP CARD ── */
+    .portal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-box {
+      background: rgba(10, 13, 20, 0.8);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: 13px 16px;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .input-box:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .input-mono {
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* ── RESULT DASHBOARD ── */
+    .result-dashboard {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .status-banner.active {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-banner.expired {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .info-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .stat-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .plan-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-monthly { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+    .plan-annual { background: rgba(129, 140, 248, 0.2); color: #818cf8; }
+    .plan-lifetime { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.2)); color: #fbbf24; }
+
+    /* ── ACTION BAR ── */
+    .action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    /* ── DEVICES LIST ── */
+    .devices-section-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .devices-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .devices-table th {
+      text-align: left;
+      padding: 12px 18px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-card);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .devices-table td {
+      padding: 14px 18px;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .devices-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .no-devices-msg {
+      padding: 30px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* ── CRYPTO TECH EXPLANATION CARD ── */
+    .tech-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-top: 30px;
+    }
+
+    .tech-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tech-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .tech-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border-card);
+      padding: 24px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e1b4b;
+      border: 1px solid #6366f1;
+      color: #ffffff;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: none;
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="brand-logo">
+        <img src="/assets/app-icon.png" alt="Ravn Logo">
+        <span class="brand-name">Ravn</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#pricing" class="nav-link">Plans & Pricing</a>
+        <a href="/assets/macos/Ravn-Universal.dmg" class="nav-link" style="display: inline-flex; align-items: center; gap: 4px; color: #38bdf8;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download DMG
+        </a>
+        <a href="/#faq" class="nav-link">FAQ</a>
+        <a href="/#pricing" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;">Get Ravn Pro</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="container">
+    <div class="page-header">
+      <div class="badge-pill">
+        <span class="dot"></span>
+        ED25519 ASYMMETRIC CRYPTOGRAPHIC SYSTEM
+      </div>
+      <h1>License & Device Activation Portal</h1>
+      <p class="page-subtitle">
+        Manage your active Mac seats, launch direct 1-click desktop app activation, or verify your license signature offline.
+      </p>
+    </div>
+
+    <!-- Lookup Form Card -->
+    <div class="portal-card">
+      <div class="input-grid">
+        <div class="form-group">
+          <label for="licenseKeyInput">License Key (Required)</label>
+          <input type="text" id="licenseKeyInput" class="input-box input-mono" placeholder="RAVN-XXXX-XXXX-XXXX" maxlength="32" autofocus autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="emailInput">Registered Email (Optional)</label>
+          <input type="email" id="emailInput" class="input-box" placeholder="customer@example.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-primary" id="lookupBtn" onclick="lookupLicense()" style="flex: 1; min-width: 200px; padding: 13px;">
+          Lookup & Verify License ↗
+        </button>
+        <button class="btn btn-secondary" onclick="pasteKeyFromClipboard()" style="padding: 13px 20px;">
+          📋 Paste Key
+        </button>
+      </div>
+
+      <div id="errorBox" style="display: none; margin-top: 18px; padding: 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: #f87171; font-size: 13.5px; font-weight: 600;"></div>
+    </div>
+
+    <!-- Results Dashboard (Revealed on successful lookup) -->
+    <div class="result-dashboard" id="resultDashboard">
+      
+      <!-- Top Status Banner -->
+      <div class="status-banner active" id="statusBanner">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 24px;">🛡️</span>
+          <div>
+            <div style="font-size: 16px; font-weight: 800;" id="statusBannerTitle">Valid & Cryptographically Verified</div>
+            <div style="font-size: 13px; color: var(--text-muted);" id="statusBannerSub">Signed by Ravn Authority Ed25519 Key</div>
+          </div>
+        </div>
+        <div id="planBadgeContainer">
+          <span class="plan-badge plan-annual" id="planBadge">ANNUAL PRO</span>
+        </div>
+      </div>
+
+      <!-- Info Stats Grid -->
+      <div class="info-stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">License Key</div>
+          <div class="stat-value" style="font-family: 'JetBrains Mono', monospace; font-size: 15px;" id="statKey">RAVN-••••-••••-••••</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Registered Owner</div>
+          <div class="stat-value" style="font-size: 14.5px; word-break: break-all;" id="statEmail">—</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Active Mac Seats</div>
+          <div class="stat-value" id="statSeats">0 / 5 Active</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Expiration / Renewal</div>
+          <div class="stat-value" style="font-size: 14.5px;" id="statExpiry">Never (Lifetime)</div>
+        </div>
+      </div>
+
+      <!-- 1-Click Desktop Activation Action Bar -->
+      <div class="action-bar">
+        <div>
+          <div style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">🚀 Activate on this Mac Instantly</div>
+          <div style="font-size: 13px; color: var(--text-muted);">
+            Opens Ravn for macOS and imports cryptographic credentials in 1 click.
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-mac-activate" onclick="launchMacAppActivation()">
+            ⚡️ Activate in Ravn for Mac
+          </button>
+          <button class="btn btn-secondary" onclick="openStripePortal()">
+            💳 Billing Portal ↗
+          </button>
+        </div>
+      </div>
+
+      <!-- Registered Devices Table -->
+      <div class="devices-section-title">
+        <span>💻 Registered Devices</span>
+        <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);" id="devicesCountHeader">(0 Active)</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="devices-table">
+          <thead>
+            <tr>
+              <th>Device Name</th>
+              <th>OS Version</th>
+              <th>Activated On</th>
+              <th>Last Ping</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="devicesTableBody">
+            <tr>
+              <td colspan="5" class="no-devices-msg">No active devices registered to this license key yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Technology & Cryptography Architecture Explanation -->
+    <div class="tech-card">
+      <div class="tech-header">
+        <span style="font-size: 20px;">🔐</span>
+        <div class="tech-title">How Ravn Licensing Works (Under the Hood)</div>
+      </div>
+      <p class="tech-desc">
+        Ravn employs military-grade <strong>Ed25519 asymmetric elliptic-curve cryptography</strong> (Curve25519). When your license is verified, the server signs your hardware UUID into a canonical mathematical token using an asymmetric private key. The native macOS client uses Apple's <code>CryptoKit</code> framework to verify this signature offline with the embedded public key, allowing you to use 48 parallel streams anywhere without internet DRM.
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="/assets/app-icon.png" alt="Ravn Icon" style="width: 22px; height: 22px; border-radius: 5px;">
+        <span>&copy; 2026 Ravn Download Manager. All rights reserved.</span>
+      </div>
+      <div style="display: flex; gap: 20px;">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/#faq" class="nav-link">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toastBox">Action completed successfully.</div>
+
+  <script>
+    let currentLicenseData = null;
+
+    // Auto-fill from URL params (e.g. /activate?key=RAVN-XXXX&email=test@example.com)
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const key = params.get('key') || params.get('license');
+      const email = params.get('email');
+
+      if (key) {
+        document.getElementById('licenseKeyInput').value = key.toUpperCase();
+        if (email) document.getElementById('emailInput').value = email;
+        lookupLicense();
+      }
+    });
+
+    // Format input automatically with hyphens
+    document.getElementById('licenseKeyInput').addEventListener('input', (e) => {
+      let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (val.startsWith('RAVN')) {
+        val = val.substring(4);
+      }
+      let parts = ['RAVN'];
+      for (let i = 0; i < val.length && i < 16; i += 4) {
+        parts.push(val.substring(i, i + 4));
+      }
+      e.target.value = parts.join('-').replace(/-+$/, '');
+    });
+
+    async function pasteKeyFromClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          const match = text.match(/RAVN-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}/i);
+          if (match) {
+            document.getElementById('licenseKeyInput').value = match[0].toUpperCase();
+            lookupLicense();
+          } else if (text.includes('@')) {
+            document.getElementById('emailInput').value = text.trim();
+            showToast('Pasted email from clipboard.');
+          } else {
+            document.getElementById('licenseKeyInput').value = text.trim().toUpperCase();
+            lookupLicense();
+          }
+        }
+      } catch (err) {
+        alert('Please allow clipboard access or paste directly into the box.');
+      }
+    }
+
+    async function lookupLicense() {
+      const key = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
+      const email = document.getElementById('emailInput').value.trim();
+      const errorBox = document.getElementById('errorBox');
+      const lookupBtn = document.getElementById('lookupBtn');
+      const resultDashboard = document.getElementById('resultDashboard');
+
+      if (!key || key.length < 5) {
+        errorBox.textContent = 'Please enter a valid license key (e.g. RAVN-XXXX-XXXX-XXXX).';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      errorBox.style.display = 'none';
+      lookupBtn.textContent = 'Verifying Ed25519 Signature...';
+      lookupBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/v1/license/lookup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ licenseKey: key, email })
+        });
+        const data = await res.json();
+
+        if (data.success && data.found) {
+          currentLicenseData = data;
+          renderLicenseDashboard(data);
+          resultDashboard.style.display = 'block';
+          showToast('✅ License verified successfully.');
+        } else {
+          resultDashboard.style.display = 'none';
+          errorBox.textContent = 'Lookup Failed: ' + (data.error || 'License key not found or expired.');
+          errorBox.style.display = 'block';
+        }
+      } catch (err) {
+        resultDashboard.style.display = 'none';
+        errorBox.textContent = 'Network error contacting licensing server: ' + err.message;
+        errorBox.style.display = 'block';
+      } finally {
+        lookupBtn.textContent = 'Lookup & Verify License ↗';
+        lookupBtn.disabled = false;
+      }
+    }
+
+    function renderLicenseDashboard(data) {
+      // 1. Status Banner
+      const statusBanner = document.getElementById('statusBanner');
+      const bannerTitle = document.getElementById('statusBannerTitle');
+      const planBadge = document.getElementById('planBadge');
+
+      if (data.valid) {
+        statusBanner.className = 'status-banner active';
+        bannerTitle.textContent = 'Valid & Cryptographically Active';
+      } else {
+        statusBanner.className = 'status-banner expired';
+        bannerTitle.textContent = 'License Inactive / Expired / Revoked';
+      }
+
+      const planMap = {
+        'monthly': { label: 'MONTHLY PRO', cls: 'plan-monthly' },
+        'annual': { label: 'ANNUAL PRO (7-DAY TRIAL)', cls: 'plan-annual' },
+        'lifetime': { label: 'ULTRA LIFETIME', cls: 'plan-lifetime' }
+      };
+      const planInfo = planMap[data.plan] || { label: data.plan.toUpperCase(), cls: 'plan-annual' };
+      planBadge.className = 'plan-badge ' + planInfo.cls;
+      planBadge.textContent = planInfo.label;
+
+      // 2. Stats
+      document.getElementById('statKey').textContent = data.licenseKey;
+      document.getElementById('statEmail').textContent = data.email || 'Anonymous / Store Purchase';
+      document.getElementById('statSeats').textContent = `${data.activeDevicesCount} / ${data.maxDevices} Active`;
+      document.getElementById('statExpiry').textContent = data.expiresAt ? new Date(data.expiresAt).toLocaleDateString() : 'Never (Lifetime)';
+
+      // 3. Devices Table
+      const tbody = document.getElementById('devicesTableBody');
+      document.getElementById('devicesCountHeader').textContent = `(${data.devices.length} / ${data.maxDevices} Seats Used)`;
+
+      if (!data.devices || data.devices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="no-devices-msg">No active devices registered to this license key yet. Use the 1-click button above to activate your Mac.</td></tr>';
+      } else {
+        tbody.innerHTML = data.devices.map(device => `
+          <tr>
+            <td><strong>💻 ${escapeHtml(device.deviceName)}</strong></td>
+            <td><code style="font-size: 12px; color: #94a3b8;">${escapeHtml(device.osVersion)}</code></td>
+            <td>${device.activatedAt ? new Date(device.activatedAt).toLocaleDateString() : '—'}</td>
+            <td>${device.lastPingAt ? new Date(device.lastPingAt).toLocaleDateString() : 'Just now'}</td>
+            <td style="text-align: right;">
+              <button class="btn btn-danger" onclick="deactivateDevice('${escapeHtml(data.licenseKey)}', '${escapeHtml(device.deviceId)}')">
+                Deactivate
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function deactivateDevice(licenseKey, deviceId) {
+      if (!confirm('Are you sure you want to deactivate this Mac and free up a license seat?')) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/license/deactivate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ licenseKey, deviceId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Device deactivated. Refreshing license...');
+          lookupLicense();
+        } else {
+          alert('Deactivation error: ' + (data.message || data.error));
+        }
+      } catch (err) {
+        alert('Network error during deactivation: ' + err.message);
+      }
+    }
+
+    function launchMacAppActivation() {
+      if (!currentLicenseData || !currentLicenseData.licenseKey) return;
+      const key = currentLicenseData.licenseKey;
+      const email = currentLicenseData.email || '';
+      
+      const deepLink = `ravn://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`;
+      window.location.href = deepLink;
+      showToast('🚀 Launching Ravn for Mac...');
+    }
+
+    async function openStripePortal() {
+      if (!currentLicenseData || !currentLicenseData.email) {
+        alert('Please enter your registered email address to open the billing portal.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/billing/portal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentLicenseData.email })
+        });
+        const data = await res.json();
+        if (data.portalUrl) {
+          window.location.href = data.portalUrl;
+        } else {
+          alert('Unable to locate Stripe customer portal: ' + (data.error || 'No active Stripe subscription found for this key.'));
+        }
+      } catch (err) {
+        alert('Error connecting to Stripe billing portal: ' + err.message);
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toastBox');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 4000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+  </script>
+</body>
+</html>
