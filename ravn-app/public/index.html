@@ -2808,9 +2808,15 @@
           }
         };
 
+        const c = CURRENCIES[currentCurrency] || CURRENCIES.usd;
+        const rawAmount = data.amount || (selectedModalPlanTier === 'annual' ? 3999 : (selectedModalPlanTier === 'lifetime' ? 7999 : (selectedModalPlanTier === 'seat_addon' ? 1999 : 499)));
+
         stripeElements = stripeInstance.elements({
           clientSecret: currentClientSecret,
           appearance,
+          currency: (currentCurrency || 'usd').toLowerCase(),
+          mode: isCurrentSubscription ? 'setup' : 'payment',
+          amount: rawAmount,
         });
 
         // 1. Transition view to step 2 FIRST so the DOM element is visible before mounting
@@ -2819,7 +2825,6 @@
         document.getElementById('checkoutStepSuccess').style.display = 'none';
 
         // 2. Update displays
-        const c = CURRENCIES[currentCurrency] || CURRENCIES.usd;
         const planTitles = {
           'annual': `Ravn Pro Annual (7-Day Trial)`,
           'lifetime': `Ravn Ultra Lifetime Pass`,
@@ -2849,7 +2854,16 @@
                 applePay: 'black',
                 googlePay: 'black',
               },
-              buttonHeight: 46,
+              buttonHeight: 48,
+              wallets: {
+                applePay: 'auto',
+                googlePay: 'auto',
+              },
+              paymentMethods: {
+                applePay: 'auto',
+                googlePay: 'auto',
+                link: 'auto',
+              },
             });
 
             expressCheckoutElement.on('ready', ({ availablePaymentMethods }) => {
