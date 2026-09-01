@@ -303,7 +303,13 @@
     function launchMacActivation() {
       const key = currentKey || document.getElementById('licenseKeyText').textContent;
       const url = `ravn://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(currentEmail)}`;
-      window.location.href = url;
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+      document.body.appendChild(iframe);
+      setTimeout(() => {
+        try { document.body.removeChild(iframe); } catch(e) {}
+      }, 2500);
     }
   </script>
 </body>
