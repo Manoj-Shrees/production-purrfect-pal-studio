@@ -2833,9 +2833,6 @@
         stripeElements = stripeInstance.elements({
           clientSecret: currentClientSecret,
           appearance,
-          currency: (currentCurrency || 'usd').toLowerCase(),
-          mode: isCurrentSubscription ? 'setup' : 'payment',
-          amount: rawAmount,
         });
 
         // 1. Transition view to step 2 FIRST so the DOM element is visible before mounting
@@ -2874,10 +2871,6 @@
                 googlePay: 'black',
               },
               buttonHeight: 48,
-              wallets: {
-                applePay: 'auto',
-                googlePay: 'auto',
-              },
               paymentMethods: {
                 applePay: 'auto',
                 googlePay: 'auto',
@@ -2897,7 +2890,7 @@
 
             expressCheckoutElement.mount('#express-checkout-element');
           } catch (e) {
-            console.log('[Express Checkout Init Note]', e);
+            console.log('[Express Checkout Note]', e);
           }
         }
 
