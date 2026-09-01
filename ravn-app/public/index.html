@@ -3111,11 +3111,12 @@
 
       try {
         let result;
+        const returnSuccessUrl = 'https://ravn.purrfectpal.studio/success.html';
         if (isCurrentSubscription) {
           result = await stripeInstance.confirmSetup({
             elements: stripeElements,
             confirmParams: {
-              return_url: window.location.href,
+              return_url: returnSuccessUrl,
             },
             redirect: 'if_required',
           });
@@ -3123,7 +3124,7 @@
           result = await stripeInstance.confirmPayment({
             elements: stripeElements,
             confirmParams: {
-              return_url: window.location.href,
+              return_url: returnSuccessUrl,
             },
             redirect: 'if_required',
           });
