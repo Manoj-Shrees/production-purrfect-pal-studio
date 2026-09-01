@@ -901,16 +901,31 @@
     }
 
     .modal-box {
-      background: #0b0d14;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.94) 0%, rgba(10, 15, 29, 0.97) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 26px;
       width: 100%;
-      max-width: 540px;
-      padding: 32px;
-      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 50px -10px var(--glass-glow);
+      max-width: 560px;
+      padding: 32px 34px;
+      box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.9), 0 0 60px -10px rgba(56, 189, 248, 0.2), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
       transform: scale(0.94) translateY(10px);
       transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
+      overflow: hidden;
+    }
+
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 140px;
+      background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(56, 189, 248, 0.12), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .modal-overlay.active .modal-box {
@@ -947,21 +962,24 @@
 
     .modal-header {
       margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
     }
 
     .modal-title {
-      font-size: 22px;
+      font-size: 23px;
       font-weight: 800;
       color: white;
       margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 10px;
+      letter-spacing: -0.5px;
     }
 
     .modal-subtitle {
       font-size: 13px;
-      color: var(--text-muted);
+      color: #94a3b8;
       line-height: 1.5;
     }
 
@@ -969,14 +987,16 @@
     .plan-picker-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 11px;
       margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
     }
 
     .plan-card-option {
-      background: rgba(30, 41, 59, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 14px;
+      background: rgba(30, 41, 59, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
       padding: 13px 18px;
       display: flex;
       align-items: center;
@@ -984,48 +1004,113 @@
       cursor: pointer;
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .plan-card-option:hover {
-      border-color: rgba(56, 189, 248, 0.45);
-      background: rgba(51, 65, 85, 0.8);
-      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(51, 65, 85, 0.7);
+      transform: translateY(-1.5px);
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
     }
 
-    .plan-card-option.selected {
-      border: 1.5px solid #38bdf8;
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(99, 102, 241, 0.15));
-      box-shadow: 0 0 24px rgba(56, 189, 248, 0.35), 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .plan-card-option.selected.featured-annual {
-      border: 1.5px solid #10b981;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(56, 189, 248, 0.14));
-      box-shadow: 0 0 28px rgba(16, 185, 129, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
-    }
-
-    .plan-card-option.selected.lifetime-option {
-      border: 1.5px solid #f59e0b;
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(239, 68, 68, 0.14));
-      box-shadow: 0 0 28px rgba(245, 158, 11, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
-    }
-
+    /* Unselected Icon Badges */
     .plan-icon-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
     }
 
-    .plan-card-option.selected .plan-icon-badge {
+    /* Monthly Selected */
+    .plan-card-option.selected.monthly-option,
+    .plan-card-option.selected#planOptionMonthly {
+      border: 1.5px solid #38bdf8;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22) 0%, rgba(14, 116, 144, 0.35) 100%);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.35), 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+    .plan-card-option.selected.monthly-option .plan-icon-badge,
+    .plan-card-option.selected#planOptionMonthly .plan-icon-badge {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: #38bdf8;
+      color: #38bdf8;
       transform: scale(1.08);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+    .plan-card-option.selected.monthly-option .plan-radio-circle,
+    .plan-card-option.selected#planOptionMonthly .plan-radio-circle {
+      border-color: #38bdf8;
+      background: #38bdf8;
+    }
+
+    /* Annual Selected (Featured) */
+    .plan-card-option.selected.featured-annual,
+    .plan-card-option.selected#planOptionAnnual {
+      border: 1.5px solid #10b981;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(4, 120, 87, 0.35) 100%);
+      box-shadow: 0 0 28px rgba(16, 185, 129, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+    .plan-card-option.selected.featured-annual .plan-icon-badge,
+    .plan-card-option.selected#planOptionAnnual .plan-icon-badge {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: #10b981;
+      color: #34d399;
+      transform: scale(1.08);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+    .plan-card-option.selected.featured-annual .plan-radio-circle,
+    .plan-card-option.selected#planOptionAnnual .plan-radio-circle {
+      border-color: #10b981;
+      background: #10b981;
+    }
+
+    /* Lifetime Selected */
+    .plan-card-option.selected.lifetime-option,
+    .plan-card-option.selected#planOptionLifetime {
+      border: 1.5px solid #f59e0b;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(180, 83, 9, 0.35) 100%);
+      box-shadow: 0 0 28px rgba(245, 158, 11, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+    .plan-card-option.selected.lifetime-option .plan-icon-badge,
+    .plan-card-option.selected#planOptionLifetime .plan-icon-badge {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: #f59e0b;
+      color: #fbbf24;
+      transform: scale(1.08);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+    .plan-card-option.selected.lifetime-option .plan-radio-circle,
+    .plan-card-option.selected#planOptionLifetime .plan-radio-circle {
+      border-color: #f59e0b;
+      background: #f59e0b;
+    }
+
+    /* Seat Addon Selected */
+    .plan-card-option.selected.seat-addon-option,
+    .plan-card-option.selected#planOptionSeatAddon {
+      border: 1.5px solid #a855f7;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(109, 40, 217, 0.35) 100%);
+      box-shadow: 0 0 28px rgba(168, 85, 247, 0.4), 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+    .plan-card-option.selected.seat-addon-option .plan-icon-badge,
+    .plan-card-option.selected#planOptionSeatAddon .plan-icon-badge {
+      background: rgba(168, 85, 247, 0.25);
+      border-color: #a855f7;
+      color: #c084fc;
+      transform: scale(1.08);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+    }
+    .plan-card-option.selected.seat-addon-option .plan-radio-circle,
+    .plan-card-option.selected#planOptionSeatAddon .plan-radio-circle {
+      border-color: #a855f7;
+      background: #a855f7;
     }
 
     .plan-option-left {
@@ -1035,28 +1120,26 @@
     }
 
     .plan-radio-circle {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       border: 2px solid #64748b;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
-    }
-
-    .plan-card-option.selected .plan-radio-circle {
-      border-color: var(--accent-blue);
-      background: var(--accent-blue);
+      background: transparent;
+      flex-shrink: 0;
     }
 
     .plan-radio-circle::after {
       content: '';
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: #030712;
+      background: #ffffff;
       opacity: 0;
+      transition: opacity 0.2s ease;
     }
 
     .plan-card-option.selected .plan-radio-circle::after {
@@ -1064,7 +1147,7 @@
     }
 
     .plan-option-name {
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 700;
       color: white;
     }
@@ -1085,9 +1168,9 @@
     }
 
     .plan-option-badge.badge-monthly {
-      background: rgba(148, 163, 184, 0.16);
-      color: #e2e8f0;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.35);
     }
 
     .plan-option-badge.badge-annual {
@@ -1107,13 +1190,13 @@
     }
 
     .plan-option-badge.badge-seat {
-      background: rgba(139, 92, 246, 0.2);
-      color: #c4b5fd;
-      border: 1px solid rgba(139, 92, 246, 0.4);
+      background: rgba(168, 85, 247, 0.2);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.4);
     }
 
     .plan-option-price {
-      font-size: 16px;
+      font-size: 16.5px;
       font-weight: 800;
       color: white;
       font-family: 'JetBrains Mono', monospace;
@@ -1122,104 +1205,124 @@
 
     .plan-option-sub {
       font-size: 11px;
-      color: #64748b;
+      color: #94a3b8;
+      margin-top: 1px;
     }
 
     .modal-input-group {
       margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
     }
 
     .modal-label {
       display: block;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       color: #cbd5e1;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
     }
 
     .modal-input {
       width: 100%;
       padding: 13px 16px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
       border-radius: 12px;
-      color: white;
-      font-size: 14px;
+      color: #ffffff;
+      font-size: 14.5px;
+      font-weight: 500;
       outline: none;
       transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
 
     .modal-input:focus {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35);
+      background: rgba(15, 23, 42, 0.98);
+    }
+
+    /* Dark Mode Autofill Override for Chrome/Safari/Edge */
+    .modal-input:-webkit-autofill,
+    .modal-input:-webkit-autofill:hover, 
+    .modal-input:-webkit-autofill:focus,
+    .modal-input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+      caret-color: #ffffff !important;
+      border-color: rgba(56, 189, 248, 0.6) !important;
     }
 
     .modal-trust-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin-top: 16px;
-      font-size: 11px;
-      color: #64748b;
+      gap: 7px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
     }
 
     .pay-chip {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 4px 9px;
-      border-radius: 7px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 5px 9px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       font-size: 11px;
       font-weight: 700;
-      color: #f8fafc;
+      color: #f1f5f9;
       transition: all 0.2s ease;
       white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     }
     .pay-chip:hover {
-      background: rgba(255, 255, 255, 0.09);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
       transform: translateY(-1px);
     }
     .pay-chip.pay-apple {
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.2);
       color: #ffffff;
     }
     .pay-chip.pay-gpay {
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.2);
       color: #ffffff;
     }
     .pay-chip.pay-afterpay {
-      background: rgba(110, 231, 183, 0.1);
-      border-color: rgba(110, 231, 183, 0.35);
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(52, 211, 153, 0.4);
       color: #6ee7b7;
     }
     .pay-chip.pay-klarna {
-      background: rgba(244, 114, 182, 0.1);
-      border-color: rgba(244, 114, 182, 0.35);
+      background: rgba(244, 114, 182, 0.12);
+      border-color: rgba(244, 114, 182, 0.4);
       color: #f472b6;
     }
     .pay-chip.pay-visa {
-      background: rgba(56, 189, 248, 0.08);
-      border-color: rgba(56, 189, 248, 0.28);
-      padding: 4px 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.35);
+      padding: 5px 8px;
     }
     .pay-chip.pay-mastercard {
-      background: rgba(249, 115, 22, 0.08);
-      border-color: rgba(249, 115, 22, 0.28);
-      padding: 4px 8px;
+      background: rgba(249, 115, 22, 0.1);
+      border-color: rgba(249, 115, 22, 0.35);
+      padding: 5px 8px;
     }
     .pay-chip.pay-amex {
-      background: rgba(59, 130, 246, 0.08);
-      border-color: rgba(59, 130, 246, 0.28);
-      padding: 4px 8px;
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.35);
+      padding: 5px 8px;
     }
     .pay-chip.pay-link {
-      background: rgba(52, 211, 153, 0.08);
-      border-color: rgba(52, 211, 153, 0.28);
+      background: rgba(52, 211, 153, 0.1);
+      border-color: rgba(52, 211, 153, 0.35);
       color: #34d399;
     }
 
@@ -1756,10 +1859,10 @@
 
         <div class="plan-picker-group">
           <!-- Monthly Option -->
-          <div class="plan-card-option" id="planOptionMonthly" onclick="selectModalPlan('monthly')">
+          <div class="plan-card-option monthly-option" id="planOptionMonthly" onclick="selectModalPlan('monthly')">
             <div class="plan-option-left">
               <div class="plan-radio-circle"></div>
-              <div class="plan-icon-badge" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">
+              <div class="plan-icon-badge">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               </div>
               <div>
@@ -1774,7 +1877,7 @@
           <div class="plan-card-option selected featured-annual" id="planOptionAnnual" onclick="selectModalPlan('annual')">
             <div class="plan-option-left">
               <div class="plan-radio-circle"></div>
-              <div class="plan-icon-badge" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(56, 189, 248, 0.25)); border-color: rgba(16, 185, 129, 0.5); color: #34d399; box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);">
+              <div class="plan-icon-badge">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
               </div>
               <div>
@@ -1789,7 +1892,7 @@
           <div class="plan-card-option lifetime-option" id="planOptionLifetime" onclick="selectModalPlan('lifetime')">
             <div class="plan-option-left">
               <div class="plan-radio-circle"></div>
-              <div class="plan-icon-badge" style="background: rgba(245, 158, 11, 0.18); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);">
+              <div class="plan-icon-badge">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3v6l-5 12"/><path d="M13 3v6l5 12"/></svg>
               </div>
               <div>
@@ -1801,10 +1904,10 @@
           </div>
 
           <!-- Extra Mac Seat Add-on Option -->
-          <div class="plan-card-option" id="planOptionSeatAddon" onclick="selectModalPlan('seat_addon')">
+          <div class="plan-card-option seat-addon-option" id="planOptionSeatAddon" onclick="selectModalPlan('seat_addon')">
             <div class="plan-option-left">
               <div class="plan-radio-circle"></div>
-              <div class="plan-icon-badge" style="background: rgba(139, 92, 246, 0.18); border-color: rgba(139, 92, 246, 0.4); color: #a78bfa;">
+              <div class="plan-icon-badge">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
               </div>
               <div>
@@ -1840,39 +1943,34 @@
               <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.97 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
               <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.93 6.72-4.93z"/>
             </svg>
-            Pay
+            G Pay
           </span>
-          <span class="pay-chip pay-afterpay" title="Afterpay / Clearpay">
-            <svg width="14" height="11" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <span class="pay-chip pay-afterpay" title="Afterpay">
+            <svg width="13" height="11" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
               <path d="M7 16l-5-6 5-6M17 4l5 6-5 6M2 10h20"/>
             </svg>
-            afterpay ▾
+            afterpay
           </span>
           <span class="pay-chip pay-klarna" title="Klarna">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
               <path d="M5.5 3h3.2v18H5.5V3zm6.3 0h3.2v8.5l4.8-8.5h3.7l-5.6 9.8 6.1 8.2h-3.9l-5.1-7v7h-3.2V3z"/>
             </svg>
-            Klarna.
+            Klarna
           </span>
           <span class="pay-chip pay-visa" title="Visa">
-            <svg width="22" height="11" viewBox="0 0 48 24" fill="none">
-              <path d="M19.2 22.8L23.4 1.2H28.8L24.6 22.8H19.2ZM37.2 1.8C35.8 1.4 33.6 1 31 1C24.4 1 19.8 4.4 19.8 9.2C19.8 12.8 23 14.8 25.4 16C27.8 17.2 28.6 18 28.6 19.2C28.6 21 26.4 21.8 24.2 21.8C21.8 21.8 20.4 21.4 18.6 20.6L17.8 20.2L17 24.2C18.6 25 21.4 25.6 24.2 25.6C31.2 25.6 35.8 22.2 35.8 17.2C35.8 13.2 33.2 11.2 29.8 9.6C27.8 8.6 26.6 7.8 26.6 6.8C26.6 5.4 28.2 4.8 30.2 4.8C32 4.8 33.4 5.2 34.6 5.8L35.2 6.2L37.2 1.8ZM47.6 1.2H43.4C42 1.2 41 1.6 40.4 3L32.4 22.8H37.8L38.8 19.8H45.4L46 22.8H50.8L47.6 1.2ZM40.4 15.6L43.2 7.6L44.8 15.6H40.4ZM14.8 1.2L9.6 15.8L9 12.8C8 8.6 4.4 4 0 1.6L4.6 22.8H10.2L18.4 1.2H14.8Z" fill="#38bdf8"/>
-            </svg>
+            <span style="font-weight: 900; font-style: italic; font-size: 11.5px; color: #38bdf8; letter-spacing: 0.5px;">VISA</span>
           </span>
           <span class="pay-chip pay-mastercard" title="Mastercard">
-            <svg width="20" height="12" viewBox="0 0 32 20">
-              <circle cx="11" cy="10" r="9" fill="#eb001b" fill-opacity="0.9"/>
-              <circle cx="21" cy="10" r="9" fill="#f79e1b" fill-opacity="0.9"/>
+            <svg width="18" height="11" viewBox="0 0 32 20">
+              <circle cx="11" cy="10" r="9" fill="#eb001b" fill-opacity="0.95"/>
+              <circle cx="21" cy="10" r="9" fill="#f79e1b" fill-opacity="0.95"/>
             </svg>
           </span>
           <span class="pay-chip pay-amex" title="American Express">
-            <svg width="20" height="11" viewBox="0 0 32 20">
-              <rect width="32" height="20" rx="3" fill="#2563eb" fill-opacity="0.3" stroke="#3b82f6" stroke-width="1.2"/>
-              <text x="16" y="14" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="900" fill="#93c5fd" text-anchor="middle">AMEX</text>
-            </svg>
+            <span style="font-weight: 900; font-size: 9.5px; color: #60a5fa; letter-spacing: 0.5px;">AMEX</span>
           </span>
           <span class="pay-chip pay-link" title="Link 1-Click">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
             </svg>
@@ -1884,7 +1982,7 @@
       <!-- STEP 2: In-Page Stripe Payment Element -->
       <div id="checkoutStepPayment" style="display: none;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-right: 44px; gap: 8px;">
-          <button onclick="backToStepSelect()" style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); color: #cbd5e1; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; transition: all 0.2s ease;">
+          <button onclick="backToStepSelect()" style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 9px; transition: all 0.2s ease;">
             ← Change Plan
           </button>
           <div id="paymentPlanBadge" style="font-size: 11.5px; font-weight: 800; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.35); box-shadow: 0 0 12px rgba(56, 189, 248, 0.2); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis;">
@@ -1935,39 +2033,34 @@
               <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.97 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
               <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.93 6.72-4.93z"/>
             </svg>
-            Pay
+            G Pay
           </span>
-          <span class="pay-chip pay-afterpay" title="Afterpay / Clearpay">
-            <svg width="14" height="11" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <span class="pay-chip pay-afterpay" title="Afterpay">
+            <svg width="13" height="11" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
               <path d="M7 16l-5-6 5-6M17 4l5 6-5 6M2 10h20"/>
             </svg>
-            afterpay ▾
+            afterpay
           </span>
           <span class="pay-chip pay-klarna" title="Klarna">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
               <path d="M5.5 3h3.2v18H5.5V3zm6.3 0h3.2v8.5l4.8-8.5h3.7l-5.6 9.8 6.1 8.2h-3.9l-5.1-7v7h-3.2V3z"/>
             </svg>
-            Klarna.
+            Klarna
           </span>
           <span class="pay-chip pay-visa" title="Visa">
-            <svg width="22" height="11" viewBox="0 0 48 24" fill="none">
-              <path d="M19.2 22.8L23.4 1.2H28.8L24.6 22.8H19.2ZM37.2 1.8C35.8 1.4 33.6 1 31 1C24.4 1 19.8 4.4 19.8 9.2C19.8 12.8 23 14.8 25.4 16C27.8 17.2 28.6 18 28.6 19.2C28.6 21 26.4 21.8 24.2 21.8C21.8 21.8 20.4 21.4 18.6 20.6L17.8 20.2L17 24.2C18.6 25 21.4 25.6 24.2 25.6C31.2 25.6 35.8 22.2 35.8 17.2C35.8 13.2 33.2 11.2 29.8 9.6C27.8 8.6 26.6 7.8 26.6 6.8C26.6 5.4 28.2 4.8 30.2 4.8C32 4.8 33.4 5.2 34.6 5.8L35.2 6.2L37.2 1.8ZM47.6 1.2H43.4C42 1.2 41 1.6 40.4 3L32.4 22.8H37.8L38.8 19.8H45.4L46 22.8H50.8L47.6 1.2ZM40.4 15.6L43.2 7.6L44.8 15.6H40.4ZM14.8 1.2L9.6 15.8L9 12.8C8 8.6 4.4 4 0 1.6L4.6 22.8H10.2L18.4 1.2H14.8Z" fill="#38bdf8"/>
-            </svg>
+            <span style="font-weight: 900; font-style: italic; font-size: 11.5px; color: #38bdf8; letter-spacing: 0.5px;">VISA</span>
           </span>
           <span class="pay-chip pay-mastercard" title="Mastercard">
-            <svg width="20" height="12" viewBox="0 0 32 20">
-              <circle cx="11" cy="10" r="9" fill="#eb001b" fill-opacity="0.9"/>
-              <circle cx="21" cy="10" r="9" fill="#f79e1b" fill-opacity="0.9"/>
+            <svg width="18" height="11" viewBox="0 0 32 20">
+              <circle cx="11" cy="10" r="9" fill="#eb001b" fill-opacity="0.95"/>
+              <circle cx="21" cy="10" r="9" fill="#f79e1b" fill-opacity="0.95"/>
             </svg>
           </span>
           <span class="pay-chip pay-amex" title="American Express">
-            <svg width="20" height="11" viewBox="0 0 32 20">
-              <rect width="32" height="20" rx="3" fill="#2563eb" fill-opacity="0.3" stroke="#3b82f6" stroke-width="1.2"/>
-              <text x="16" y="14" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="900" fill="#93c5fd" text-anchor="middle">AMEX</text>
-            </svg>
+            <span style="font-weight: 900; font-size: 9.5px; color: #60a5fa; letter-spacing: 0.5px;">AMEX</span>
           </span>
           <span class="pay-chip pay-link" title="Link 1-Click">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
             </svg>
