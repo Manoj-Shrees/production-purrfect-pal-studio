@@ -121,12 +121,20 @@
       z-index: 100;
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      background: rgba(7, 7, 9, 0.85);
+      background: rgba(7, 7, 9, 0.88);
       border-bottom: 1px solid var(--glass-border);
-      padding: 14px 40px;
+      padding: 14px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: all 0.25s ease;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        padding: 12px 18px;
+        flex-wrap: wrap;
+      }
     }
 
     .brand-group {
@@ -135,11 +143,12 @@
       gap: 12px;
       text-decoration: none;
       color: white;
+      z-index: 101;
     }
 
     .brand-logo-img {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       box-shadow: 0 4px 18px var(--glass-glow);
       transition: transform 0.2s ease;
@@ -159,7 +168,8 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 24px;
+      transition: all 0.3s ease;
     }
 
     .nav-link {
@@ -177,7 +187,68 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      z-index: 101;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--glass-border);
+      color: white;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s ease;
+      z-index: 102;
+    }
+
+    .mobile-menu-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    @media (max-width: 900px) {
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px 8px 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        margin-top: 10px;
+      }
+
+      .nav-links.mobile-open {
+        display: flex;
+        animation: slideDownMenu 0.25s ease forwards;
+      }
+
+      .nav-link {
+        font-size: 15px;
+        padding: 6px 0;
+        width: 100%;
+      }
+    }
+
+    @keyframes slideDownMenu {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 540px) {
+      .header-dmg-btn {
+        display: none !important;
+      }
     }
 
     /* Container */
@@ -565,17 +636,18 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Features Grid (3 Columns Desktop) */
+    /* Features Grid (Auto-fitting Responsive Grid) */
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 24px;
       margin-bottom: 80px;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 680px) {
       .features-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
       }
     }
 
@@ -585,7 +657,7 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-radius: 20px;
-      padding: 30px;
+      padding: clamp(20px, 3vw, 30px);
       transition: all 0.3s ease;
     }
 
@@ -620,7 +692,7 @@
       line-height: 1.6;
     }
 
-    /* Pricing Section (4 Columns Desktop) */
+    /* Pricing Section (Responsive Grid) */
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -637,13 +709,18 @@
     @media (max-width: 680px) {
       .pricing-grid {
         grid-template-columns: 1fr;
+        max-width: 440px;
+        margin-left: auto;
+        margin-right: auto;
       }
-    }    .pricing-card {
+    }
+
+    .pricing-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       backdrop-filter: blur(20px);
       border-radius: 24px;
-      padding: 36px;
+      padding: clamp(24px, 3vw, 36px);
       position: relative;
       overflow: visible;
       display: flex;
@@ -678,7 +755,7 @@
       white-space: nowrap;
       z-index: 10;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-    } }
+    }
 
     .plan-name {
       font-size: 20px;
@@ -1497,23 +1574,23 @@
   <div class="ambient-glow glow-1"></div>
   <div class="ambient-glow glow-2"></div>
 
-  <!-- Header with Official App Icon -->
+  <!-- Header with Official App Icon & Mobile Menu -->
   <header>
     <a href="/" class="brand-group">
       <img src="/assets/app-icon.png" alt="Ravn App Icon" class="brand-logo-img">
       <span class="brand-name">Ravn</span>
     </a>
 
-    <nav class="nav-links">
-      <a href="#features" class="nav-link">Features</a>
-      <a href="#speed-bench" class="nav-link">Speed Test</a>
-      <a href="#pricing" class="nav-link">Pricing</a>
-      <a href="/activate.html" class="nav-link">License Portal</a>
-      <a href="#faq" class="nav-link">FAQ</a>
+    <nav class="nav-links" id="mainNavLinks">
+      <a href="#features" class="nav-link" onclick="closeMobileMenu()">Features</a>
+      <a href="#speed-bench" class="nav-link" onclick="closeMobileMenu()">Speed Test</a>
+      <a href="#pricing" class="nav-link" onclick="closeMobileMenu()">Pricing</a>
+      <a href="/activate.html" class="nav-link" onclick="closeMobileMenu()">License Portal</a>
+      <a href="#faq" class="nav-link" onclick="closeMobileMenu()">FAQ</a>
     </nav>
 
-    <div class="nav-actions" style="display: flex; align-items: center; gap: 10px;">
-      <a href="/assets/macos/Ravn-Universal.dmg" class="btn btn-secondary" style="padding: 8px 14px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+    <div class="nav-actions">
+      <a href="/assets/macos/Ravn-Universal.dmg" class="btn btn-secondary header-dmg-btn" style="padding: 8px 14px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download DMG
       </a>
@@ -1521,19 +1598,23 @@
       <div class="currency-picker-pill">
         <span>🌐</span>
         <select class="currency-select-inline" id="navCurrencySelect" onchange="changeCurrency(this.value)" title="Select Billing Currency">
-          <option value="usd">🇺🇸 United States (USD - $)</option>
-          <option value="eur">🇪🇺 Eurozone (EUR - €)</option>
-          <option value="gbp">🇬🇧 United Kingdom (GBP - £)</option>
-          <option value="aud">🇦🇺 Australia (AUD - A$)</option>
-          <option value="cad">🇨🇦 Canada (CAD - CA$)</option>
-          <option value="jpy">🇯🇵 Japan (JPY - ¥)</option>
-          <option value="inr">🇮🇳 India (INR - ₹)</option>
-          <option value="npr">🇳🇵 Nepal (NPR - Rs)</option>
+          <option value="usd">🇺🇸 USD ($)</option>
+          <option value="eur">🇪🇺 EUR (€)</option>
+          <option value="gbp">🇬🇧 GBP (£)</option>
+          <option value="aud">🇦🇺 AUD (A$)</option>
+          <option value="cad">🇨🇦 CAD (CA$)</option>
+          <option value="jpy">🇯🇵 JPY (¥)</option>
+          <option value="inr">🇮🇳 INR (₹)</option>
+          <option value="npr">🇳🇵 NPR (Rs)</option>
         </select>
       </div>
 
-      <button class="btn btn-primary" onclick="openCheckoutModal('annual')" style="padding: 9px 18px; font-size: 13px;">
-        Get Ravn Pro
+      <button class="btn btn-primary" onclick="openCheckoutModal('annual')" style="padding: 9px 16px; font-size: 13px;">
+        Get Pro
+      </button>
+
+      <button class="mobile-menu-btn" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
+        <span id="mobileMenuIcon">☰</span>
       </button>
     </div>
   </header>
@@ -2925,6 +3006,27 @@
     // FAQ Accordion Toggle
     function toggleFaq(item) {
       item.classList.toggle('open');
+    }
+
+    // ── MOBILE MENU SYSTEM ──
+    function toggleMobileMenu() {
+      const nav = document.getElementById('mainNavLinks');
+      const icon = document.getElementById('mobileMenuIcon');
+      if (nav) {
+        nav.classList.toggle('mobile-open');
+        if (icon) {
+          icon.textContent = nav.classList.contains('mobile-open') ? '✕' : '☰';
+        }
+      }
+    }
+
+    function closeMobileMenu() {
+      const nav = document.getElementById('mainNavLinks');
+      const icon = document.getElementById('mobileMenuIcon');
+      if (nav && nav.classList.contains('mobile-open')) {
+        nav.classList.remove('mobile-open');
+        if (icon) icon.textContent = '☰';
+      }
     }
 
     // ── MODAL & 100% IN-PAGE STRIPE CHECKOUT SYSTEM ──
