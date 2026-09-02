@@ -30,8 +30,8 @@ export class DownloadController {
     dmgUrl: '/assets/macos/Ravn-Universal.dmg',
     appleSiliconUrl: '/assets/macos/Ravn-AppleSilicon.dmg',
     intelUrl: '/assets/macos/Ravn-Intel.dmg',
-    fileSizeBytes: 19158045, // actual build size
-    sha256: 'bf20d64f81a02d53d01737ef134cd4f836e0fab17e47730db0d0ad0e30a0faa7', // shasum -a 256 Ravn-Universal.dmg
+    fileSizeBytes: 19167579, // actual build size
+    sha256: '194604a6a0d31196556b4b54e2b9b62554e5d74c34473cbf11b52726899e265f', // shasum -a 256 Ravn-Universal.dmg
     changelog: [
       '⚡️ Turbo 48-Stream Parallel Multi-Segment download engine with dual-probe fallback.',
       '✨ 16 Artisan Glassmorphic Themes & Custom Spectrum Palette Studio.',

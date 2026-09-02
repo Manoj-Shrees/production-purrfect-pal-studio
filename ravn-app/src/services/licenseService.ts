@@ -32,19 +32,47 @@ export class LicenseService {
     signedPayload: string;
     expiresAt: Date | null;
   }> {
+    const normalizedEmail = options.email.toLowerCase().trim();
+
+    // Enforce 1 Trial per Email Address
+    if (options.planType === 'trial') {
+      const [existingTrials] = await dbPool.execute<RowDataPacket[]>(
+        `SELECT l.* FROM licenses l
+         JOIN customers c ON l.customer_id = c.id
+         WHERE c.email = ? AND l.plan_type = 'trial'`,
+        [normalizedEmail]
+      );
+
+      if (existingTrials.length > 0) {
+        const existing = existingTrials[0];
+        const isExpired = existing.expires_at ? new Date(existing.expires_at) < new Date() : false;
+        if (isExpired || existing.status === 'expired' || existing.status === 'revoked') {
+          throw new Error(`A 7-day free trial has already been used for ${normalizedEmail} and is expired. Please purchase a Pro license to continue.`);
+        } else {
+          // Return the existing active trial key
+          return {
+            licenseKey: existing.license_key,
+            signature: existing.signature,
+            signedPayload: existing.signed_payload,
+            expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
+          };
+        }
+      }
+    }
+
     // 1. Ensure customer exists
     const customerId = `cust_${crypto.randomBytes(12).toString('hex')}`;
     await dbPool.execute(
       `INSERT INTO customers (id, email, name)
        VALUES (?, ?, ?)
        ON DUPLICATE KEY UPDATE name = COALESCE(VALUES(name), name)`,
-      [customerId, options.email.toLowerCase().trim(), options.name ?? null]
+      [customerId, normalizedEmail, options.name ?? null]
     );
 
     // Get actual customer ID if existed
     const [custRows] = await dbPool.execute<RowDataPacket[]>(
       `SELECT id FROM customers WHERE email = ?`,
-      [options.email.toLowerCase().trim()]
+      [normalizedEmail]
     );
     const resolvedCustomerId = custRows[0]?.id ?? customerId;
 
@@ -164,7 +192,13 @@ export class LicenseService {
     }
 
     if (license.status === 'expired' || (license.expires_at && new Date(license.expires_at) < new Date())) {
-      return { success: false, message: 'This license has expired. Please renew your subscription to continue.' };
+      await dbPool.execute(`UPDATE licenses SET status = 'expired' WHERE id = ?`, [license.id]);
+      await this.logAudit('activation_rejected_expired', key, options.deviceId, options.ipAddress ?? null);
+      const expiryStr = license.expires_at ? new Date(license.expires_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'earlier date';
+      return {
+        success: false,
+        message: `This ${license.plan_type === 'trial' ? '7-Day Free Trial' : 'license'} expired on ${expiryStr}. Please upgrade to a Pro license to continue using Pro features.`
+      };
     }
 
     // Check email match (if email provided)
@@ -251,7 +285,9 @@ export class LicenseService {
 
     return {
       success: true,
-      message: 'License activated successfully on this Mac!',
+      message: license.plan_type === 'trial'
+        ? '7-Day Free Trial activated successfully on this Mac!'
+        : 'License activated successfully on this Mac!',
       signature: leaseSignature,
       signedPayload: leaseCanonical,
       plan: license.plan_type,

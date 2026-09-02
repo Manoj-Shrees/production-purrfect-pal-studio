@@ -778,9 +778,11 @@
       }
 
       const planMap = {
+        'trial': { label: '7-DAY PRO TRIAL', cls: 'plan-annual' },
         'monthly': { label: 'MONTHLY PRO', cls: 'plan-monthly' },
-        'annual': { label: 'ANNUAL PRO (7-DAY TRIAL)', cls: 'plan-annual' },
-        'lifetime': { label: 'ULTRA LIFETIME', cls: 'plan-lifetime' }
+        'annual': { label: 'ANNUAL PRO', cls: 'plan-annual' },
+        'lifetime': { label: 'ULTRA LIFETIME (2 MACS)', cls: 'plan-lifetime' },
+        'family': { label: 'FAMILY & TEAM (5 MACS)', cls: 'plan-lifetime' }
       };
       const planInfo = planMap[data.plan] || { label: data.plan.toUpperCase(), cls: 'plan-annual' };
       planBadge.className = 'plan-badge ' + planInfo.cls;
