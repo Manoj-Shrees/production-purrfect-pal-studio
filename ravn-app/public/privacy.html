@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Ravn Download Manager</title>
+  <meta name="description" content="Privacy Policy for Ravn Download Manager application, browser extensions, and web services. Learn about our local-first, zero-telemetry approach.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-base: #07090e;
+      --bg-card: rgba(13, 18, 31, 0.75);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-focus: #6366f1;
+      --text-primary: #ffffff;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-green: #22c55e;
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      overflow-x: hidden !important;
+      width: 100%;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Background Glows */
+    .glow-sphere {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.25;
+    }
+    .glow-1 { top: -100px; left: -100px; width: 500px; height: 500px; background: #6366f1; }
+    .glow-2 { top: 40%; right: -150px; width: 600px; height: 600px; background: #38bdf8; }
+    .glow-3 { bottom: -100px; left: 30%; width: 550px; height: 550px; background: #a855f7; }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(7, 9, 14, 0.82);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-logo img {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-badge {
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%);
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+    }
+
+    /* Policy Content */
+    .policy-hero {
+      padding: 60px 0 30px;
+      text-align: center;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .policy-hero h1 {
+      font-size: clamp(32px, 5vw, 46px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 14px;
+    }
+
+    .policy-hero p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .last-updated {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-card);
+    }
+
+    /* Policy Cards */
+    .policy-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 18px;
+      padding: 36px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .policy-card h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .policy-card h2 .sec-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: var(--accent-blue);
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .policy-card p {
+      color: #cbd5e1;
+      font-size: 14.5px;
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .policy-card ul, .policy-card ol {
+      margin-left: 20px;
+      margin-bottom: 16px;
+      color: #cbd5e1;
+      font-size: 14.5px;
+    }
+
+    .policy-card li {
+      margin-bottom: 10px;
+      line-height: 1.65;
+    }
+
+    .policy-card strong {
+      color: #ffffff;
+    }
+
+    .highlight-box {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 18px 0;
+      font-size: 13.5px;
+      color: #e0f2fe;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 40px 24px;
+      background: rgba(7, 9, 14, 0.95);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 60px;
+    }
+
+    @media (max-width: 640px) {
+      .policy-card {
+        padding: 24px 18px;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+  <div class="glow-sphere glow-3"></div>
+
+  <!-- Sticky Header -->
+  <header>
+    <a href="/" class="brand-logo">
+      <img src="/assets/app-icon.png" alt="Ravn Logo">
+      <div class="brand-text">
+        <span class="brand-name">Ravn</span>
+        <span class="brand-badge">DOWNLOAD MANAGER</span>
+      </div>
+    </a>
+
+    <nav class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/activate.html" class="nav-link">License Portal</a>
+      <a href="/#extensions" class="nav-link">Extensions</a>
+      <a href="/#faq" class="nav-link">FAQ</a>
+      <a href="/assets/macos/Ravn-Universal.dmg" data-no-ravn="true" class="btn btn-primary">Download Free DMG</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="policy-hero">
+      <div class="badge-pill">PRIVACY FIRST • ZERO TELEMETRY</div>
+      <h1>Privacy Policy</h1>
+      <p>Your privacy is non-negotiable. Ravn is built on a local-first philosophy with zero analytics tracking, zero behavioral tracking, and strict local cryptographic licensing.</p>
+      <div class="last-updated">Last Updated: September 2, 2026</div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="policy-card">
+      <h2><span class="sec-num">1</span> Our Core Privacy Philosophy</h2>
+      <p>
+        <strong>Ravn Download Manager</strong> ("Ravn", "we", "our", or "us") is committed to protecting your privacy. Unlike legacy download accelerators or ad-supported utilities, Ravn is built with an absolute <strong>local-first, zero-tracking architecture</strong>.
+      </p>
+      <div class="highlight-box">
+        🛡️ <strong>Zero Data Selling:</strong> We do not sell, rent, monetize, or harvest user data, browsing histories, or downloaded content under any circumstance.
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="policy-card">
+      <h2><span class="sec-num">2</span> Data We Do NOT Collect</h2>
+      <p>When using the Ravn macOS Desktop Application or Browser Extensions, we <strong>never</strong> record, collect, or transmit:</p>
+      <ul>
+        <li><strong>Downloaded File Contents:</strong> The files, videos, music, archives, or ISOs you download remain 100% private on your local disk.</li>
+        <li><strong>Browsing History &amp; URLs:</strong> We do not maintain any logs or telemetry of the websites you visit or the URLs you add to your download queue.</li>
+        <li><strong>Authentication Credentials:</strong> Passwords, session cookies, or authorization tokens used for downloads remain strictly within your local machine and browser.</li>
+        <li><strong>Third-Party Analytics Telemetry:</strong> No Google Analytics, Mixpanel, or telemetry SDKs are embedded inside the macOS application.</li>
+      </ul>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="policy-card">
+      <h2><span class="sec-num">3</span> Data We Collect &amp; Process</h2>
+      <p>We only collect and process minimal data necessary to fulfill purchases and validate cryptographic licenses:</p>
+      <ul>
+        <li><strong>Email Address:</strong> Provided during checkout or 7-day trial registration to deliver your cryptographic license key, purchase invoice, and customer support notifications.</li>
+        <li><strong>Hardware UUID Hash:</strong> A non-reversible cryptographic hash of your Mac's hardware identifier (IOPlatformUUID) is transmitted solely during initial license activation or 7-day trial validation to prevent unauthorized license duplication. This identifier cannot be used to trace your physical location or personal identity.</li>
+        <li><strong>Payment &amp; Billing Data:</strong> Payments are processed directly by <strong>Stripe, Inc.</strong> (a PCI-DSS Level 1 certified payment processor). We never view or store full credit card numbers, CVVs, or bank details on our servers.</li>
+      </ul>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="policy-card">
+      <h2><span class="sec-num">4</span> Browser Extensions (Chrome &amp; Safari)</h2>
+      <p>The Ravn companion browser extension operates under a strict <strong>Single Purpose Policy</strong>:</p>
+      <ul>
+        <li><strong>Local Proxy Communication:</strong> The extension detects download links or media streams (.m3u8, .mpd) and transmits them directly to your locally running Ravn desktop application via local loopback (<code>http://127.0.0.1:6543</code>).</li>
+        <li><strong>No Cloud Routing:</strong> No URLs, cookies, or video stream metadata captured by the extension are ever routed through our remote web servers.</li>
+        <li><strong>Permission Declarations:</strong> Permissions requested (e.g. <code>contextMenus</code>, <code>downloads</code>, <code>cookies</code>) are utilized solely to intercept file requests and transfer them to your local download client with authentic headers intact.</li>
+      </ul>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="policy-card">
+      <h2><span class="sec-num">5</span> Security &amp; Cryptography</h2>
+      <p>
+        Ravn utilizes <strong>Ed25519 asymmetric cryptography</strong> via Apple CryptoKit. Once your license key is issued, all license verification and feature tier checks execute <strong>100% offline</strong> on your Mac without requiring persistent server heartbeats.
+      </p>
+      <p>
+        All communication between the web portal, payment endpoints, and SMTP transactional email servers is encrypted using modern <strong>TLS 1.3 / HTTPS</strong> protocols.
+      </p>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="policy-card">
+      <h2><span class="sec-num">6</span> Data Retention &amp; User Rights (GDPR &amp; CCPA)</h2>
+      <p>Under international privacy regulations (including the EU General Data Protection Regulation and California Consumer Privacy Act), you retain full rights over your data:</p>
+      <ul>
+        <li><strong>Right to Access:</strong> You may retrieve your active licenses at any time through our <a href="/activate.html" style="color: var(--accent-blue);">License Portal</a> using your registered email.</li>
+        <li><strong>Right to Erasure:</strong> You may request complete deletion of your customer record and email from our database by contacting support.</li>
+      </ul>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="policy-card">
+      <h2><span class="sec-num">7</span> Contact Us</h2>
+      <p>If you have any questions, concerns, or requests regarding this Privacy Policy or data handling, please contact us directly:</p>
+      <div class="highlight-box">
+        📧 <strong>Email:</strong> <a href="mailto:support@purrfectpal.studio" style="color: #38bdf8; text-decoration: none;">support@purrfectpal.studio</a><br>
+        🌐 <strong>Website:</strong> <a href="https://ravn.purrfectpal.studio" style="color: #38bdf8; text-decoration: none;">https://ravn.purrfectpal.studio</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="/assets/app-icon.png" alt="Ravn App Icon" style="width: 24px; height: 24px; border-radius: 6px;">
+        <span>&copy; 2026 Ravn Download Manager. All rights reserved.</span>
+      </div>
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/activate.html" class="nav-link">License Portal</a>
+        <a href="/privacy.html" class="nav-link" style="color: var(--accent-blue);">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
