@@ -3553,19 +3553,38 @@
 
     function launchMacDeepLink(customUrl) {
       const oneClickBtn = document.getElementById('successOneClickBtn');
-      const key = document.getElementById('successLicenseKeyVal') ? document.getElementById('successLicenseKeyVal').textContent.trim() : '';
-      const email = document.getElementById('successCustomerEmail') ? document.getElementById('successCustomerEmail').textContent.trim() : '';
+      const keyElem = document.getElementById('successLicenseKeyVal');
+      const key = keyElem ? keyElem.textContent.trim() : '';
+      const emailElem = document.getElementById('successCustomerEmail');
+      const email = emailElem ? emailElem.textContent.trim() : '';
       
-      const url = customUrl || (oneClickBtn ? oneClickBtn.getAttribute('data-deeplink') : '') || `ravn://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`;
+      let targetUrl = customUrl || (oneClickBtn ? oneClickBtn.getAttribute('data-deeplink') : '');
+      if (!targetUrl) {
+        if (key && key !== 'RAVN-XXXX-XXXX-XXXX') {
+          targetUrl = `ravn://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`;
+        } else {
+          targetUrl = 'ravn://open';
+        }
+      }
       
-      // Use hidden iframe to safely launch macOS app protocol without Safari "address is invalid" navigation abort
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = url;
-      document.body.appendChild(iframe);
+      // Direct anchor click dispatch (works across Chrome, Safari, Firefox, Arc, Edge)
+      try {
+        const link = document.createElement('a');
+        link.href = targetUrl;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          try { document.body.removeChild(link); } catch(_) {}
+        }, 500);
+      } catch (_) {
+        window.location.href = targetUrl;
+      }
+
+      // Also set window.location as secondary trigger
       setTimeout(() => {
-        try { document.body.removeChild(iframe); } catch(e) {}
-      }, 2500);
+        window.location.assign(targetUrl);
+      }, 100);
     }
 
     function copySuccessLicenseKey() {

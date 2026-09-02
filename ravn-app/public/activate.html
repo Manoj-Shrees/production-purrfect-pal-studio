@@ -869,7 +869,22 @@
       const email = currentLicenseData.email || '';
       
       const deepLink = `ravn://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`;
-      window.location.href = deepLink;
+      
+      try {
+        const link = document.createElement('a');
+        link.href = deepLink;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          try { document.body.removeChild(link); } catch(_) {}
+        }, 500);
+      } catch (_) {}
+
+      setTimeout(() => {
+        window.location.assign(deepLink);
+      }, 100);
+
       showToast('🚀 Launching Ravn for Mac...');
     }
 
