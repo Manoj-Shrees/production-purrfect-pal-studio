@@ -1,0 +1,116 @@
+services:
+  # ── 1. Nginx Reverse Proxy (SSL & HTTP/2 Production) ──
+  ravn-nginx:
+    image: ${DOCKER_REGISTRY:-purrfectpalstudio/}ravn-nginx:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    container_name: ravn-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot_etc:/etc/letsencrypt:ro
+      - certbot_var:/var/lib/letsencrypt:ro
+      - web_root:/var/www/certbot:ro
+    depends_on:
+      ravn-api:
+        condition: service_healthy
+    networks:
+      - ravn-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # ── 2. Node.js API Service (Production Cluster) ──
+  ravn-api:
+    image: ${DOCKER_REGISTRY:-purrfectpalstudio/}ravn-api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ravn-api
+    restart: always
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DB_HOST=ravn-mysql
+      - DB_PORT=3306
+      - DB_USER=ravn_user
+      - DB_PASSWORD=${DB_PASSWORD:-ravn_super_secret_password_2026}
+      - DB_NAME=ravn_db
+      - REDIS_HOST=ravn-redis
+      - REDIS_PORT=6379
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - LICENSE_PRIVATE_KEY=${LICENSE_PRIVATE_KEY}
+      - LICENSE_PUBLIC_KEY=${LICENSE_PUBLIC_KEY}
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - APP_BASE_URL=${APP_BASE_URL:-https://ravn.purrfectpal.studio}
+    depends_on:
+      ravn-mysql:
+        condition: service_healthy
+      ravn-redis:
+        condition: service_healthy
+    networks:
+      - ravn-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── 3. MySQL 8.0 Database (Persistent & Hardened) ──
+  ravn-mysql:
+    image: mysql:8.0
+    container_name: ravn-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-ravn_root_password_2026}
+      MYSQL_DATABASE: ravn_db
+      MYSQL_USER: ravn_user
+      MYSQL_PASSWORD: ${DB_PASSWORD:-ravn_super_secret_password_2026}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    command: [
+      "--default-authentication-plugin=mysql_native_password",
+      "--character-set-server=utf8mb4",
+      "--collation-server=utf8mb4_unicode_ci"
+    ]
+    networks:
+      - ravn-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-ravn_root_password_2026}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── 4. Redis 7.0 Cache (AOF Persistence) ──
+  ravn-redis:
+    image: redis:7-alpine
+    container_name: ravn-redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - ravn-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+networks:
+  ravn-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  certbot_etc:
+  certbot_var:
+  web_root:
