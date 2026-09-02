@@ -93,6 +93,11 @@ export class DownloadController {
       path.resolve(process.cwd(), 'public/assets/macos'),
       path.resolve(process.cwd(), 'ravn-app/public/assets/macos'),
       '/app/public/assets/macos',
+      path.resolve(__dirname, '../../public/assets/extensions'),
+      path.resolve(__dirname, '../public/assets/extensions'),
+      path.resolve(process.cwd(), 'public/assets/extensions'),
+      path.resolve(process.cwd(), 'ravn-app/public/assets/extensions'),
+      '/app/public/assets/extensions',
       path.resolve(__dirname, '../../downloads'),
       path.resolve(__dirname, '../../public/downloads'),
     ];
@@ -102,7 +107,8 @@ export class DownloadController {
         const localFilePath = path.join(dir, targetName);
         try {
           if (fs.existsSync(localFilePath) && fs.statSync(localFilePath).isFile()) {
-            res.setHeader('Content-Type', 'application/x-apple-diskimage');
+            const isZip = safeFilename.endsWith('.zip');
+            res.setHeader('Content-Type', isZip ? 'application/zip' : 'application/x-apple-diskimage');
             res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}"`);
             res.setHeader('Cache-Control', 'public, max-age=86400');
             const stream = fs.createReadStream(localFilePath);
