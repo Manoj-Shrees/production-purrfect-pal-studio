@@ -104,6 +104,25 @@ export class LicenseService {
     );
     const resolvedCustomerId = custRows[0]?.id ?? customerId;
 
+    // ── If customer already has an active license for this plan, return existing license ──
+    const [existingPlanLicenses] = await dbPool.execute<RowDataPacket[]>(
+      `SELECT l.* FROM licenses l
+       WHERE l.customer_id = ? AND l.plan_type = ? AND l.status = 'active'
+       AND (l.expires_at IS NULL OR l.expires_at > NOW())
+       ORDER BY l.created_at DESC LIMIT 1`,
+      [resolvedCustomerId, options.planType]
+    );
+
+    if (existingPlanLicenses.length > 0) {
+      const existing = existingPlanLicenses[0];
+      return {
+        licenseKey: existing.license_key,
+        signature: existing.signature,
+        signedPayload: existing.signed_payload,
+        expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
+      };
+    }
+
     // 2. Determine expiration and max devices based on plan (Pro = 1 Mac, Ultra Lifetime = 2 Macs, Family = 5 Macs)
     let expiresAt: Date | null = options.expiresAt ?? null;
     let maxDevices = options.maxDevices ?? (options.planType === 'family' ? 5 : options.planType === 'lifetime' ? 2 : 1);
@@ -466,6 +485,26 @@ export class LicenseService {
         lastPingAt: d.last_ping_at ? new Date(d.last_ping_at).toISOString() : '',
       })),
     };
+  }
+
+  /**
+   * Retrieves existing active license key and details by customer email
+   */
+  static async getLicenseDetailsByEmail(email: string): Promise<any> {
+    const cleanEmail = email.trim().toLowerCase();
+    const [rows] = await dbPool.execute<RowDataPacket[]>(
+      `SELECT l.license_key FROM licenses l
+       JOIN customers c ON l.customer_id = c.id
+       WHERE c.email = ? AND l.status = 'active'
+       ORDER BY l.created_at DESC LIMIT 1`,
+      [cleanEmail]
+    );
+
+    if (rows.length === 0) {
+      return { found: false, valid: false, error: `No active license found for ${cleanEmail}.` };
+    }
+
+    return this.getLicenseDetails(rows[0].license_key, cleanEmail);
   }
 
   /**

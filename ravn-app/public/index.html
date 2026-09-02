@@ -3645,7 +3645,7 @@
     }
 
     async function verifyLicenseHelper(key, email, statusBox) {
-      if (!key) {
+      if (!key && (!email || !email.includes('@'))) {
         statusBox.style.display = 'block';
         statusBox.style.background = 'rgba(239, 68, 68, 0.15)';
         statusBox.style.border = '1px solid rgba(239, 68, 68, 0.35)';
@@ -3654,7 +3654,7 @@
         statusBox.style.color = '#f87171';
         statusBox.style.fontSize = '12.5px';
         statusBox.style.fontWeight = '600';
-        statusBox.textContent = 'Please enter your license key.';
+        statusBox.textContent = 'Please enter your license key or registered email address.';
         return;
       }
 

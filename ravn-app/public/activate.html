@@ -555,12 +555,12 @@
     <div class="portal-card">
       <div class="input-grid">
         <div class="form-group">
-          <label for="licenseKeyInput">License Key (Required)</label>
+          <label for="licenseKeyInput">License Key</label>
           <input type="text" id="licenseKeyInput" class="input-box input-mono" placeholder="RAVN-XXXX-XXXX-XXXX" maxlength="32" autofocus autocomplete="off">
         </div>
 
         <div class="form-group">
-          <label for="emailInput">Registered Email (Optional)</label>
+          <label for="emailInput">Registered Email</label>
           <input type="email" id="emailInput" class="input-box" placeholder="customer@example.com" autocomplete="email">
         </div>
       </div>
@@ -748,14 +748,14 @@
       const lookupBtn = document.getElementById('lookupBtn');
       const resultDashboard = document.getElementById('resultDashboard');
 
-      if (!key || key.length < 5) {
-        errorBox.textContent = 'Please enter a valid license key (e.g. RAVN-XXXX-XXXX-XXXX).';
+      if (!key && (!email || !email.includes('@'))) {
+        errorBox.textContent = 'Please enter your license key (RAVN-XXXX-XXXX-XXXX) or registered email address.';
         errorBox.style.display = 'block';
         return;
       }
 
       errorBox.style.display = 'none';
-      lookupBtn.textContent = 'Verifying Ed25519 Signature...';
+      lookupBtn.textContent = 'Verifying with Server...';
       lookupBtn.disabled = true;
 
       try {

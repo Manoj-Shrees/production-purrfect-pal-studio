@@ -71,14 +71,23 @@ export class LicenseController {
     try {
       const { licenseKey, email } = req.body;
 
-      if (!licenseKey) {
-        res.status(400).json({ success: false, error: 'licenseKey is required.' });
+      if (!licenseKey && !email) {
+        res.status(400).json({ success: false, error: 'A license key or registered email address is required.' });
         return;
       }
 
-      const result = await LicenseService.getLicenseDetails(licenseKey, email);
+      let result;
+      if (licenseKey && String(licenseKey).trim()) {
+        result = await LicenseService.getLicenseDetails(String(licenseKey).trim(), email ? String(email).trim() : undefined);
+      } else if (email && String(email).trim()) {
+        result = await LicenseService.getLicenseDetailsByEmail(String(email).trim());
+      } else {
+        res.status(400).json({ success: false, error: 'Please provide a valid license key or email.' });
+        return;
+      }
+
       if (!result.found) {
-        res.status(404).json({ success: false, error: result.error || 'License key not found.' });
+        res.status(404).json({ success: false, error: result.error || 'No active license found.' });
         return;
       }
 
