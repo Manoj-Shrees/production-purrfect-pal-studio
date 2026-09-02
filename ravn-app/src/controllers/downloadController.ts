@@ -85,21 +85,31 @@ export class DownloadController {
     }
     const safeFilename = path.basename(requestedFile);
     
-    // Check possible local paths
-    const possiblePaths = [
-      path.resolve(__dirname, '../../public/assets/macos', safeFilename),
-      path.resolve(__dirname, '../../downloads', safeFilename),
-      path.resolve(__dirname, '../../public/downloads', safeFilename),
+    // Check possible local paths for the exact file first, then fallback to Ravn-Universal.dmg
+    const candidateFilenames = [safeFilename, 'Ravn-Universal.dmg'];
+    const searchDirs = [
+      path.resolve(__dirname, '../../public/assets/macos'),
+      path.resolve(__dirname, '../public/assets/macos'),
+      path.resolve(process.cwd(), 'public/assets/macos'),
+      path.resolve(process.cwd(), 'ravn-app/public/assets/macos'),
+      '/app/public/assets/macos',
+      path.resolve(__dirname, '../../downloads'),
+      path.resolve(__dirname, '../../public/downloads'),
     ];
 
-    for (const localFilePath of possiblePaths) {
-      if (fs.existsSync(localFilePath)) {
-        res.setHeader('Content-Type', 'application/x-apple-diskimage');
-        res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}"`);
-        res.setHeader('Cache-Control', 'public, max-age=86400');
-        const stream = fs.createReadStream(localFilePath);
-        stream.pipe(res);
-        return;
+    for (const targetName of candidateFilenames) {
+      for (const dir of searchDirs) {
+        const localFilePath = path.join(dir, targetName);
+        try {
+          if (fs.existsSync(localFilePath) && fs.statSync(localFilePath).isFile()) {
+            res.setHeader('Content-Type', 'application/x-apple-diskimage');
+            res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}"`);
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+            const stream = fs.createReadStream(localFilePath);
+            stream.pipe(res);
+            return;
+          }
+        } catch (_) {}
       }
     }
 
