@@ -10,6 +10,7 @@ export interface CreateLicenseOptions {
   subscriptionId?: string;
   expiresAt?: Date | null;
   maxDevices?: number;
+  deviceId?: string;
 }
 
 export interface ActivationOptions {
@@ -34,8 +35,9 @@ export class LicenseService {
   }> {
     const normalizedEmail = options.email.toLowerCase().trim();
 
-    // Enforce 1 Trial per Email Address
+    // ── Enforce 1 Trial per Email & Device ID ──
     if (options.planType === 'trial') {
+      // 1. Check existing trial by Email Address
       const [existingTrials] = await dbPool.execute<RowDataPacket[]>(
         `SELECT l.* FROM licenses l
          JOIN customers c ON l.customer_id = c.id
@@ -47,15 +49,41 @@ export class LicenseService {
         const existing = existingTrials[0];
         const isExpired = existing.expires_at ? new Date(existing.expires_at) < new Date() : false;
         if (isExpired || existing.status === 'expired' || existing.status === 'revoked') {
-          throw new Error(`A 7-day free trial has already been used for ${normalizedEmail} and is expired. Please purchase a Pro license to continue.`);
+          throw new Error(`A 7-day free trial has already been used for ${normalizedEmail} and has expired. Please purchase a Pro license to continue.`);
         } else {
-          // Return the existing active trial key
+          // Return the existing active trial key within the 7 days
           return {
             licenseKey: existing.license_key,
             signature: existing.signature,
             signedPayload: existing.signed_payload,
             expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
           };
+        }
+      }
+
+      // 2. Check existing trial by Device ID (Hardware UUID)
+      if (options.deviceId && options.deviceId.trim()) {
+        const cleanDeviceId = options.deviceId.trim();
+        const [deviceTrials] = await dbPool.execute<RowDataPacket[]>(
+          `SELECT l.* FROM license_activations la
+           JOIN licenses l ON la.license_id = l.id
+           WHERE la.device_id = ? AND l.plan_type = 'trial'`,
+          [cleanDeviceId]
+        );
+
+        if (deviceTrials.length > 0) {
+          const existing = deviceTrials[0];
+          const isExpired = existing.expires_at ? new Date(existing.expires_at) < new Date() : false;
+          if (isExpired || existing.status === 'expired' || existing.status === 'revoked') {
+            throw new Error(`This Mac (Device ID: ${cleanDeviceId.substring(0, 8)}...) has already used its 7-day free trial. Please purchase a Pro license to continue.`);
+          } else {
+            return {
+              licenseKey: existing.license_key,
+              signature: existing.signature,
+              signedPayload: existing.signed_payload,
+              expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
+            };
+          }
         }
       }
     }
@@ -207,6 +235,27 @@ export class LicenseService {
         providedEmail: email,
       });
       return { success: false, message: 'The provided email address does not match the registered license holder.' };
+    }
+
+    // ── Enforce 1 Trial per Hardware Device UUID ──
+    if (license.plan_type === 'trial') {
+      const [priorDeviceTrials] = await dbPool.execute<RowDataPacket[]>(
+        `SELECT l.* FROM license_activations la
+         JOIN licenses l ON la.license_id = l.id
+         WHERE la.device_id = ? AND l.plan_type = 'trial' AND l.id != ?`,
+        [options.deviceId.trim(), license.id]
+      );
+      if (priorDeviceTrials.length > 0) {
+        const prev = priorDeviceTrials[0];
+        const isExpired = prev.expires_at ? new Date(prev.expires_at) < new Date() : false;
+        if (isExpired || prev.status === 'expired' || prev.status === 'revoked') {
+          await this.logAudit('activation_rejected_trial_device_used', key, options.deviceId, options.ipAddress ?? null);
+          return {
+            success: false,
+            message: 'This Mac has already used a 7-Day Free Trial that has expired. Please upgrade to Ravn Pro or Lifetime to continue.',
+          };
+        }
+      }
     }
 
     // 2. Check existing activations for this device

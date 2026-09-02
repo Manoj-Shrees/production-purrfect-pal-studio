@@ -108,7 +108,7 @@ export class LicenseController {
    */
   static async startTrial(req: Request, res: Response): Promise<void> {
     try {
-      const { email, name } = req.body;
+      const { email, name, deviceId } = req.body;
       if (!email || !email.includes('@')) {
         res.status(400).json({ success: false, error: 'A valid email address is required to receive your trial license.' });
         return;
@@ -119,6 +119,7 @@ export class LicenseController {
         name: name ? String(name).trim() : undefined,
         planType: 'trial',
         maxDevices: 1,
+        deviceId: deviceId ? String(deviceId).trim() : undefined,
       });
 
       // Send 7-day trial email asynchronously
