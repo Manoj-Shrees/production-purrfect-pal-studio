@@ -166,8 +166,6 @@ services:
     build:
       context: ./ravn-app
       dockerfile: Dockerfile
-    image: ravn-api:latest
-    platform: linux/amd64
     container_name: ravn-api-c
     restart: always
     expose:
