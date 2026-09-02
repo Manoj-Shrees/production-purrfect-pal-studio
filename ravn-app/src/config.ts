@@ -88,7 +88,7 @@ export const config = {
     port: parseInt(process.env.SMTP_PORT || '465', 10),
     secure: (process.env.SMTP_PORT || '465') === '465',
     user: process.env.EMAIL_USER || 'noreply@purrfectpal.studio',
-    pass: process.env.EMAIL_PASS || '',
+    pass: process.env.EMAIL_PASS || 'Toor@77@MTS@77*',
     from: process.env.EMAIL_FROM || '"Ravn by Purrfect Pal Studio" <noreply@purrfectpal.studio>',
   },
 
