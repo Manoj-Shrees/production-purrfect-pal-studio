@@ -1737,7 +1737,7 @@
       <a href="#speed-bench" class="nav-link" onclick="closeMobileMenu()">Speed Test</a>
       <a href="#extensions" class="nav-link" onclick="closeMobileMenu()">Extensions</a>
       <a href="#pricing" class="nav-link" onclick="closeMobileMenu()">Pricing</a>
-      <a href="/activate.html" class="nav-link" onclick="closeMobileMenu()">License Portal</a>
+      <a href="/activate" class="nav-link" onclick="closeMobileMenu()">License Portal</a>
       <a href="#faq" class="nav-link" onclick="closeMobileMenu()">FAQ</a>
     </nav>
 
@@ -2334,8 +2334,8 @@
         <span>&copy; 2026 Ravn Download Manager. All rights reserved.</span>
       </div>
       <div style="display: flex; gap: 20px; align-items: center;">
-        <a href="/activate.html" class="nav-link">License Portal</a>
-        <a href="/privacy.html" class="nav-link">Privacy Policy</a>
+        <a href="/activate" class="nav-link">License Portal</a>
+        <a href="/privacy" class="nav-link">Privacy Policy</a>
         <button onclick="updatePriceDisplay()" style="background: none; border: none; color: #64748b; font-size: 12px; cursor: pointer; text-decoration: underline;">Refresh Currency</button>
       </div>
     </div>
@@ -3658,7 +3658,7 @@
 
       try {
         let result;
-        const returnSuccessUrl = 'https://ravn.purrfectpal.studio/success.html';
+        const returnSuccessUrl = 'https://ravn.purrfectpal.studio/success';
         if (isCurrentSubscription) {
           result = await stripeInstance.confirmSetup({
             elements: stripeElements,

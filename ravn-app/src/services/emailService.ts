@@ -118,7 +118,7 @@ export class EmailService {
       : 'Lifetime Pass (Never Expires)';
 
     const downloadUrl = `${config.appBaseUrl}/assets/macos/Ravn-Universal.dmg`;
-    const portalUrl = `${config.appBaseUrl}/activate.html`;
+    const portalUrl = `${config.appBaseUrl}/activate`;
     const deepLinkUrl = `ravn://activate?key=${encodeURIComponent(licenseKey)}&email=${encodeURIComponent(email)}`;
 
     const htmlContent = `
@@ -326,7 +326,7 @@ export class EmailService {
       : '7 Days from Activation';
 
     const downloadUrl = `${config.appBaseUrl}/assets/macos/Ravn-Universal.dmg`;
-    const portalUrl = `${config.appBaseUrl}/activate.html`;
+    const portalUrl = `${config.appBaseUrl}/activate`;
     const deepLinkUrl = `ravn://activate?key=${encodeURIComponent(licenseKey)}&email=${encodeURIComponent(email)}`;
 
     const htmlContent = `

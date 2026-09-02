@@ -37,8 +37,8 @@ export const config = {
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_live_51QZ0jqCr1bc7EQACqZqkOVdRA8KTakavMewoC7IaQkM5rhBV3R38YPaAfhvyxtc75Gljnu4SVkT22t8Xe6n1cfHc00N8sGTGOa',
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || 'whsec_mock',
     logoUrl: process.env.STRIPE_LOGO_URL || '',
-    successUrl: process.env.STRIPE_SUCCESS_URL || 'https://ravn.purrfectpal.studio/success.html?session_id={CHECKOUT_SESSION_ID}',
-    cancelUrl: process.env.STRIPE_CANCEL_URL || 'https://ravn.purrfectpal.studio/index.html',
+    successUrl: process.env.STRIPE_SUCCESS_URL || 'https://ravn.purrfectpal.studio/success?session_id={CHECKOUT_SESSION_ID}',
+    cancelUrl: process.env.STRIPE_CANCEL_URL || 'https://ravn.purrfectpal.studio/',
     plans: {
       monthly: {
         id: 'plan_monthly',
