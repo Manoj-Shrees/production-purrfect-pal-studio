@@ -1,7 +1,7 @@
 export interface CreateLicenseOptions {
     email: string;
     name?: string;
-    planType: 'monthly' | 'annual' | 'lifetime' | 'trial';
+    planType: 'monthly' | 'annual' | 'lifetime' | 'family' | 'trial';
     subscriptionId?: string;
     expiresAt?: Date | null;
     maxDevices?: number;

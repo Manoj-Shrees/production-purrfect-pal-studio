@@ -6,7 +6,7 @@ import { CryptoService, LicensePayload } from './cryptoService.js';
 export interface CreateLicenseOptions {
   email: string;
   name?: string;
-  planType: 'monthly' | 'annual' | 'lifetime' | 'trial';
+  planType: 'monthly' | 'annual' | 'lifetime' | 'family' | 'trial';
   subscriptionId?: string;
   expiresAt?: Date | null;
   maxDevices?: number;
@@ -48,9 +48,9 @@ export class LicenseService {
     );
     const resolvedCustomerId = custRows[0]?.id ?? customerId;
 
-    // 2. Determine expiration and max devices based on plan (Pro = 1 Mac, Ultra Lifetime = 2 Macs)
+    // 2. Determine expiration and max devices based on plan (Pro = 1 Mac, Ultra Lifetime = 2 Macs, Family = 5 Macs)
     let expiresAt: Date | null = options.expiresAt ?? null;
-    let maxDevices = options.maxDevices ?? (options.planType === 'lifetime' ? 2 : 1);
+    let maxDevices = options.maxDevices ?? (options.planType === 'family' ? 5 : options.planType === 'lifetime' ? 2 : 1);
 
     if (options.planType === 'monthly') {
       const d = new Date();
@@ -65,6 +65,9 @@ export class LicenseService {
     } else if (options.planType === 'lifetime') {
       expiresAt = null;
       maxDevices = options.maxDevices ?? 2;
+    } else if (options.planType === 'family') {
+      expiresAt = null;
+      maxDevices = options.maxDevices ?? 5;
     } else if (options.planType === 'trial') {
       const d = new Date();
       d.setDate(d.getDate() + 7);

@@ -7,14 +7,14 @@ export class DownloadController {
     static releaseInfo = {
         version: '2.5.0',
         buildNumber: 250,
-        releaseDate: '2026-08-31',
+        releaseDate: '2026-09-02',
         minMacOSVersion: '14.0',
         downloadUrl: '/assets/macos/Ravn-Universal.dmg',
         dmgUrl: '/assets/macos/Ravn-Universal.dmg',
         appleSiliconUrl: '/assets/macos/Ravn-AppleSilicon.dmg',
         intelUrl: '/assets/macos/Ravn-Intel.dmg',
-        fileSizeBytes: 28450192, // ~28.4 MB
-        sha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
+        fileSizeBytes: 19106454, // actual build size
+        sha256: '4170b81ba448b369a815915b4460331fe2e7da0262fe4bc492eb145349210049', // shasum -a 256 Ravn-Universal.dmg
         changelog: [
             '⚡️ Turbo 48-Stream Parallel Multi-Segment download engine with dual-probe fallback.',
             '✨ 16 Artisan Glassmorphic Themes & Custom Spectrum Palette Studio.',

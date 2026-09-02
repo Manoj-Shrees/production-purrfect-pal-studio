@@ -55,6 +55,13 @@ export const config = {
                 priceCents: 7999,
                 maxDevices: 2,
             },
+            family: {
+                id: 'plan_family',
+                priceId: process.env.STRIPE_PRICE_FAMILY || 'price_family_sample',
+                name: 'Ravn Family & Team Pass (5 Macs)',
+                priceCents: 12999,
+                maxDevices: 5,
+            },
             seat_addon: {
                 id: 'plan_seat_addon',
                 priceId: process.env.STRIPE_PRICE_SEAT_ADDON || 'price_seat_addon_sample',
@@ -69,6 +76,9 @@ export const config = {
         publicKey: process.env.LICENSE_PUBLIC_KEY || '',
     },
     admin: {
-        apiKey: process.env.ADMIN_API_KEY || 'ravn_master_admin_key_9988',
+        apiKey: process.env.ADMIN_API_KEY || (() => {
+            console.error('[CONFIG] CRITICAL: ADMIN_API_KEY is not set in .env! Admin endpoints will reject all requests.');
+            return ''; // Empty string = all admin requests will 401
+        })(),
     },
 };

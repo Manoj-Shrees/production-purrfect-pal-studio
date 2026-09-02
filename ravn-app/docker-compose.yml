@@ -1,7 +1,8 @@
 services:
   # ── 1. Nginx Reverse Proxy ──
   ravn-nginx:
-    image: ${DOCKER_REGISTRY:-purrfectpalstudio/}ravn-nginx:${TAG:-latest}
+    image: ravn-nginx:latest
+    platform: linux/amd64
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
@@ -22,7 +23,8 @@ services:
 
   # ── 2. Node.js API Service ──
   ravn-api:
-    image: ${DOCKER_REGISTRY:-purrfectpalstudio/}ravn-api:${TAG:-latest}
+    image: ravn-api:latest
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile

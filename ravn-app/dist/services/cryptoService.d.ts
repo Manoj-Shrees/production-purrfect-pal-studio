@@ -1,7 +1,7 @@
 export interface LicensePayload {
     key: string;
     email: string;
-    plan: 'monthly' | 'annual' | 'lifetime' | 'trial';
+    plan: 'monthly' | 'annual' | 'lifetime' | 'family' | 'trial';
     maxDevices: number;
     issuedAt: string;
     expiresAt: string | null;

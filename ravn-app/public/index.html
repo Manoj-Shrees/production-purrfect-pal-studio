@@ -620,15 +620,21 @@
       line-height: 1.6;
     }
 
-    /* Pricing Section (3 Columns Desktop) */
+    /* Pricing Section (4 Columns Desktop) */
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-bottom: 80px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 70px;
     }
 
-    @media (max-width: 960px) {
+    @media (max-width: 1200px) {
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
       .pricing-grid {
         grid-template-columns: 1fr;
       }
@@ -904,16 +910,17 @@
       background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(10, 15, 29, 0.98) 100%);
       border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 26px;
-      width: 100%;
-      max-width: 540px !important;
-      padding: 30px 32px;
+      width: 92%;
+      max-width: 820px !important;
+      max-height: min(90vh, 880px);
+      overflow-y: auto;
+      padding: 32px 36px;
       box-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.92), 0 0 60px -10px rgba(56, 189, 248, 0.22), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(36px) saturate(200%);
       -webkit-backdrop-filter: blur(36px) saturate(200%);
       transform: scale(0.94) translateY(10px);
       transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
-      overflow: hidden;
       box-sizing: border-box;
     }
 
@@ -1795,12 +1802,12 @@
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Media Studio & Spatial 3D VR Converter</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>1 Active Mac Seat</strong> (Transfer Anytime)</li>
         </ul>
-        <button class="btn btn-primary" onclick="openCheckoutModal('annual')">Start 7-Day Free Trial</button>
+        <button class="btn btn-primary" onclick="openCheckoutModal('annual')">Choose Annual Plan</button>
       </div>
 
-      <!-- Lifetime Plan -->
+      <!-- Lifetime Pass (Personal) -->
       <div class="pricing-card" style="border: 1px solid rgba(245, 158, 11, 0.4); position: relative; overflow: visible;">
-        <div class="tag-featured" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; box-shadow: 0 0 18px rgba(245, 158, 11, 0.5);">💎 ULTRA LIFETIME PASS</div>
+        <div class="tag-featured" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; box-shadow: 0 0 18px rgba(245, 158, 11, 0.5);">💎 ULTRA LIFETIME</div>
         <div class="plan-name">Ravn Ultra Lifetime</div>
         <div class="plan-price" id="pricingLifetimeVal">$79.99 <span>one-time</span></div>
         <div class="plan-desc">Pay once, own forever. Includes all future major upgrades for life.</div>
@@ -1811,6 +1818,21 @@
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Zero Recurring Fees Ever</li>
         </ul>
         <button class="btn btn-secondary" onclick="openCheckoutModal('lifetime')" style="border-color: rgba(245, 158, 11, 0.5); color: #fbbf24;">Get Lifetime Pass ↗</button>
+      </div>
+
+      <!-- Family & Team Pass -->
+      <div class="pricing-card" style="border: 1px solid rgba(168, 85, 247, 0.4); position: relative; overflow: visible;">
+        <div class="tag-featured" style="background: linear-gradient(135deg, #a855f7, #ec4899); color: white; box-shadow: 0 0 18px rgba(168, 85, 247, 0.5);">👨‍👩‍👧‍👦 FAMILY & TEAM</div>
+        <div class="plan-name">Family & Team Pass</div>
+        <div class="plan-price" id="pricingFamilyVal">$129.99 <span>one-time</span></div>
+        <div class="plan-desc">For households & teams. Share across multiple Macs with 1 license.</div>
+        <ul class="plan-features">
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>5 Active Mac Seats</strong> (Transfer Anytime)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>48 Turbo Parallel Streams</strong></li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Spatial 3D VR Converter & Media Studio</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Priority VIP 24/7 Support</li>
+        </ul>
+        <button class="btn btn-secondary" onclick="openCheckoutModal('family')" style="border-color: rgba(168, 85, 247, 0.5); color: #c084fc;">Get Family Pass ↗</button>
       </div>
     </div>
 
@@ -1990,7 +2012,7 @@
   <!-- ║ CUSTOM 100% IN-PAGE STRIPE CHECKOUT MODAL                ║ -->
   <!-- ╚══════════════════════════════════════════════════════════╝ -->
   <div class="modal-overlay" id="checkoutModalOverlay" onclick="handleBackdropClick(event, 'checkoutModalOverlay')">
-    <div class="modal-box" id="checkoutModalBox" style="max-width: 540px;">
+    <div class="modal-box" id="checkoutModalBox">
       <button class="modal-close-btn" onclick="closeCheckoutModal()" title="Close">&times;</button>
       
       <!-- STEP 1: Plan & Email Selection -->
@@ -2074,6 +2096,21 @@
               </div>
             </div>
             <div class="plan-option-price" id="modalLifetimePriceVal">$79.99 <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span></div>
+          </div>
+
+          <!-- Family & Team Option -->
+          <div class="plan-card-option family-option" id="planOptionFamily" onclick="selectModalPlan('family')">
+            <div class="plan-option-left">
+              <div class="plan-radio-circle"></div>
+              <div class="plan-icon-badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div>
+                <div class="plan-option-name">Family & Team Pass <span class="plan-option-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35);">👨‍👩‍👧‍👦 5 MACS INCLUDED</span></div>
+                <div class="plan-option-sub">Household & team license • VIP 24/7 support</div>
+              </div>
+            </div>
+            <div class="plan-option-price" id="modalFamilyPriceVal">$129.99 <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span></div>
           </div>
 
           <!-- Extra Mac Seat Add-on Option -->
@@ -2320,47 +2357,47 @@
 
     const CURRENCIES = {
       // North America
-      usd: { code: 'usd', symbol: '$', name: 'USD ($)', country: 'United States', flag: '🇺🇸', monthly: '$4.99', monthlyNum: '$4.99', annual: '$39.99', annualMonthly: '$3.33', lifetime: '$79.99', seatAddon: '$19.99' },
-      cad: { code: 'cad', symbol: 'CA$', name: 'CAD (CA$)', country: 'Canada', flag: '🇨🇦', monthly: 'CA$6.79', monthlyNum: 'CA$6.79', annual: 'CA$54.99', annualMonthly: 'CA$4.58', lifetime: 'CA$109.99', seatAddon: 'CA$26.99' },
-      mxn: { code: 'mxn', symbol: 'MX$', name: 'MXN (MX$)', country: 'Mexico', flag: '🇲🇽', monthly: 'MX$99', monthlyNum: 'MX$99', annual: 'MX$799', annualMonthly: 'MX$66.58', lifetime: 'MX$1,599', seatAddon: 'MX$399' },
+      usd: { code: 'usd', symbol: '$', name: 'USD ($)', country: 'United States', flag: '🇺🇸', monthly: '$4.99', monthlyNum: '$4.99', annual: '$39.99', annualMonthly: '$3.33', lifetime: '$79.99', family: '$129.99', seatAddon: '$19.99' },
+      cad: { code: 'cad', symbol: 'CA$', name: 'CAD (CA$)', country: 'Canada', flag: '🇨🇦', monthly: 'CA$6.79', monthlyNum: 'CA$6.79', annual: 'CA$54.99', annualMonthly: 'CA$4.58', lifetime: 'CA$109.99', family: 'CA$169.99', seatAddon: 'CA$26.99' },
+      mxn: { code: 'mxn', symbol: 'MX$', name: 'MXN (MX$)', country: 'Mexico', flag: '🇲🇽', monthly: 'MX$99', monthlyNum: 'MX$99', annual: 'MX$799', annualMonthly: 'MX$66.58', lifetime: 'MX$1,599', family: 'MX$2,599', seatAddon: 'MX$399' },
       
       // Europe
-      eur: { code: 'eur', symbol: '€', name: 'EUR (€)', country: 'European Union', flag: '🇪🇺', monthly: '€4.59', monthlyNum: '€4.59', annual: '€36.99', annualMonthly: '€3.08', lifetime: '€74.99', seatAddon: '€18.99' },
-      gbp: { code: 'gbp', symbol: '£', name: 'GBP (£)', country: 'United Kingdom', flag: '🇬🇧', monthly: '£3.99', monthlyNum: '£3.99', annual: '£31.99', annualMonthly: '£2.66', lifetime: '£64.99', seatAddon: '£15.99' },
-      chf: { code: 'chf', symbol: 'CHF', name: 'CHF (CHF)', country: 'Switzerland', flag: '🇨🇭', monthly: '4.49 CHF', monthlyNum: '4.49 CHF', annual: '35.99 CHF', annualMonthly: '2.99 CHF', lifetime: '69.99 CHF', seatAddon: '17.99 CHF' },
-      sek: { code: 'sek', symbol: 'kr', name: 'SEK (kr)', country: 'Sweden', flag: '🇸🇪', monthly: '52.99 kr', monthlyNum: '52.99 kr', annual: '429.99 kr', annualMonthly: '35.83 kr', lifetime: '859.99 kr', seatAddon: '214.99 kr' },
-      nok: { code: 'nok', symbol: 'kr', name: 'NOK (kr)', country: 'Norway', flag: '🇳🇴', monthly: '54.99 kr', monthlyNum: '54.99 kr', annual: '439.99 kr', annualMonthly: '36.66 kr', lifetime: '879.99 kr', seatAddon: '219.99 kr' },
-      dkk: { code: 'dkk', symbol: 'kr', name: 'DKK (kr)', country: 'Denmark', flag: '🇩🇰', monthly: '34.99 kr', monthlyNum: '34.99 kr', annual: '279.99 kr', annualMonthly: '23.33 kr', lifetime: '559.99 kr', seatAddon: '139.99 kr' },
-      pln: { code: 'pln', symbol: 'zł', name: 'PLN (zł)', country: 'Poland', flag: '🇵🇱', monthly: '19.99 zł', monthlyNum: '19.99 zł', annual: '159.99 zł', annualMonthly: '13.33 zł', lifetime: '319.99 zł', seatAddon: '79.99 zł' },
-      czk: { code: 'czk', symbol: 'Kč', name: 'CZK (Kč)', country: 'Czech Republic', flag: '🇨🇿', monthly: '115 Kč', monthlyNum: '115 Kč', annual: '929 Kč', annualMonthly: '77.41 Kč', lifetime: '1,859 Kč', seatAddon: '465 Kč' },
-      try: { code: 'try', symbol: '₺', name: 'TRY (₺)', country: 'Turkey', flag: '🇹🇷', monthly: '₺169', monthlyNum: '₺169', annual: '₺1,349', annualMonthly: '₺112.41', lifetime: '₺2,699', seatAddon: '₺679' },
+      eur: { code: 'eur', symbol: '€', name: 'EUR (€)', country: 'European Union', flag: '🇪🇺', monthly: '€4.59', monthlyNum: '€4.59', annual: '€36.99', annualMonthly: '€3.08', lifetime: '€74.99', family: '€129.99', seatAddon: '€18.99' },
+      gbp: { code: 'gbp', symbol: '£', name: 'GBP (£)', country: 'United Kingdom', flag: '🇬🇧', monthly: '£3.99', monthlyNum: '£3.99', annual: '£31.99', annualMonthly: '£2.66', lifetime: '£64.99', family: '£109.99', seatAddon: '£15.99' },
+      chf: { code: 'chf', symbol: 'CHF', name: 'CHF (CHF)', country: 'Switzerland', flag: '🇨🇭', monthly: '4.49 CHF', monthlyNum: '4.49 CHF', annual: '35.99 CHF', annualMonthly: '2.99 CHF', lifetime: '69.99 CHF', family: '119.99 CHF', seatAddon: '17.99 CHF' },
+      sek: { code: 'sek', symbol: 'kr', name: 'SEK (kr)', country: 'Sweden', flag: '🇸🇪', monthly: '52.99 kr', monthlyNum: '52.99 kr', annual: '429.99 kr', annualMonthly: '35.83 kr', lifetime: '859.99 kr', family: '1,399.99 kr', seatAddon: '214.99 kr' },
+      nok: { code: 'nok', symbol: 'kr', name: 'NOK (kr)', country: 'Norway', flag: '🇳🇴', monthly: '54.99 kr', monthlyNum: '54.99 kr', annual: '439.99 kr', annualMonthly: '36.66 kr', lifetime: '879.99 kr', family: '1,429.99 kr', seatAddon: '219.99 kr' },
+      dkk: { code: 'dkk', symbol: 'kr', name: 'DKK (kr)', country: 'Denmark', flag: '🇩🇰', monthly: '34.99 kr', monthlyNum: '34.99 kr', annual: '279.99 kr', annualMonthly: '23.33 kr', lifetime: '559.99 kr', family: '919.99 kr', seatAddon: '139.99 kr' },
+      pln: { code: 'pln', symbol: 'zł', name: 'PLN (zł)', country: 'Poland', flag: '🇵🇱', monthly: '19.99 zł', monthlyNum: '19.99 zł', annual: '159.99 zł', annualMonthly: '13.33 zł', lifetime: '319.99 zł', family: '529.99 zł', seatAddon: '79.99 zł' },
+      czk: { code: 'czk', symbol: 'Kč', name: 'CZK (Kč)', country: 'Czech Republic', flag: '🇨🇿', monthly: '115 Kč', monthlyNum: '115 Kč', annual: '929 Kč', annualMonthly: '77.41 Kč', lifetime: '1,859 Kč', family: '3,099 Kč', seatAddon: '465 Kč' },
+      try: { code: 'try', symbol: '₺', name: 'TRY (₺)', country: 'Turkey', flag: '🇹🇷', monthly: '₺169', monthlyNum: '₺169', annual: '₺1,349', annualMonthly: '₺112.41', lifetime: '₺2,699', family: '₺4,499', seatAddon: '₺679' },
 
       // Asia-Pacific & Oceania
-      aud: { code: 'aud', symbol: 'A$', name: 'AUD (A$)', country: 'Australia', flag: '🇦🇺', monthly: 'A$7.49', monthlyNum: 'A$7.49', annual: 'A$59.99', annualMonthly: 'A$4.99', lifetime: 'A$119.99', seatAddon: 'A$29.99' },
-      nzd: { code: 'nzd', symbol: 'NZ$', name: 'NZD (NZ$)', country: 'New Zealand', flag: '🇳🇿', monthly: 'NZ$7.99', monthlyNum: 'NZ$7.99', annual: 'NZ$64.99', annualMonthly: 'NZ$5.41', lifetime: 'NZ$129.99', seatAddon: 'NZ$32.99' },
-      jpy: { code: 'jpy', symbol: '¥', name: 'JPY (¥)', country: 'Japan', flag: '🇯🇵', monthly: '¥750', monthlyNum: '¥750', annual: '¥5,990', annualMonthly: '¥499', lifetime: '¥11,990', seatAddon: '¥2,990' },
-      inr: { code: 'inr', symbol: '₹', name: 'INR (₹)', country: 'India', flag: '🇮🇳', monthly: '₹419', monthlyNum: '₹419', annual: '₹3,299', annualMonthly: '₹275', lifetime: '₹6,699', seatAddon: '₹1,699' },
-      sgd: { code: 'sgd', symbol: 'S$', name: 'SGD (S$)', country: 'Singapore', flag: '🇸🇬', monthly: 'S$6.69', monthlyNum: 'S$6.69', annual: 'S$53.99', annualMonthly: 'S$4.49', lifetime: 'S$107.99', seatAddon: 'S$26.99' },
-      hkd: { code: 'hkd', symbol: 'HK$', name: 'HKD (HK$)', country: 'Hong Kong', flag: '🇭🇰', monthly: 'HK$38.99', monthlyNum: 'HK$38.99', annual: 'HK$312.99', annualMonthly: 'HK$26.08', lifetime: 'HK$624.99', seatAddon: 'HK$156.99' },
-      twd: { code: 'twd', symbol: 'NT$', name: 'TWD (NT$)', country: 'Taiwan', flag: '🇹🇼', monthly: 'NT$159', monthlyNum: 'NT$159', annual: 'NT$1,280', annualMonthly: 'NT$106.67', lifetime: 'NT$2,560', seatAddon: 'NT$640' },
-      krw: { code: 'krw', symbol: '₩', name: 'KRW (₩)', country: 'South Korea', flag: '🇰🇷', monthly: '₩6,800', monthlyNum: '₩6,800', annual: '₩54,900', annualMonthly: '₩4,575', lifetime: '₩109,000', seatAddon: '₩27,900' },
-      myr: { code: 'myr', symbol: 'RM', name: 'MYR (RM)', country: 'Malaysia', flag: '🇲🇾', monthly: 'RM 21.99', monthlyNum: 'RM 21.99', annual: 'RM 179.99', annualMonthly: 'RM 14.99', lifetime: 'RM 359.99', seatAddon: 'RM 89.99' },
-      thb: { code: 'thb', symbol: '฿', name: 'THB (฿)', country: 'Thailand', flag: '🇹🇭', monthly: '฿179', monthlyNum: '฿179', annual: '฿1,449', annualMonthly: '฿120.75', lifetime: '฿2,899', seatAddon: '฿729' },
-      php: { code: 'php', symbol: '₱', name: 'PHP (₱)', country: 'Philippines', flag: '🇵🇭', monthly: '₱279', monthlyNum: '₱279', annual: '₱2,249', annualMonthly: '₱187.41', lifetime: '₱4,499', seatAddon: '₱1,129' },
-      idr: { code: 'idr', symbol: 'Rp', name: 'IDR (Rp)', country: 'Indonesia', flag: '🇮🇩', monthly: 'Rp 79.000', monthlyNum: 'Rp 79.000', annual: 'Rp 639.000', annualMonthly: 'Rp 53.250', lifetime: 'Rp 1.279.000', seatAddon: 'Rp 319.000' },
-      vnd: { code: 'vnd', symbol: '₫', name: 'VND (₫)', country: 'Vietnam', flag: '🇻🇳', monthly: '₫125,000', monthlyNum: '₫125,000', annual: '₫999,000', annualMonthly: '₫83,250', lifetime: '₫1,999,000', seatAddon: '₫499,000' },
+      aud: { code: 'aud', symbol: 'A$', name: 'AUD (A$)', country: 'Australia', flag: '🇦🇺', monthly: 'A$7.49', monthlyNum: 'A$7.49', annual: 'A$59.99', annualMonthly: 'A$4.99', lifetime: 'A$119.99', family: 'A$199.99', seatAddon: 'A$29.99' },
+      nzd: { code: 'nzd', symbol: 'NZ$', name: 'NZD (NZ$)', country: 'New Zealand', flag: '🇳🇿', monthly: 'NZ$7.99', monthlyNum: 'NZ$7.99', annual: 'NZ$64.99', annualMonthly: 'NZ$5.41', lifetime: 'NZ$129.99', family: 'NZ$219.99', seatAddon: 'NZ$32.99' },
+      jpy: { code: 'jpy', symbol: '¥', name: 'JPY (¥)', country: 'Japan', flag: '🇯🇵', monthly: '¥750', monthlyNum: '¥750', annual: '¥5,990', annualMonthly: '¥499', lifetime: '¥11,990', family: '¥19,980', seatAddon: '¥2,990' },
+      inr: { code: 'inr', symbol: '₹', name: 'INR (₹)', country: 'India', flag: '🇮🇳', monthly: '₹419', monthlyNum: '₹419', annual: '₹3,299', annualMonthly: '₹275', lifetime: '₹6,699', family: '₹10,999', seatAddon: '₹1,699' },
+      sgd: { code: 'sgd', symbol: 'S$', name: 'SGD (S$)', country: 'Singapore', flag: '🇸🇬', monthly: 'S$6.69', monthlyNum: 'S$6.69', annual: 'S$53.99', annualMonthly: 'S$4.49', lifetime: 'S$107.99', family: 'S$179.99', seatAddon: 'S$26.99' },
+      hkd: { code: 'hkd', symbol: 'HK$', name: 'HKD (HK$)', country: 'Hong Kong', flag: '🇭🇰', monthly: 'HK$38.99', monthlyNum: 'HK$38.99', annual: 'HK$312.99', annualMonthly: 'HK$26.08', lifetime: 'HK$624.99', family: 'HK$1,019.99', seatAddon: 'HK$156.99' },
+      twd: { code: 'twd', symbol: 'NT$', name: 'TWD (NT$)', country: 'Taiwan', flag: '🇹🇼', monthly: 'NT$159', monthlyNum: 'NT$159', annual: 'NT$1,280', annualMonthly: 'NT$106.67', lifetime: 'NT$2,560', family: 'NT$4,190', seatAddon: 'NT$640' },
+      krw: { code: 'krw', symbol: '₩', name: 'KRW (₩)', country: 'South Korea', flag: '🇰🇷', monthly: '₩6,800', monthlyNum: '₩6,800', annual: '₩54,900', annualMonthly: '₩4,575', lifetime: '₩109,000', family: '₩179,000', seatAddon: '₩27,900' },
+      myr: { code: 'myr', symbol: 'RM', name: 'MYR (RM)', country: 'Malaysia', flag: '🇲🇾', monthly: 'RM 21.99', monthlyNum: 'RM 21.99', annual: 'RM 179.99', annualMonthly: 'RM 14.99', lifetime: 'RM 359.99', family: 'RM 589.99', seatAddon: 'RM 89.99' },
+      thb: { code: 'thb', symbol: '฿', name: 'THB (฿)', country: 'Thailand', flag: '🇹🇭', monthly: '฿179', monthlyNum: '฿179', annual: '฿1,449', annualMonthly: '฿120.75', lifetime: '฿2,899', family: '฿4,699', seatAddon: '฿729' },
+      php: { code: 'php', symbol: '₱', name: 'PHP (₱)', country: 'Philippines', flag: '🇵🇭', monthly: '₱279', monthlyNum: '₱279', annual: '₱2,249', annualMonthly: '₱187.41', lifetime: '₱4,499', family: '₱7,299', seatAddon: '₱1,129' },
+      idr: { code: 'idr', symbol: 'Rp', name: 'IDR (Rp)', country: 'Indonesia', flag: '🇮🇩', monthly: 'Rp 79.000', monthlyNum: 'Rp 79.000', annual: 'Rp 639.000', annualMonthly: 'Rp 53.250', lifetime: 'Rp 1.279.000', family: 'Rp 2.090.000', seatAddon: 'Rp 319.000' },
+      vnd: { code: 'vnd', symbol: '₫', name: 'VND (₫)', country: 'Vietnam', flag: '🇻🇳', monthly: '₫125,000', monthlyNum: '₫125,000', annual: '₫999,000', annualMonthly: '₫83,250', lifetime: '₫1,999,000', family: '₫3,299,000', seatAddon: '₫499,000' },
 
       // Middle East & Africa
-      aed: { code: 'aed', symbol: 'AED', name: 'AED (AED)', country: 'United Arab Emirates', flag: '🇦🇪', monthly: 'AED 18.49', monthlyNum: 'AED 18.49', annual: 'AED 146.99', annualMonthly: 'AED 12.24', lifetime: 'AED 293.99', seatAddon: 'AED 73.99' },
-      sar: { code: 'sar', symbol: 'SAR', name: 'SAR (SAR)', country: 'Saudi Arabia', flag: '🇸🇦', monthly: 'SAR 18.99', monthlyNum: 'SAR 18.99', annual: 'SAR 149.99', annualMonthly: 'SAR 12.49', lifetime: 'SAR 299.99', seatAddon: 'SAR 74.99' },
-      ils: { code: 'ils', symbol: '₪', name: 'ILS (₪)', country: 'Israel', flag: '🇮🇱', monthly: '₪18.99', monthlyNum: '₪18.99', annual: '₪149.99', annualMonthly: '₪12.49', lifetime: '₪299.99', seatAddon: '₪74.99' },
-      zar: { code: 'zar', symbol: 'R', name: 'ZAR (R)', country: 'South Africa', flag: '🇿🇦', monthly: 'R 89.99', monthlyNum: 'R 89.99', annual: 'R 729.99', annualMonthly: 'R 60.83', lifetime: 'R 1,459.99', seatAddon: 'R 369.99' },
+      aed: { code: 'aed', symbol: 'AED', name: 'AED (AED)', country: 'United Arab Emirates', flag: '🇦🇪', monthly: 'AED 18.49', monthlyNum: 'AED 18.49', annual: 'AED 146.99', annualMonthly: 'AED 12.24', lifetime: 'AED 293.99', family: 'AED 479.99', seatAddon: 'AED 73.99' },
+      sar: { code: 'sar', symbol: 'SAR', name: 'SAR (SAR)', country: 'Saudi Arabia', flag: '🇸🇦', monthly: 'SAR 18.99', monthlyNum: 'SAR 18.99', annual: 'SAR 149.99', annualMonthly: 'SAR 12.49', lifetime: 'SAR 299.99', family: 'SAR 489.99', seatAddon: 'SAR 74.99' },
+      ils: { code: 'ils', symbol: '₪', name: 'ILS (₪)', country: 'Israel', flag: '🇮🇱', monthly: '₪18.99', monthlyNum: '₪18.99', annual: '₪149.99', annualMonthly: '₪12.49', lifetime: '₪299.99', family: '₪489.99', seatAddon: '₪74.99' },
+      zar: { code: 'zar', symbol: 'R', name: 'ZAR (R)', country: 'South Africa', flag: '🇿🇦', monthly: 'R 89.99', monthlyNum: 'R 89.99', annual: 'R 729.99', annualMonthly: 'R 60.83', lifetime: 'R 1,459.99', family: 'R 2,399.99', seatAddon: 'R 369.99' },
 
       // Latin America
-      brl: { code: 'brl', symbol: 'R$', name: 'BRL (R$)', country: 'Brazil', flag: '🇧🇷', monthly: 'R$27.99', monthlyNum: 'R$27.99', annual: 'R$219.99', annualMonthly: 'R$18.33', lifetime: 'R$439.99', seatAddon: 'R$99.99' },
-      ars: { code: 'ars', symbol: '$', name: 'ARS ($)', country: 'Argentina', flag: '🇦🇷', monthly: '$4,999', monthlyNum: '$4,999', annual: '$39,999', annualMonthly: '$3,333', lifetime: '$79,999', seatAddon: '$19,999' },
-      clp: { code: 'clp', symbol: 'CLP$', name: 'CLP (CLP$)', country: 'Chile', flag: '🇨🇱', monthly: 'CLP$ 4,800', monthlyNum: 'CLP$ 4,800', annual: 'CLP$ 38,900', annualMonthly: 'CLP$ 3,241', lifetime: 'CLP$ 77,900', seatAddon: 'CLP$ 19,500' },
-      cop: { code: 'cop', symbol: 'COP$', name: 'COP (COP$)', country: 'Colombia', flag: '🇨🇴', monthly: 'COP$ 19,900', monthlyNum: 'COP$ 19,900', annual: 'COP$ 159,900', annualMonthly: 'COP$ 13,325', lifetime: 'COP$ 319,900', seatAddon: 'COP$ 79,900' },
+      brl: { code: 'brl', symbol: 'R$', name: 'BRL (R$)', country: 'Brazil', flag: '🇧🇷', monthly: 'R$27.99', monthlyNum: 'R$27.99', annual: 'R$219.99', annualMonthly: 'R$18.33', lifetime: 'R$439.99', family: 'R$719.99', seatAddon: 'R$99.99' },
+      ars: { code: 'ars', symbol: '$', name: 'ARS ($)', country: 'Argentina', flag: '🇦🇷', monthly: '$4,999', monthlyNum: '$4,999', annual: '$39,999', annualMonthly: '$3,333', lifetime: '$79,999', family: '$129,999', seatAddon: '$19,999' },
+      clp: { code: 'clp', symbol: 'CLP$', name: 'CLP (CLP$)', country: 'Chile', flag: '🇨🇱', monthly: 'CLP$ 4,800', monthlyNum: 'CLP$ 4,800', annual: 'CLP$ 38,900', annualMonthly: 'CLP$ 3,241', lifetime: 'CLP$ 77,900', family: 'CLP$ 127,900', seatAddon: 'CLP$ 19,500' },
+      cop: { code: 'cop', symbol: 'COP$', name: 'COP (COP$)', country: 'Colombia', flag: '🇨🇴', monthly: 'COP$ 19,900', monthlyNum: 'COP$ 19,900', annual: 'COP$ 159,900', annualMonthly: 'COP$ 13,325', lifetime: 'COP$ 319,900', family: 'COP$ 519,900', seatAddon: 'COP$ 79,900' },
     };
 
     // Complete Global Country-to-Currency Map (200+ Countries & Territories matching macOS App)
@@ -2793,6 +2830,8 @@
       if (pAnnual) pAnnual.innerHTML = `${c.annual} <span>/ year (${c.annualMonthly}/mo)</span>`;
       const pLifetime = document.getElementById('pricingLifetimeVal');
       if (pLifetime) pLifetime.innerHTML = `${c.lifetime} <span>one-time</span>`;
+      const pFamily = document.getElementById('pricingFamilyVal');
+      if (pFamily) pFamily.innerHTML = `${c.family} <span>one-time</span>`;
       const pSeatAddon = document.getElementById('seatAddonPriceVal');
       if (pSeatAddon) pSeatAddon.textContent = c.seatAddon;
 
@@ -2805,6 +2844,8 @@
       if (mAnnualSub) mAnnualSub.textContent = `Save 33% • ${c.annualMonthly}/mo billed annually`;
       const mLifetime = document.getElementById('modalLifetimePriceVal');
       if (mLifetime) mLifetime.innerHTML = `${c.lifetime} <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span>`;
+      const mFamily = document.getElementById('modalFamilyPriceVal');
+      if (mFamily) mFamily.innerHTML = `${c.family} <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span>`;
       const mSeatAddon = document.getElementById('modalSeatAddonPriceVal');
       if (mSeatAddon) mSeatAddon.innerHTML = `${c.seatAddon} <span style="font-size: 11px; font-weight: normal; color: #64748b;">once</span>`;
 
@@ -2823,6 +2864,21 @@
     document.addEventListener('DOMContentLoaded', () => {
       populateCountryDropdowns();
       autoDetectLocationAndCurrency();
+
+      // Check if URL specifies a plan query parameter (e.g. ?plan=annual or ?plan=com.ravn.pro.annual)
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        let planParam = urlParams.get('plan') || urlParams.get('tier') || '';
+        planParam = planParam.toLowerCase().replace('com.ravn.pro.', '').replace('com.ravn.', '').trim();
+        if (planParam === 'ultra') planParam = 'lifetime';
+        if (['monthly', 'annual', 'lifetime', 'family', 'seat_addon'].includes(planParam)) {
+          setTimeout(() => {
+            openCheckoutModal(planParam);
+          }, 250);
+        }
+      } catch (e) {
+        console.warn('Could not parse plan param:', e);
+      }
     });
 
     // Live Theme Switcher
@@ -2927,6 +2983,7 @@
         'monthly': 'planOptionMonthly',
         'annual': 'planOptionAnnual',
         'lifetime': 'planOptionLifetime',
+        'family': 'planOptionFamily',
         'seat_addon': 'planOptionSeatAddon'
       }[planTier] || 'planOptionAnnual';
 
@@ -2941,6 +2998,8 @@
           submitBtn.textContent = `Continue with 7-Day Free Trial (${c.annual}/yr) ➔`;
         } else if (planTier === 'lifetime') {
           submitBtn.textContent = `Continue to Lifetime Pass (${c.lifetime}) ➔`;
+        } else if (planTier === 'family') {
+          submitBtn.textContent = `Continue to Family & Team Pass (${c.family}) ➔`;
         } else if (planTier === 'seat_addon') {
           submitBtn.textContent = `Continue to Seat Add-on (${c.seatAddon}) ➔`;
         } else {

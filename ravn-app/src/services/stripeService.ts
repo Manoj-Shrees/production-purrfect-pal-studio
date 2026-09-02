@@ -50,52 +50,52 @@ export class StripeService {
     cop: { code: 'cop', symbol: 'COP$' },
   };
 
-  public static readonly PLAN_PRICES: Record<string, Record<'monthly' | 'annual' | 'lifetime' | 'seat_addon', number>> = {
+  public static readonly PLAN_PRICES: Record<string, Record<'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon', number>> = {
     // North America
-    usd: { monthly: 499, annual: 3999, lifetime: 7999, seat_addon: 1999 },
-    cad: { monthly: 679, annual: 5499, lifetime: 10999, seat_addon: 2699 },
-    mxn: { monthly: 9900, annual: 79900, lifetime: 159900, seat_addon: 39900 },
+    usd: { monthly: 499, annual: 3999, lifetime: 7999, family: 12999, seat_addon: 1999 },
+    cad: { monthly: 679, annual: 5499, lifetime: 10999, family: 16999, seat_addon: 2699 },
+    mxn: { monthly: 9900, annual: 79900, lifetime: 159900, family: 259900, seat_addon: 39900 },
     // Europe
-    eur: { monthly: 459, annual: 3699, lifetime: 7499, seat_addon: 1899 },
-    gbp: { monthly: 399, annual: 3199, lifetime: 6499, seat_addon: 1599 },
-    chf: { monthly: 449, annual: 3599, lifetime: 6999, seat_addon: 1799 },
-    sek: { monthly: 5299, annual: 42999, lifetime: 85999, seat_addon: 21499 },
-    nok: { monthly: 5499, annual: 43999, lifetime: 87999, seat_addon: 21999 },
-    dkk: { monthly: 3499, annual: 27999, lifetime: 55999, seat_addon: 13999 },
-    pln: { monthly: 1999, annual: 15999, lifetime: 31999, seat_addon: 7999 },
-    czk: { monthly: 11500, annual: 92900, lifetime: 185900, seat_addon: 46500 },
-    try: { monthly: 16900, annual: 134900, lifetime: 269900, seat_addon: 67900 },
+    eur: { monthly: 459, annual: 3699, lifetime: 7499, family: 12999, seat_addon: 1899 },
+    gbp: { monthly: 399, annual: 3199, lifetime: 6499, family: 10999, seat_addon: 1599 },
+    chf: { monthly: 449, annual: 3599, lifetime: 6999, family: 11999, seat_addon: 1799 },
+    sek: { monthly: 5299, annual: 42999, lifetime: 85999, family: 139999, seat_addon: 21499 },
+    nok: { monthly: 5499, annual: 43999, lifetime: 87999, family: 142999, seat_addon: 21999 },
+    dkk: { monthly: 3499, annual: 27999, lifetime: 55999, family: 91999, seat_addon: 13999 },
+    pln: { monthly: 1999, annual: 15999, lifetime: 31999, family: 52999, seat_addon: 7999 },
+    czk: { monthly: 11500, annual: 92900, lifetime: 185900, family: 309900, seat_addon: 46500 },
+    try: { monthly: 16900, annual: 134900, lifetime: 269900, family: 449900, seat_addon: 67900 },
     // Asia-Pacific & Oceania
-    aud: { monthly: 749, annual: 5999, lifetime: 11999, seat_addon: 2999 },
-    nzd: { monthly: 799, annual: 6499, lifetime: 12999, seat_addon: 3299 },
-    jpy: { monthly: 750, annual: 5990, lifetime: 11990, seat_addon: 2990 },
-    inr: { monthly: 41900, annual: 329900, lifetime: 669900, seat_addon: 169900 },
-    sgd: { monthly: 669, annual: 5399, lifetime: 10799, seat_addon: 2699 },
-    hkd: { monthly: 3899, annual: 31299, lifetime: 62499, seat_addon: 15699 },
-    twd: { monthly: 15900, annual: 128000, lifetime: 256000, seat_addon: 64000 },
-    krw: { monthly: 6800, annual: 54900, lifetime: 109000, seat_addon: 27900 },
-    myr: { monthly: 2199, annual: 17999, lifetime: 35999, seat_addon: 8999 },
-    thb: { monthly: 17900, annual: 144900, lifetime: 289900, seat_addon: 72900 },
-    php: { monthly: 27900, annual: 224900, lifetime: 449900, seat_addon: 112900 },
-    idr: { monthly: 7900000, annual: 63900000, lifetime: 127900000, seat_addon: 31900000 },
-    vnd: { monthly: 125000, annual: 999000, lifetime: 1999000, seat_addon: 499000 },
+    aud: { monthly: 749, annual: 5999, lifetime: 11999, family: 19999, seat_addon: 2999 },
+    nzd: { monthly: 799, annual: 6499, lifetime: 12999, family: 21999, seat_addon: 3299 },
+    jpy: { monthly: 750, annual: 5990, lifetime: 11990, family: 19980, seat_addon: 2990 },
+    inr: { monthly: 41900, annual: 329900, lifetime: 669900, family: 1099900, seat_addon: 169900 },
+    sgd: { monthly: 669, annual: 5399, lifetime: 10799, family: 17999, seat_addon: 2699 },
+    hkd: { monthly: 3899, annual: 31299, lifetime: 62499, family: 101999, seat_addon: 15699 },
+    twd: { monthly: 15900, annual: 128000, lifetime: 256000, family: 419000, seat_addon: 64000 },
+    krw: { monthly: 6800, annual: 54900, lifetime: 109000, family: 179000, seat_addon: 27900 },
+    myr: { monthly: 2199, annual: 17999, lifetime: 35999, family: 58999, seat_addon: 8999 },
+    thb: { monthly: 17900, annual: 144900, lifetime: 289900, family: 469900, seat_addon: 72900 },
+    php: { monthly: 27900, annual: 224900, lifetime: 449900, family: 729900, seat_addon: 112900 },
+    idr: { monthly: 7900000, annual: 63900000, lifetime: 127900000, family: 209000000, seat_addon: 31900000 },
+    vnd: { monthly: 125000, annual: 999000, lifetime: 1999000, family: 3299000, seat_addon: 499000 },
     // Middle East & Africa
-    aed: { monthly: 1849, annual: 14699, lifetime: 29399, seat_addon: 7399 },
-    sar: { monthly: 1899, annual: 14999, lifetime: 29999, seat_addon: 7499 },
-    ils: { monthly: 1899, annual: 14999, lifetime: 29999, seat_addon: 7499 },
-    zar: { monthly: 8999, annual: 72999, lifetime: 145999, seat_addon: 36999 },
+    aed: { monthly: 1849, annual: 14699, lifetime: 29399, family: 47999, seat_addon: 7399 },
+    sar: { monthly: 1899, annual: 14999, lifetime: 29999, family: 48999, seat_addon: 7499 },
+    ils: { monthly: 1899, annual: 14999, lifetime: 29999, family: 48999, seat_addon: 7499 },
+    zar: { monthly: 8999, annual: 72999, lifetime: 145999, family: 239999, seat_addon: 36999 },
     // Latin America
-    brl: { monthly: 2799, annual: 21999, lifetime: 43999, seat_addon: 9999 },
-    ars: { monthly: 499900, annual: 3999900, lifetime: 7999900, seat_addon: 1999900 },
-    clp: { monthly: 4800, annual: 38900, lifetime: 77900, seat_addon: 19500 },
-    cop: { monthly: 1990000, annual: 15990000, lifetime: 31990000, seat_addon: 7990000 },
+    brl: { monthly: 2799, annual: 21999, lifetime: 43999, family: 71999, seat_addon: 9999 },
+    ars: { monthly: 499900, annual: 3999900, lifetime: 7999900, family: 12999900, seat_addon: 1999900 },
+    clp: { monthly: 4800, annual: 38900, lifetime: 77900, family: 127900, seat_addon: 19500 },
+    cop: { monthly: 1990000, annual: 15990000, lifetime: 31990000, family: 51990000, seat_addon: 7990000 },
   };
 
   /**
-   * Creates a Stripe Checkout Session for Monthly, Annual, Lifetime, or Seat Add-on in selected currency
+   * Creates a Stripe Checkout Session for Monthly, Annual, Lifetime, Family, or Seat Add-on in selected currency
    */
   static async createCheckoutSession(options: {
-    planTier: 'monthly' | 'annual' | 'lifetime' | 'seat_addon';
+    planTier: 'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon';
     customerEmail?: string;
     currency?: string;
     licenseKey?: string;
@@ -212,7 +212,7 @@ export class StripeService {
    * Creates a PaymentIntent or SetupIntent for custom in-page Stripe checkout
    */
   static async createPaymentIntent(options: {
-    planTier: 'monthly' | 'annual' | 'lifetime' | 'seat_addon';
+    planTier: 'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon';
     email: string;
     currency?: string;
   }): Promise<{
@@ -275,7 +275,7 @@ export class StripeService {
         isSubscription: true,
       };
     } else {
-      // Create PaymentIntent for lifetime / seat add-on
+      // Create PaymentIntent for lifetime / family / seat add-on
       const paymentIntent = await this.stripeClient.paymentIntents.create({
         amount: unitAmount,
         currency: curr.code.toLowerCase(),
@@ -312,7 +312,7 @@ export class StripeService {
     paymentIntentId?: string;
     setupIntentId?: string;
     email: string;
-    planTier: 'monthly' | 'annual' | 'lifetime' | 'seat_addon';
+    planTier: 'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon';
   }): Promise<{
     success: boolean;
     licenseKey: string;
@@ -322,12 +322,26 @@ export class StripeService {
     expiresAt: string | null;
   }> {
     let customerId = '';
+    const isOneTimePayment = !['monthly', 'annual'].includes(options.planTier);
 
     if (options.paymentIntentId) {
       const pi = await this.stripeClient.paymentIntents.retrieve(options.paymentIntentId);
-      if (pi.status !== 'succeeded' && pi.status !== 'processing') {
+
+      // For one-time payments (lifetime/family/seat_addon), ONLY mint on 'succeeded'
+      // 'processing' (e.g. ACH bank transfer) can still reverse — do not mint early
+      if (isOneTimePayment && pi.status !== 'succeeded') {
+        throw new Error(
+          `Payment has not been confirmed yet (status: ${pi.status}). ` +
+          `Your license will be delivered automatically once the payment clears. ` +
+          `Check your email or the activation portal.`
+        );
+      }
+
+      // For subscriptions, succeeded OR processing is acceptable (card pre-auth)
+      if (!isOneTimePayment && pi.status !== 'succeeded' && pi.status !== 'processing') {
         throw new Error(`Payment has not succeeded yet (status: ${pi.status})`);
       }
+
       customerId = typeof pi.customer === 'string' ? pi.customer : pi.customer?.id || '';
     } else if (options.setupIntentId) {
       const si = await this.stripeClient.setupIntents.retrieve(options.setupIntentId);
@@ -337,8 +351,11 @@ export class StripeService {
       customerId = typeof si.customer === 'string' ? si.customer : si.customer?.id || '';
     }
 
-    const planType = options.planTier === 'annual' ? 'annual' : options.planTier === 'lifetime' ? 'lifetime' : 'monthly';
-    const maxDevices = options.planTier === 'lifetime' ? 2 : 1;
+    const planType = options.planTier === 'annual' ? 'annual'
+      : options.planTier === 'family' ? 'family'
+      : options.planTier === 'lifetime' ? 'lifetime'
+      : 'monthly';
+    const maxDevices = options.planTier === 'family' ? 5 : options.planTier === 'lifetime' ? 2 : 1;
 
     const license = await LicenseService.createLicense({
       email: options.email,

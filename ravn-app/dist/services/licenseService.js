@@ -14,9 +14,9 @@ export class LicenseService {
         // Get actual customer ID if existed
         const [custRows] = await dbPool.execute(`SELECT id FROM customers WHERE email = ?`, [options.email.toLowerCase().trim()]);
         const resolvedCustomerId = custRows[0]?.id ?? customerId;
-        // 2. Determine expiration and max devices based on plan (Pro = 1 Mac, Ultra Lifetime = 2 Macs)
+        // 2. Determine expiration and max devices based on plan (Pro = 1 Mac, Ultra Lifetime = 2 Macs, Family = 5 Macs)
         let expiresAt = options.expiresAt ?? null;
-        let maxDevices = options.maxDevices ?? (options.planType === 'lifetime' ? 2 : 1);
+        let maxDevices = options.maxDevices ?? (options.planType === 'family' ? 5 : options.planType === 'lifetime' ? 2 : 1);
         if (options.planType === 'monthly') {
             const d = new Date();
             d.setMonth(d.getMonth() + 1);
@@ -32,6 +32,10 @@ export class LicenseService {
         else if (options.planType === 'lifetime') {
             expiresAt = null;
             maxDevices = options.maxDevices ?? 2;
+        }
+        else if (options.planType === 'family') {
+            expiresAt = null;
+            maxDevices = options.maxDevices ?? 5;
         }
         else if (options.planType === 'trial') {
             const d = new Date();

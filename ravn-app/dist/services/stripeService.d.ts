@@ -5,12 +5,12 @@ export declare class StripeService {
         symbol: string;
         isZeroDecimal?: boolean;
     }>;
-    static readonly PLAN_PRICES: Record<string, Record<'monthly' | 'annual' | 'lifetime' | 'seat_addon', number>>;
+    static readonly PLAN_PRICES: Record<string, Record<'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon', number>>;
     /**
-     * Creates a Stripe Checkout Session for Monthly, Annual, Lifetime, or Seat Add-on in selected currency
+     * Creates a Stripe Checkout Session for Monthly, Annual, Lifetime, Family, or Seat Add-on in selected currency
      */
     static createCheckoutSession(options: {
-        planTier: 'monthly' | 'annual' | 'lifetime' | 'seat_addon';
+        planTier: 'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon';
         customerEmail?: string;
         currency?: string;
         licenseKey?: string;
@@ -24,7 +24,7 @@ export declare class StripeService {
      * Creates a PaymentIntent or SetupIntent for custom in-page Stripe checkout
      */
     static createPaymentIntent(options: {
-        planTier: 'monthly' | 'annual' | 'lifetime' | 'seat_addon';
+        planTier: 'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon';
         email: string;
         currency?: string;
     }): Promise<{
@@ -42,7 +42,7 @@ export declare class StripeService {
         paymentIntentId?: string;
         setupIntentId?: string;
         email: string;
-        planTier: 'monthly' | 'annual' | 'lifetime' | 'seat_addon';
+        planTier: 'monthly' | 'annual' | 'lifetime' | 'family' | 'seat_addon';
     }): Promise<{
         success: boolean;
         licenseKey: string;

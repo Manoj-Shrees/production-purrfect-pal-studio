@@ -9,10 +9,10 @@ export class StripeController {
     try {
       const { planTier, email, currency, successUrl, cancelUrl } = req.body;
 
-      if (!planTier || !['monthly', 'annual', 'lifetime', 'seat_addon'].includes(planTier)) {
+      if (!planTier || !['monthly', 'annual', 'lifetime', 'family', 'seat_addon'].includes(planTier)) {
         res.status(400).json({
           success: false,
-          error: 'Valid planTier (monthly, annual, lifetime, seat_addon) is required.',
+          error: 'Valid planTier (monthly, annual, lifetime, family, seat_addon) is required.',
         });
         return;
       }
@@ -55,10 +55,10 @@ export class StripeController {
     try {
       const { planTier, email, currency } = req.body;
 
-      if (!planTier || !['monthly', 'annual', 'lifetime', 'seat_addon'].includes(planTier)) {
+      if (!planTier || !['monthly', 'annual', 'lifetime', 'family', 'seat_addon'].includes(planTier)) {
         res.status(400).json({
           success: false,
-          error: 'Valid planTier (monthly, annual, lifetime, seat_addon) is required.',
+          error: 'Valid planTier (monthly, annual, lifetime, family, seat_addon) is required.',
         });
         return;
       }

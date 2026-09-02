@@ -43,6 +43,13 @@ export declare const config: {
                 priceCents: number;
                 maxDevices: number;
             };
+            family: {
+                id: string;
+                priceId: string;
+                name: string;
+                priceCents: number;
+                maxDevices: number;
+            };
             seat_addon: {
                 id: string;
                 priceId: string;

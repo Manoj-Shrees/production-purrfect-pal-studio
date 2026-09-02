@@ -1,5 +1,6 @@
 # Multi-Stage Production Dockerfile for Ravn Backend
-FROM node:22-alpine AS builder
+# Platform pinned to linux/amd64 — works on all VPS/cloud servers regardless of build machine arch
+FROM --platform=linux/amd64 node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +18,7 @@ COPY src ./src
 RUN npm run build
 
 # ── Production Image ────────────────────────────────────────────────────────
-FROM node:22-alpine AS runner
+FROM --platform=linux/amd64 node:22-alpine AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
