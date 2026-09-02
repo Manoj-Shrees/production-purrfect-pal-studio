@@ -83,6 +83,15 @@ export const config = {
     publicKey: process.env.LICENSE_PUBLIC_KEY || '',
   },
 
+  email: {
+    host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+    port: parseInt(process.env.SMTP_PORT || '465', 10),
+    secure: (process.env.SMTP_PORT || '465') === '465',
+    user: process.env.EMAIL_USER || 'noreply@purrfectpal.studio',
+    pass: process.env.EMAIL_PASS || '',
+    from: process.env.EMAIL_FROM || '"Ravn by Purrfect Pal Studio" <noreply@purrfectpal.studio>',
+  },
+
   admin: {
     apiKey: process.env.ADMIN_API_KEY || (() => {
       console.error('[CONFIG] CRITICAL: ADMIN_API_KEY is not set in .env! Admin endpoints will reject all requests.');

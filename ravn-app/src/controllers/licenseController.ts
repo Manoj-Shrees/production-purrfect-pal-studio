@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { LicenseService } from '../services/licenseService.js';
 import { CryptoService } from '../services/cryptoService.js';
+import { EmailService } from '../services/emailService.js';
 
 export class LicenseController {
   /**
@@ -120,13 +121,23 @@ export class LicenseController {
         maxDevices: 1,
       });
 
+      // Send 7-day trial email asynchronously
+      EmailService.sendTrialLicenseEmail({
+        email: email.trim().toLowerCase(),
+        name: name ? String(name).trim() : undefined,
+        licenseKey: license.licenseKey,
+        expiresAt: license.expiresAt,
+      }).catch(err => {
+        console.error('[LicenseController.startTrial] Non-blocking email error:', err.message);
+      });
+
       res.status(200).json({
         success: true,
         licenseKey: license.licenseKey,
         plan: 'trial',
         days: 7,
         expiresAt: license.expiresAt,
-        message: 'Your 7-Day Free Trial license has been successfully minted.',
+        message: 'Your 7-Day Free Trial license has been successfully minted and emailed to you.',
       });
     } catch (err: any) {
       console.error('[LicenseController.startTrial] Error:', err);
