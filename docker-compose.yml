@@ -125,7 +125,7 @@ services:
       - ADMIN_KEY=${ADMIN_KEY}
       - ARTIST_KEY=${ARTIST_KEY}
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
-      - ALLOWED_IPS=${ALLOWED_IPS}
+      - ALLOWED_IPS=${ALLOWED_IPS:-}
       # ── Email / SMTP ──────────────────────────
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
@@ -184,11 +184,11 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-${MYSQL_PASSWORD}}
       - DB_NAME=${DB_NAME:-${MYSQL_DATABASE}}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-${STRIPE_KEY}}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY:-pk_live_51QZ0jqCr1bc7EQACqZqkOVdRA8KTakavMewoC7IaQkM5rhBV3R38YPaAfhvyxtc75Gljnu4SVkT22t8Xe6n1cfHc00N8sGTGOa}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - LICENSE_PRIVATE_KEY=${LICENSE_PRIVATE_KEY}
-      - LICENSE_PUBLIC_KEY=${LICENSE_PUBLIC_KEY}
-      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - LICENSE_PRIVATE_KEY=${LICENSE_PRIVATE_KEY:-}
+      - LICENSE_PUBLIC_KEY=${LICENSE_PUBLIC_KEY:-CRS/Z3ZDljNJDqAMvz1Yg1vKxR4VuRhr5Su6lfJ7rVs=}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-h97DNp9U5nG3mGP2TnqVwL/cMUG+3Z+bFi5x2SVZaHSi+lhluAbfQaz57UpkfKRK}
       - APP_BASE_URL=https://ravn.purrfectpal.studio
     volumes:
       - ./ravn-app/public/assets/macos:/app/public/assets/macos:ro
@@ -271,7 +271,7 @@ services:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_REPO=${GITHUB_REPO}
       - GITHUB_BRANCH=${GITHUB_BRANCH}
-      - BACKUP_ENCRYPTION_KEY=${BACKUP_ENCRYPTION_KEY}
+      - BACKUP_ENCRYPTION_KEY=${BACKUP_ENCRYPTION_KEY:-}
     volumes:
       - ./backups:/backups
       - uploads_data:/app/uploadedfiles:ro
