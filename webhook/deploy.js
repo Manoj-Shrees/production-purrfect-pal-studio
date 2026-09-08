@@ -663,6 +663,81 @@ upstream backend {
       }
     });
 
+  // ── Docker Management Proxy (Internal) ──────────────────────────────────
+  } else if (urlPath.startsWith('/docker/')) {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      if (!isAuthorizedRequest(req, body || '')) {
+        console.warn('[deploy] Rejected Docker proxy request: unauthorized.');
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: false, error: 'Forbidden: Invalid token or signature' }));
+      }
+
+      const subPath = req.url.slice('/docker'.length);
+      // Security: Strictly enforce container operations only
+      if (!subPath.startsWith('/containers')) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: false, error: 'Forbidden: Only container operations permitted' }));
+      }
+
+      try {
+        const queryHostDocker = (dockerPath, method, postData) => {
+          return new Promise((resolve, reject) => {
+            const reqOpts = {
+              socketPath: '/var/run/docker.sock',
+              path: dockerPath,
+              method: method,
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            };
+            if (postData) {
+              reqOpts.headers['Content-Length'] = Buffer.byteLength(postData);
+            }
+            const proxyReq = http.request(reqOpts, (proxyRes) => {
+              const chunks = [];
+              proxyRes.on('data', c => { chunks.push(c); });
+              proxyRes.on('end', () => {
+                const rawBuffer = Buffer.concat(chunks);
+                if (proxyRes.statusCode >= 200 && proxyRes.statusCode < 300) {
+                  if (dockerPath.includes('/logs')) {
+                    let offset = 0;
+                    let output = '';
+                    while (offset < rawBuffer.length) {
+                      if (offset + 8 > rawBuffer.length) break;
+                      const size = rawBuffer.readUInt32BE(offset + 4);
+                      if (offset + 8 + size > rawBuffer.length) break;
+                      output += rawBuffer.toString('utf8', offset + 8, offset + 8 + size);
+                      offset += 8 + size;
+                    }
+                    return resolve({ statusCode: 200, contentType: 'text/plain', body: output || rawBuffer.toString('utf8') });
+                  }
+                  return resolve({ statusCode: proxyRes.statusCode, contentType: 'application/json', body: rawBuffer.toString('utf8') });
+                } else {
+                  return resolve({ statusCode: proxyRes.statusCode, contentType: 'application/json', body: rawBuffer.toString('utf8') });
+                }
+              });
+            });
+            proxyReq.setTimeout(10000, () => {
+              proxyReq.destroy(new Error('Docker daemon request timeout'));
+            });
+            proxyReq.on('error', reject);
+            if (postData) proxyReq.write(postData);
+            proxyReq.end();
+          });
+        };
+
+        const result = await queryHostDocker(subPath, req.method, body || null);
+        res.writeHead(result.statusCode, { 'Content-Type': result.contentType });
+        res.end(result.body);
+      } catch (dockerErr) {
+        console.error('[deploy] Error querying Docker socket:', dockerErr.message);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: dockerErr.message }));
+      }
+    });
+
   // ── GET /health ────────────────────────────────────────────────────────────
   } else if (req.method === 'GET' && urlPath === '/health') {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
