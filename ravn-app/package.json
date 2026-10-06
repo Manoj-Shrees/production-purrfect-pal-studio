@@ -1,6 +1,6 @@
 {
   "name": "ravn-backend",
-  "version": "1.0.0",
+  "version": "2.5.0",
   "type": "module",
   "description": "Production Licensing and Stripe Monetization Backend for Ravn Download Manager",
   "main": "dist/server.js",

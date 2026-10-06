@@ -16,6 +16,14 @@ export class CryptoService {
   private static publicKey: string = config.crypto.publicKey;
 
   static initialize() {
+    if (this.privateKey) {
+      // Strip surrounding quotes and normalize escaped newlines (\n -> actual line break)
+      this.privateKey = this.privateKey.replace(/^"|"$/g, '').replace(/\\n/g, '\n').trim();
+    }
+    if (this.publicKey) {
+      this.publicKey = this.publicKey.replace(/^"|"$/g, '').trim();
+    }
+
     // If keys not set in env, auto-generate ephemeral pair for testing/fallback
     if (!this.privateKey || !this.publicKey) {
       console.warn('[CryptoService] No Ed25519 keys found in environment. Generating dynamic key pair...');
@@ -93,8 +101,9 @@ export class CryptoService {
       this.initialize();
     }
 
+    const cleanPrivateKey = this.privateKey.replace(/^"|"$/g, '').replace(/\\n/g, '\n').trim();
     const canonical = this.canonicalizePayload(payload);
-    const signature = crypto.sign(null, Buffer.from(canonical, 'utf8'), this.privateKey);
+    const signature = crypto.sign(null, Buffer.from(canonical, 'utf8'), cleanPrivateKey);
     return {
       signature: signature.toString('base64'),
       canonical,
@@ -106,10 +115,12 @@ export class CryptoService {
    */
   static verifySignature(canonical: string, signatureBase64: string): boolean {
     try {
+      if (!this.publicKey) this.initialize();
       if (!this.publicKey) return false;
 
+      const cleanPublicKey = this.publicKey.replace(/^"|"$/g, '').trim();
       // Construct SPKI DER buffer from 32-byte base64 public key
-      const rawPublicKey = Buffer.from(this.publicKey, 'base64');
+      const rawPublicKey = Buffer.from(cleanPublicKey, 'base64');
       const spkiHeader = Buffer.from([
         0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00
       ]);

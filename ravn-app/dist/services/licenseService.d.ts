@@ -5,6 +5,7 @@ export interface CreateLicenseOptions {
     subscriptionId?: string;
     expiresAt?: Date | null;
     maxDevices?: number;
+    deviceId?: string;
 }
 export interface ActivationOptions {
     licenseKey: string;
@@ -72,6 +73,10 @@ export declare class LicenseService {
         }>;
         error?: string;
     }>;
+    /**
+     * Retrieves existing active license key and details by customer email
+     */
+    static getLicenseDetailsByEmail(email: string): Promise<any>;
     /**
      * Audit Logger helper
      */

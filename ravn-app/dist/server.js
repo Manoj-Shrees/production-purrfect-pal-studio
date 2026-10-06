@@ -78,13 +78,29 @@ const checkoutLimiter = rateLimit({
     legacyHeaders: false,
     message: { success: false, error: 'Too many checkout requests. Please try again later.' },
 });
-// ── 4. Static Files (Glassmorphic Web Storefront) ───────────────────────────
+// ── 4. Clean Extensionless Routes & Static Files ─────────────────────────────
 const publicDir = path.resolve(__dirname, '../public');
-app.use(express.static(publicDir));
-// Standalone Activation Portal Page Alias
+// Automatically 301 redirect any direct *.html requests to clean route
+app.use((req, res, next) => {
+    if (req.path.endsWith('.html')) {
+        const cleanPath = req.path.slice(0, -5);
+        const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+        return res.redirect(301, (cleanPath === '/index' ? '/' : cleanPath) + queryString);
+    }
+    next();
+});
+// Explicit Clean Page Routes
 app.get(['/activate', '/portal', '/license'], (_req, res) => {
     res.sendFile(path.resolve(publicDir, 'activate.html'));
 });
+app.get('/privacy', (_req, res) => {
+    res.sendFile(path.resolve(publicDir, 'privacy.html'));
+});
+app.get('/success', (_req, res) => {
+    res.sendFile(path.resolve(publicDir, 'success.html'));
+});
+// Static assets (images, css, dmgs, scripts) with HTML extension resolution
+app.use(express.static(publicDir, { extensions: ['html'] }));
 // ── 5. Root Health Check ─────────────────────────────────────────────────────
 app.get('/health', async (_req, res) => {
     const dbOk = await testDbConnection();

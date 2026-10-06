@@ -6,14 +6,98 @@ export class LicenseService {
      * Generates and stores a new cryptographically signed license in MySQL
      */
     static async createLicense(options) {
+        const normalizedEmail = options.email.toLowerCase().trim();
+        // ── Enforce 1 Trial per Email & Device ID ──
+        if (options.planType === 'trial') {
+            // 1. Check existing trial by Email Address
+            const [existingTrials] = await dbPool.execute(`SELECT l.* FROM licenses l
+         JOIN customers c ON l.customer_id = c.id
+         WHERE c.email = ? AND l.plan_type = 'trial'`, [normalizedEmail]);
+            if (existingTrials.length > 0) {
+                const existing = existingTrials[0];
+                const isExpired = existing.expires_at ? new Date(existing.expires_at) < new Date() : false;
+                if (isExpired || existing.status === 'expired' || existing.status === 'revoked') {
+                    throw new Error(`A 7-day free trial has already been used for ${normalizedEmail} and has expired. Please purchase a Pro license to continue.`);
+                }
+                else {
+                    // Return the existing active trial key within the 7 days
+                    return {
+                        licenseKey: existing.license_key,
+                        signature: existing.signature,
+                        signedPayload: existing.signed_payload,
+                        expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
+                    };
+                }
+            }
+            // 2. Check existing trial by Device ID (Hardware UUID)
+            if (options.deviceId && options.deviceId.trim()) {
+                const cleanDeviceId = options.deviceId.trim();
+                // Check license_activations for this device
+                const [deviceTrials] = await dbPool.execute(`SELECT l.*, c.email as customer_email FROM license_activations la
+           JOIN licenses l ON la.license_id = l.id
+           JOIN customers c ON l.customer_id = c.id
+           WHERE la.device_id = ? AND l.plan_type = 'trial'`, [cleanDeviceId]);
+                if (deviceTrials.length > 0) {
+                    const existing = deviceTrials[0];
+                    const existingEmail = (existing.customer_email || '').toLowerCase().trim();
+                    // Reject if device was previously registered under a different email/ID
+                    if (existingEmail && existingEmail !== normalizedEmail) {
+                        throw new Error(`This device has already activated a 7-day free trial under another account (${existingEmail.substring(0, 3)}***). Only one free trial is allowed per device. Please sign in with your original account or upgrade to Ravn Pro.`);
+                    }
+                    const isExpired = existing.expires_at ? new Date(existing.expires_at) < new Date() : false;
+                    if (isExpired || existing.status === 'expired' || existing.status === 'revoked') {
+                        throw new Error(`This Mac (Device ID: ${cleanDeviceId.substring(0, 8)}...) has already used its 7-day free trial. Please purchase a Pro license to continue.`);
+                    }
+                    else {
+                        return {
+                            licenseKey: existing.license_key,
+                            signature: existing.signature,
+                            signedPayload: existing.signed_payload,
+                            expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
+                        };
+                    }
+                }
+                // Also check audit_logs in case trial was requested with this deviceId under a different email before activation
+                const [auditTrials] = await dbPool.execute(`SELECT al.* FROM audit_logs al
+           WHERE al.device_id = ? AND al.event_type IN ('trial_claimed', 'activation_success')
+           ORDER BY al.created_at DESC LIMIT 10`, [cleanDeviceId]);
+                for (const audit of auditTrials) {
+                    try {
+                        const details = typeof audit.details === 'string' ? JSON.parse(audit.details) : audit.details;
+                        const auditEmail = details?.email ? String(details.email).toLowerCase().trim() : null;
+                        if (auditEmail && auditEmail !== normalizedEmail) {
+                            throw new Error(`This device has already claimed a 7-day free trial under another account/ID (${auditEmail.substring(0, 3)}***). Only 1 free trial is permitted per device. Please sign in with your original account or upgrade to Ravn Pro.`);
+                        }
+                    }
+                    catch (e) {
+                        if (e.message?.includes('already claimed') || e.message?.includes('already activated'))
+                            throw e;
+                    }
+                }
+            }
+        }
         // 1. Ensure customer exists
         const customerId = `cust_${crypto.randomBytes(12).toString('hex')}`;
         await dbPool.execute(`INSERT INTO customers (id, email, name)
        VALUES (?, ?, ?)
-       ON DUPLICATE KEY UPDATE name = COALESCE(VALUES(name), name)`, [customerId, options.email.toLowerCase().trim(), options.name ?? null]);
+       ON DUPLICATE KEY UPDATE name = COALESCE(VALUES(name), name)`, [customerId, normalizedEmail, options.name ?? null]);
         // Get actual customer ID if existed
-        const [custRows] = await dbPool.execute(`SELECT id FROM customers WHERE email = ?`, [options.email.toLowerCase().trim()]);
+        const [custRows] = await dbPool.execute(`SELECT id FROM customers WHERE email = ?`, [normalizedEmail]);
         const resolvedCustomerId = custRows[0]?.id ?? customerId;
+        // ── If customer already has an active license for this plan, return existing license ──
+        const [existingPlanLicenses] = await dbPool.execute(`SELECT l.* FROM licenses l
+       WHERE l.customer_id = ? AND l.plan_type = ? AND l.status = 'active'
+       AND (l.expires_at IS NULL OR l.expires_at > NOW())
+       ORDER BY l.created_at DESC LIMIT 1`, [resolvedCustomerId, options.planType]);
+        if (existingPlanLicenses.length > 0) {
+            const existing = existingPlanLicenses[0];
+            return {
+                licenseKey: existing.license_key,
+                signature: existing.signature,
+                signedPayload: existing.signed_payload,
+                expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
+            };
+        }
         // 2. Determine expiration and max devices based on plan (Pro = 1 Mac, Ultra Lifetime = 2 Macs, Family = 5 Macs)
         let expiresAt = options.expiresAt ?? null;
         let maxDevices = options.maxDevices ?? (options.planType === 'family' ? 5 : options.planType === 'lifetime' ? 2 : 1);
@@ -72,7 +156,7 @@ export class LicenseService {
             expiresAt,
         ]);
         // Audit Log
-        await this.logAudit('license_created', licenseKey, null, null, {
+        await this.logAudit(options.planType === 'trial' ? 'trial_claimed' : 'license_created', licenseKey, options.deviceId ?? null, null, {
             plan: options.planType,
             email: options.email,
             maxDevices,
@@ -106,7 +190,13 @@ export class LicenseService {
             return { success: false, message: 'This license has been revoked. Reason: ' + (license.revocation_reason ?? 'Administrative action') };
         }
         if (license.status === 'expired' || (license.expires_at && new Date(license.expires_at) < new Date())) {
-            return { success: false, message: 'This license has expired. Please renew your subscription to continue.' };
+            await dbPool.execute(`UPDATE licenses SET status = 'expired' WHERE id = ?`, [license.id]);
+            await this.logAudit('activation_rejected_expired', key, options.deviceId, options.ipAddress ?? null);
+            const expiryStr = license.expires_at ? new Date(license.expires_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'earlier date';
+            return {
+                success: false,
+                message: `This ${license.plan_type === 'trial' ? '7-Day Free Trial' : 'license'} expired on ${expiryStr}. Please upgrade to a Pro license to continue using Pro features.`
+            };
         }
         // Check email match (if email provided)
         if (email && license.customer_email.toLowerCase() !== email) {
@@ -114,6 +204,35 @@ export class LicenseService {
                 providedEmail: email,
             });
             return { success: false, message: 'The provided email address does not match the registered license holder.' };
+        }
+        // ── Enforce 1 Trial per Hardware Device UUID ──
+        if (license.plan_type === 'trial') {
+            const [priorDeviceTrials] = await dbPool.execute(`SELECT l.*, c.email as customer_email FROM license_activations la
+         JOIN licenses l ON la.license_id = l.id
+         JOIN customers c ON l.customer_id = c.id
+         WHERE la.device_id = ? AND l.plan_type = 'trial' AND l.id != ?`, [options.deviceId.trim(), license.id]);
+            if (priorDeviceTrials.length > 0) {
+                const prev = priorDeviceTrials[0];
+                const prevEmail = (prev.customer_email || '').toLowerCase().trim();
+                const isDifferentAccount = prevEmail && prevEmail !== license.customer_email.toLowerCase().trim();
+                await this.logAudit('activation_rejected_trial_device_used', key, options.deviceId, options.ipAddress ?? null, {
+                    priorLicenseId: prev.id,
+                    priorEmail: prevEmail,
+                    isDifferentAccount,
+                });
+                if (isDifferentAccount) {
+                    return {
+                        success: false,
+                        message: `This Mac has already activated a 7-Day Free Trial under another account (${prevEmail.substring(0, 3)}***). Only 1 free trial is permitted per device. Please sign in with your original account or upgrade to Ravn Pro.`,
+                    };
+                }
+                else {
+                    return {
+                        success: false,
+                        message: 'This Mac has already used its 7-Day Free Trial. Please upgrade to Ravn Pro or Lifetime to continue enjoying Pro features.',
+                    };
+                }
+            }
         }
         // 2. Check existing activations for this device
         const [activeRows] = await dbPool.execute(`SELECT * FROM license_activations WHERE license_id = ? AND device_id = ? AND is_active = TRUE`, [license.id, options.deviceId]);
@@ -168,7 +287,9 @@ export class LicenseService {
         });
         return {
             success: true,
-            message: 'License activated successfully on this Mac!',
+            message: license.plan_type === 'trial'
+                ? '7-Day Free Trial activated successfully on this Mac!'
+                : 'License activated successfully on this Mac!',
             signature: leaseSignature,
             signedPayload: leaseCanonical,
             plan: license.plan_type,
@@ -246,6 +367,20 @@ export class LicenseService {
                 lastPingAt: d.last_ping_at ? new Date(d.last_ping_at).toISOString() : '',
             })),
         };
+    }
+    /**
+     * Retrieves existing active license key and details by customer email
+     */
+    static async getLicenseDetailsByEmail(email) {
+        const cleanEmail = email.trim().toLowerCase();
+        const [rows] = await dbPool.execute(`SELECT l.license_key FROM licenses l
+       JOIN customers c ON l.customer_id = c.id
+       WHERE c.email = ? AND l.status = 'active'
+       ORDER BY l.created_at DESC LIMIT 1`, [cleanEmail]);
+        if (rows.length === 0) {
+            return { found: false, valid: false, error: `No active license found for ${cleanEmail}.` };
+        }
+        return this.getLicenseDetails(rows[0].license_key, cleanEmail);
     }
     /**
      * Audit Logger helper

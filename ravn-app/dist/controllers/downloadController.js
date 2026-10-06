@@ -13,8 +13,8 @@ export class DownloadController {
         dmgUrl: '/assets/macos/Ravn-Universal.dmg',
         appleSiliconUrl: '/assets/macos/Ravn-AppleSilicon.dmg',
         intelUrl: '/assets/macos/Ravn-Intel.dmg',
-        fileSizeBytes: 19158045, // actual build size
-        sha256: 'bf20d64f81a02d53d01737ef134cd4f836e0fab17e47730db0d0ad0e30a0faa7', // shasum -a 256 Ravn-Universal.dmg
+        fileSizeBytes: 19184397,
+        sha256: '4de6945257da33fcd0128a5669ec31f5c9f1c1831ba40b2f48dd5550a431828d',
         changelog: [
             '⚡️ Turbo 48-Stream Parallel Multi-Segment download engine with dual-probe fallback.',
             '✨ 16 Artisan Glassmorphic Themes & Custom Spectrum Palette Studio.',
@@ -33,22 +33,54 @@ export class DownloadController {
         res.status(200).json({
             success: true,
             data: DownloadController.releaseInfo,
+            release: DownloadController.releaseInfo,
         });
+    }
+    static isNewerVersion(latest, current) {
+        const cleanLatest = (latest || '').replace(/^v/i, '').trim();
+        const cleanCurrent = (current || '').replace(/^v/i, '').trim();
+        const lParts = cleanLatest.split('.').map(p => parseInt(p, 10) || 0);
+        const cParts = cleanCurrent.split('.').map(p => parseInt(p, 10) || 0);
+        const maxLen = Math.max(lParts.length, cParts.length);
+        for (let i = 0; i < maxLen; i++) {
+            const l = lParts[i] ?? 0;
+            const c = cParts[i] ?? 0;
+            if (l > c)
+                return true;
+            if (l < c)
+                return false;
+        }
+        return false;
     }
     /**
      * GET /api/v1/app/check-update?currentVersion=2.4.0
      */
     static checkUpdate(req, res) {
-        const currentVersion = req.query.currentVersion || '1.0.0';
-        const isUpdateAvailable = currentVersion !== DownloadController.releaseInfo.version;
+        const currentVersion = req.query.currentVersion || '2.5.0';
+        const isUpdateAvailable = DownloadController.isNewerVersion(DownloadController.releaseInfo.version, currentVersion);
         res.status(200).json({
             success: true,
             updateAvailable: isUpdateAvailable,
+            isUpdateAvailable: isUpdateAvailable,
             latestVersion: DownloadController.releaseInfo.version,
+            currentVersion: currentVersion,
             releaseDate: DownloadController.releaseInfo.releaseDate,
             downloadUrl: DownloadController.releaseInfo.downloadUrl,
             changelog: DownloadController.releaseInfo.changelog,
             mandatory: false,
+            release: {
+                version: DownloadController.releaseInfo.version,
+                buildNumber: DownloadController.releaseInfo.buildNumber,
+                releaseDate: DownloadController.releaseInfo.releaseDate,
+                minMacOSVersion: DownloadController.releaseInfo.minMacOSVersion,
+                downloadUrl: DownloadController.releaseInfo.downloadUrl,
+                dmgUrl: DownloadController.releaseInfo.dmgUrl,
+                appleSiliconUrl: DownloadController.releaseInfo.appleSiliconUrl,
+                intelUrl: DownloadController.releaseInfo.intelUrl,
+                fileSizeBytes: DownloadController.releaseInfo.fileSizeBytes,
+                sha256: DownloadController.releaseInfo.sha256,
+                changelog: DownloadController.releaseInfo.changelog,
+            }
         });
     }
     /**
@@ -63,23 +95,38 @@ export class DownloadController {
             requestedFile = 'Ravn-Universal.dmg';
         }
         const safeFilename = path.basename(requestedFile);
-        // Check possible local paths
-        const possiblePaths = [
-            path.resolve(__dirname, '../../public/assets/macos', safeFilename),
-            path.resolve(__dirname, '../../downloads', safeFilename),
-            path.resolve(__dirname, '../../public/downloads', safeFilename),
+        const candidateFilenames = [safeFilename, 'Ravn-Universal.dmg'];
+        const searchDirs = [
+            path.resolve(__dirname, '../../public/assets/macos'),
+            path.resolve(__dirname, '../public/assets/macos'),
+            path.resolve(process.cwd(), 'public/assets/macos'),
+            path.resolve(process.cwd(), 'ravn-app/public/assets/macos'),
+            '/app/public/assets/macos',
+            path.resolve(__dirname, '../../public/assets/extensions'),
+            path.resolve(__dirname, '../public/assets/extensions'),
+            path.resolve(process.cwd(), 'public/assets/extensions'),
+            path.resolve(process.cwd(), 'ravn-app/public/assets/extensions'),
+            '/app/public/assets/extensions',
+            path.resolve(__dirname, '../../downloads'),
+            path.resolve(__dirname, '../../public/downloads'),
         ];
-        for (const localFilePath of possiblePaths) {
-            if (fs.existsSync(localFilePath)) {
-                res.setHeader('Content-Type', 'application/x-apple-diskimage');
-                res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}"`);
-                res.setHeader('Cache-Control', 'public, max-age=86400');
-                const stream = fs.createReadStream(localFilePath);
-                stream.pipe(res);
-                return;
+        for (const targetName of candidateFilenames) {
+            for (const dir of searchDirs) {
+                const localFilePath = path.join(dir, targetName);
+                try {
+                    if (fs.existsSync(localFilePath) && fs.statSync(localFilePath).isFile()) {
+                        const isZip = safeFilename.endsWith('.zip');
+                        res.setHeader('Content-Type', isZip ? 'application/zip' : 'application/x-apple-diskimage');
+                        res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}"`);
+                        res.setHeader('Cache-Control', 'public, max-age=86400');
+                        const stream = fs.createReadStream(localFilePath);
+                        stream.pipe(res);
+                        return;
+                    }
+                }
+                catch (_) { }
             }
         }
-        // Direct fallback redirect to official GitHub releases
         return res.redirect(302, `https://github.com/Manoj-Shrees/Ravn-Download-manager/releases/latest/download/${safeFilename}`);
     }
 }

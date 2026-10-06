@@ -30,8 +30,8 @@ export class DownloadController {
     dmgUrl: '/assets/macos/Ravn-Universal.dmg',
     appleSiliconUrl: '/assets/macos/Ravn-AppleSilicon.dmg',
     intelUrl: '/assets/macos/Ravn-Intel.dmg',
-    fileSizeBytes: 19184397, // actual build size
-    sha256: '4de6945257da33fcd0128a5669ec31f5c9f1c1831ba40b2f48dd5550a431828d', // shasum -a 256 Ravn-Universal.dmg
+    fileSizeBytes: 19184397,
+    sha256: '4de6945257da33fcd0128a5669ec31f5c9f1c1831ba40b2f48dd5550a431828d',
     changelog: [
       '⚡️ Turbo 48-Stream Parallel Multi-Segment download engine with dual-probe fallback.',
       '✨ 16 Artisan Glassmorphic Themes & Custom Spectrum Palette Studio.',
@@ -51,24 +51,58 @@ export class DownloadController {
     res.status(200).json({
       success: true,
       data: DownloadController.releaseInfo,
+      release: DownloadController.releaseInfo,
     });
+  }
+
+  private static isNewerVersion(latest: string, current: string): boolean {
+    const cleanLatest = (latest || '').replace(/^v/i, '').trim();
+    const cleanCurrent = (current || '').replace(/^v/i, '').trim();
+    const lParts = cleanLatest.split('.').map(p => parseInt(p, 10) || 0);
+    const cParts = cleanCurrent.split('.').map(p => parseInt(p, 10) || 0);
+    const maxLen = Math.max(lParts.length, cParts.length);
+    for (let i = 0; i < maxLen; i++) {
+      const l = lParts[i] ?? 0;
+      const c = cParts[i] ?? 0;
+      if (l > c) return true;
+      if (l < c) return false;
+    }
+    return false;
   }
 
   /**
    * GET /api/v1/app/check-update?currentVersion=2.4.0
    */
   static checkUpdate(req: Request, res: Response): void {
-    const currentVersion = (req.query.currentVersion as string) || '1.0.0';
-    const isUpdateAvailable = currentVersion !== DownloadController.releaseInfo.version;
+    const currentVersion = (req.query.currentVersion as string) || '2.5.0';
+    const isUpdateAvailable = DownloadController.isNewerVersion(
+      DownloadController.releaseInfo.version,
+      currentVersion
+    );
 
     res.status(200).json({
       success: true,
       updateAvailable: isUpdateAvailable,
+      isUpdateAvailable: isUpdateAvailable,
       latestVersion: DownloadController.releaseInfo.version,
+      currentVersion: currentVersion,
       releaseDate: DownloadController.releaseInfo.releaseDate,
       downloadUrl: DownloadController.releaseInfo.downloadUrl,
       changelog: DownloadController.releaseInfo.changelog,
       mandatory: false,
+      release: {
+        version: DownloadController.releaseInfo.version,
+        buildNumber: DownloadController.releaseInfo.buildNumber,
+        releaseDate: DownloadController.releaseInfo.releaseDate,
+        minMacOSVersion: DownloadController.releaseInfo.minMacOSVersion,
+        downloadUrl: DownloadController.releaseInfo.downloadUrl,
+        dmgUrl: DownloadController.releaseInfo.dmgUrl,
+        appleSiliconUrl: DownloadController.releaseInfo.appleSiliconUrl,
+        intelUrl: DownloadController.releaseInfo.intelUrl,
+        fileSizeBytes: DownloadController.releaseInfo.fileSizeBytes,
+        sha256: DownloadController.releaseInfo.sha256,
+        changelog: DownloadController.releaseInfo.changelog,
+      }
     });
   }
 
@@ -85,7 +119,6 @@ export class DownloadController {
     }
     const safeFilename = path.basename(requestedFile);
     
-    // Check possible local paths for the exact file first, then fallback to Ravn-Universal.dmg
     const candidateFilenames = [safeFilename, 'Ravn-Universal.dmg'];
     const searchDirs = [
       path.resolve(__dirname, '../../public/assets/macos'),
@@ -119,7 +152,6 @@ export class DownloadController {
       }
     }
 
-    // Direct fallback redirect to official GitHub releases
     return res.redirect(302, `https://github.com/Manoj-Shrees/Ravn-Download-manager/releases/latest/download/${safeFilename}`);
   }
 }

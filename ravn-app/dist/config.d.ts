@@ -63,6 +63,14 @@ export declare const config: {
         privateKey: string;
         publicKey: string;
     };
+    email: {
+        host: string;
+        port: number;
+        secure: boolean;
+        user: string;
+        pass: string;
+        from: string;
+    };
     admin: {
         apiKey: string;
     };

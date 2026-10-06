@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { config } from '../config.js';
 import { dbPool } from '../db/connection.js';
 import { LicenseService } from './licenseService.js';
+import { EmailService } from './emailService.js';
 export class StripeService {
     static stripeClient = new Stripe(config.stripe.secretKey, {
         apiVersion: '2025-01-27.acacia',
@@ -307,6 +308,16 @@ export class StripeService {
             planType,
             maxDevices,
         });
+        // Send confirmation & license delivery email asynchronously
+        EmailService.sendPurchaseConfirmationEmail({
+            email: options.email,
+            licenseKey: license.licenseKey,
+            planType,
+            maxDevices,
+            expiresAt: license.expiresAt,
+        }).catch(err => {
+            console.error('[StripeService] Non-blocking email error:', err.message);
+        });
         return {
             success: true,
             licenseKey: license.licenseKey,
@@ -387,6 +398,20 @@ export class StripeService {
             subscriptionId: stripeSubscriptionId,
         });
         console.log(`[Stripe Checkout] SUCCESS: Issued license ${license.licenseKey} to ${email}`);
+        // 3. Send receipt & license delivery email asynchronously
+        const maxDevices = planTier === 'family' ? 5 : planTier === 'lifetime' ? 2 : 1;
+        const amountTotal = session.amount_total ? (session.amount_total / 100).toFixed(2) + ' ' + (session.currency || 'USD').toUpperCase() : undefined;
+        EmailService.sendPurchaseConfirmationEmail({
+            email,
+            name,
+            licenseKey: license.licenseKey,
+            planType: planTier,
+            maxDevices,
+            expiresAt: license.expiresAt,
+            amountPaid: amountTotal,
+        }).catch(err => {
+            console.error('[Stripe Checkout] Non-blocking email error:', err.message);
+        });
     }
     /**
      * Updates subscription period and extends license expiry

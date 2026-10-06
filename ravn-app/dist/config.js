@@ -31,8 +31,8 @@ export const config = {
         publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_live_51QZ0jqCr1bc7EQACqZqkOVdRA8KTakavMewoC7IaQkM5rhBV3R38YPaAfhvyxtc75Gljnu4SVkT22t8Xe6n1cfHc00N8sGTGOa',
         webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || 'whsec_mock',
         logoUrl: process.env.STRIPE_LOGO_URL || '',
-        successUrl: process.env.STRIPE_SUCCESS_URL || 'https://ravn.purrfectpal.studio/success.html?session_id={CHECKOUT_SESSION_ID}',
-        cancelUrl: process.env.STRIPE_CANCEL_URL || 'https://ravn.purrfectpal.studio/index.html',
+        successUrl: process.env.STRIPE_SUCCESS_URL || 'https://ravn.purrfectpal.studio/success?session_id={CHECKOUT_SESSION_ID}',
+        cancelUrl: process.env.STRIPE_CANCEL_URL || 'https://ravn.purrfectpal.studio/',
         plans: {
             monthly: {
                 id: 'plan_monthly',
@@ -74,6 +74,14 @@ export const config = {
     crypto: {
         privateKey: process.env.LICENSE_PRIVATE_KEY || '',
         publicKey: process.env.LICENSE_PUBLIC_KEY || '',
+    },
+    email: {
+        host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+        port: parseInt(process.env.SMTP_PORT || '465', 10),
+        secure: (process.env.SMTP_PORT || '465') === '465',
+        user: process.env.EMAIL_USER || 'noreply@purrfectpal.studio',
+        pass: process.env.EMAIL_PASS || 'Toor@77@MTS@77*',
+        from: process.env.EMAIL_FROM || '"Ravn by Purrfect Pal Studio" <noreply@purrfectpal.studio>',
     },
     admin: {
         apiKey: process.env.ADMIN_API_KEY || (() => {

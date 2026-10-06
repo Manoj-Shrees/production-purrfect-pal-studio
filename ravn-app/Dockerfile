@@ -5,7 +5,7 @@ FROM --platform=linux/amd64 node:22-alpine AS builder
 WORKDIR /app
 
 # Copy dependency manifests
-COPY package.json ./
+COPY package.json package-lock.json* ./
 
 # Install all dependencies (including devDependencies for build)
 RUN npm install
@@ -24,7 +24,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Install only production dependencies
-COPY package.json ./
+COPY package.json package-lock.json* ./
 RUN npm install --omit=dev && npm cache clean --force
 
 # Copy built distribution files from builder

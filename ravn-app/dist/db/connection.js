@@ -68,15 +68,20 @@ export async function initDatabaseTables() {
       CREATE TABLE IF NOT EXISTS \`plans\` (
         \`id\` VARCHAR(64) PRIMARY KEY,
         \`name\` VARCHAR(128) NOT NULL,
-        \`tier\` ENUM('monthly', 'annual', 'lifetime', 'trial') NOT NULL,
+        \`tier\` ENUM('monthly', 'annual', 'lifetime', 'family', 'trial') NOT NULL,
         \`price_cents\` INT UNSIGNED NOT NULL,
         \`currency\` VARCHAR(3) NOT NULL DEFAULT 'usd',
         \`billing_interval\` VARCHAR(32) NOT NULL DEFAULT 'month',
         \`stripe_price_id\` VARCHAR(128) DEFAULT NULL,
-        \`max_devices\` INT UNSIGNED NOT NULL DEFAULT 3,
+        \`max_devices\` INT UNSIGNED NOT NULL DEFAULT 1,
         \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+        // Safe auto-migration for existing tables
+        try {
+            await connection.query(`ALTER TABLE \`plans\` MODIFY COLUMN \`tier\` ENUM('monthly', 'annual', 'lifetime', 'family', 'trial') NOT NULL;`);
+        }
+        catch (_) { }
         // Insert Default Plans
         await connection.query(`
       INSERT INTO \`plans\` (\`id\`,\`name\`,\`tier\`,\`price_cents\`,\`currency\`,\`billing_interval\`,\`stripe_price_id\`,\`max_devices\`)
@@ -84,8 +89,9 @@ export async function initDatabaseTables() {
         ('plan_monthly', 'Ravn Pro Monthly', 'monthly', 499, 'usd', 'month', 'price_monthly_sample', 1),
         ('plan_annual', 'Ravn Pro Annual', 'annual', 3999, 'usd', 'year', 'price_annual_sample', 1),
         ('plan_lifetime', 'Ravn Ultra Lifetime', 'lifetime', 7999, 'usd', 'one_time', 'price_lifetime_sample', 2),
+        ('plan_family', 'Ravn Family & Team Pass (5 Macs)', 'family', 12999, 'usd', 'one_time', 'price_family_sample', 5),
         ('plan_trial', 'Ravn Pro 7-Day Free Trial', 'trial', 0, 'usd', 'trial', NULL, 1)
-      ON DUPLICATE KEY UPDATE \`name\` = VALUES(\`name\`);
+      ON DUPLICATE KEY UPDATE \`name\` = VALUES(\`name\`), \`max_devices\` = VALUES(\`max_devices\`);
     `);
         // 3. Subscriptions
         await connection.query(`
@@ -111,7 +117,7 @@ export async function initDatabaseTables() {
         \`license_key\` VARCHAR(64) NOT NULL UNIQUE,
         \`customer_id\` VARCHAR(64) NOT NULL,
         \`subscription_id\` VARCHAR(64) DEFAULT NULL,
-        \`plan_type\` ENUM('monthly', 'annual', 'lifetime', 'trial') NOT NULL DEFAULT 'monthly',
+        \`plan_type\` ENUM('monthly', 'annual', 'lifetime', 'family', 'trial') NOT NULL DEFAULT 'monthly',
         \`status\` ENUM('active', 'revoked', 'expired', 'suspended') NOT NULL DEFAULT 'active',
         \`max_activations\` INT UNSIGNED NOT NULL DEFAULT 1,
         \`activations_count\` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -125,6 +131,11 @@ export async function initDatabaseTables() {
         INDEX \`idx_licenses_status\` (\`status\`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+        // Safe auto-migration for licenses table
+        try {
+            await connection.query(`ALTER TABLE \`licenses\` MODIFY COLUMN \`plan_type\` ENUM('monthly', 'annual', 'lifetime', 'family', 'trial') NOT NULL DEFAULT 'monthly';`);
+        }
+        catch (_) { }
         // 5. Machine Activations (Hardware Binding)
         await connection.query(`
       CREATE TABLE IF NOT EXISTS \`license_activations\` (

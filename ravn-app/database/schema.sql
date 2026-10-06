@@ -22,22 +22,24 @@ CREATE TABLE IF NOT EXISTS `customers` (
 CREATE TABLE IF NOT EXISTS `plans` (
   `id` VARCHAR(64) PRIMARY KEY,
   `name` VARCHAR(128) NOT NULL,
-  `tier` ENUM('monthly', 'annual', 'lifetime') NOT NULL,
+  `tier` ENUM('monthly', 'annual', 'lifetime', 'family', 'trial') NOT NULL,
   `price_cents` INT UNSIGNED NOT NULL,
   `currency` VARCHAR(3) NOT NULL DEFAULT 'usd',
   `billing_interval` VARCHAR(32) NOT NULL DEFAULT 'month',
   `stripe_price_id` VARCHAR(128) DEFAULT NULL,
-  `max_devices` INT UNSIGNED NOT NULL DEFAULT 3,
+  `max_devices` INT UNSIGNED NOT NULL DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insert Default Production Plans
 INSERT INTO `plans` (`id`, `name`, `tier`, `price_cents`, `currency`, `billing_interval`, `stripe_price_id`, `max_devices`)
 VALUES 
-  ('plan_monthly', 'Ravn Pro Monthly', 'monthly', 499, 'usd', 'month', 'price_monthly_sample', 3),
-  ('plan_annual', 'Ravn Pro Annual', 'annual', 3999, 'usd', 'year', 'price_annual_sample', 5),
-  ('plan_lifetime', 'Ravn Ultra Lifetime', 'lifetime', 7999, 'usd', 'one_time', 'price_lifetime_sample', 10)
-ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
+  ('plan_monthly', 'Ravn Pro Monthly', 'monthly', 499, 'usd', 'month', 'price_monthly_sample', 1),
+  ('plan_annual', 'Ravn Pro Annual', 'annual', 3999, 'usd', 'year', 'price_annual_sample', 1),
+  ('plan_lifetime', 'Ravn Ultra Lifetime', 'lifetime', 7999, 'usd', 'one_time', 'price_lifetime_sample', 2),
+  ('plan_family', 'Ravn Family & Team Pass (5 Macs)', 'family', 12999, 'usd', 'one_time', 'price_family_sample', 5),
+  ('plan_trial', 'Ravn Pro 7-Day Free Trial', 'trial', 0, 'usd', 'trial', NULL, 1)
+ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `max_devices` = VALUES(`max_devices`);
 
 -- 3. Subscriptions
 CREATE TABLE IF NOT EXISTS `subscriptions` (
@@ -63,9 +65,9 @@ CREATE TABLE IF NOT EXISTS `licenses` (
   `license_key` VARCHAR(64) NOT NULL UNIQUE,
   `customer_id` VARCHAR(64) NOT NULL,
   `subscription_id` VARCHAR(64) DEFAULT NULL,
-  `plan_type` ENUM('monthly', 'annual', 'lifetime', 'trial') NOT NULL DEFAULT 'monthly',
+  `plan_type` ENUM('monthly', 'annual', 'lifetime', 'family', 'trial') NOT NULL DEFAULT 'monthly',
   `status` ENUM('active', 'revoked', 'expired', 'suspended') NOT NULL DEFAULT 'active',
-  `max_activations` INT UNSIGNED NOT NULL DEFAULT 3,
+  `max_activations` INT UNSIGNED NOT NULL DEFAULT 1,
   `activations_count` INT UNSIGNED NOT NULL DEFAULT 0,
   `signature` TEXT NOT NULL,
   `signed_payload` TEXT NOT NULL,

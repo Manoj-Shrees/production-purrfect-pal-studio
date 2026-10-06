@@ -19,6 +19,7 @@ export declare class DownloadController {
      * Returns latest version metadata and changelog for macOS auto-updater
      */
     static getVersionInfo(_req: Request, res: Response): void;
+    private static isNewerVersion;
     /**
      * GET /api/v1/app/check-update?currentVersion=2.4.0
      */

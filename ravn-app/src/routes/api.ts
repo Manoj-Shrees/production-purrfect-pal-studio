@@ -35,7 +35,15 @@ apiRouter.post(
   StripeController.handleWebhook
 );
 
-// ── 5. Admin Protected Endpoints ──
+// ── 5. Admin Protected Reporting & Management Endpoints ──
+apiRouter.get('/v1/admin/reports/overview', AdminController.authMiddleware, AdminController.getOverviewReport);
+apiRouter.get('/v1/admin/licenses', AdminController.authMiddleware, AdminController.getLicenses);
+apiRouter.get('/v1/admin/devices', AdminController.authMiddleware, AdminController.getDevices);
+apiRouter.delete('/v1/admin/devices/:id', AdminController.authMiddleware, AdminController.unlinkDevice);
+apiRouter.post('/v1/admin/devices/:id/unlink', AdminController.authMiddleware, AdminController.unlinkDevice);
+apiRouter.get('/v1/admin/audit-logs', AdminController.authMiddleware, AdminController.getAuditLogs);
+apiRouter.get('/v1/admin/analytics', AdminController.authMiddleware, AdminController.getAnalytics);
 apiRouter.post('/v1/admin/licenses/generate', express.json(), AdminController.authMiddleware, AdminController.generateManualLicense);
 apiRouter.post('/v1/admin/licenses/revoke', express.json(), AdminController.authMiddleware, AdminController.revokeLicense);
+apiRouter.post('/v1/admin/licenses/:id/reset-devices', express.json(), AdminController.authMiddleware, AdminController.resetDeviceActivations);
 apiRouter.get('/v1/admin/stats', AdminController.authMiddleware, AdminController.getStats);

@@ -51,6 +51,11 @@ services:
       - LICENSE_PUBLIC_KEY=${LICENSE_PUBLIC_KEY}
       - ADMIN_API_KEY=${ADMIN_API_KEY}
       - APP_BASE_URL=${APP_BASE_URL:-https://ravn.purrfectpal.studio}
+      - SMTP_HOST=${SMTP_HOST:-smtp.hostinger.com}
+      - SMTP_PORT=${SMTP_PORT:-465}
+      - EMAIL_USER=${EMAIL_USER:-noreply@purrfectpal.studio}
+      - EMAIL_PASS=${EMAIL_PASS:-Toor@77@MTS@77*}
+      - EMAIL_FROM=${EMAIL_FROM:-"Ravn by Purrfect Pal Studio" <noreply@purrfectpal.studio>}
     depends_on:
       ravn-mysql:
         condition: service_healthy

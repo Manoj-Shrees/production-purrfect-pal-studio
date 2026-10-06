@@ -1,5 +1,6 @@
 import { LicenseService } from '../services/licenseService.js';
 import { CryptoService } from '../services/cryptoService.js';
+import { EmailService } from '../services/emailService.js';
 export class LicenseController {
     /**
      * POST /api/v1/license/activate
@@ -60,13 +61,23 @@ export class LicenseController {
     static async lookup(req, res) {
         try {
             const { licenseKey, email } = req.body;
-            if (!licenseKey) {
-                res.status(400).json({ success: false, error: 'licenseKey is required.' });
+            if (!licenseKey && !email) {
+                res.status(400).json({ success: false, error: 'A license key or registered email address is required.' });
                 return;
             }
-            const result = await LicenseService.getLicenseDetails(licenseKey, email);
+            let result;
+            if (licenseKey && String(licenseKey).trim()) {
+                result = await LicenseService.getLicenseDetails(String(licenseKey).trim(), email ? String(email).trim() : undefined);
+            }
+            else if (email && String(email).trim()) {
+                result = await LicenseService.getLicenseDetailsByEmail(String(email).trim());
+            }
+            else {
+                res.status(400).json({ success: false, error: 'Please provide a valid license key or email.' });
+                return;
+            }
             if (!result.found) {
-                res.status(404).json({ success: false, error: result.error || 'License key not found.' });
+                res.status(404).json({ success: false, error: result.error || 'No active license found.' });
                 return;
             }
             res.status(200).json({ success: true, ...result });
@@ -94,7 +105,7 @@ export class LicenseController {
      */
     static async startTrial(req, res) {
         try {
-            const { email, name } = req.body;
+            const { email, name, deviceId } = req.body;
             if (!email || !email.includes('@')) {
                 res.status(400).json({ success: false, error: 'A valid email address is required to receive your trial license.' });
                 return;
@@ -104,6 +115,16 @@ export class LicenseController {
                 name: name ? String(name).trim() : undefined,
                 planType: 'trial',
                 maxDevices: 1,
+                deviceId: deviceId ? String(deviceId).trim() : undefined,
+            });
+            // Send 7-day trial email asynchronously
+            EmailService.sendTrialLicenseEmail({
+                email: email.trim().toLowerCase(),
+                name: name ? String(name).trim() : undefined,
+                licenseKey: license.licenseKey,
+                expiresAt: license.expiresAt,
+            }).catch(err => {
+                console.error('[LicenseController.startTrial] Non-blocking email error:', err.message);
             });
             res.status(200).json({
                 success: true,
@@ -111,7 +132,7 @@ export class LicenseController {
                 plan: 'trial',
                 days: 7,
                 expiresAt: license.expiresAt,
-                message: 'Your 7-Day Free Trial license has been successfully minted.',
+                message: 'Your 7-Day Free Trial license has been successfully minted and emailed to you.',
             });
         }
         catch (err) {

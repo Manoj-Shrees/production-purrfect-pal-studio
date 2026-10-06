@@ -64,15 +64,25 @@ export class LicenseService {
       // 2. Check existing trial by Device ID (Hardware UUID)
       if (options.deviceId && options.deviceId.trim()) {
         const cleanDeviceId = options.deviceId.trim();
+        
+        // Check license_activations for this device
         const [deviceTrials] = await dbPool.execute<RowDataPacket[]>(
-          `SELECT l.* FROM license_activations la
+          `SELECT l.*, c.email as customer_email FROM license_activations la
            JOIN licenses l ON la.license_id = l.id
+           JOIN customers c ON l.customer_id = c.id
            WHERE la.device_id = ? AND l.plan_type = 'trial'`,
           [cleanDeviceId]
         );
 
         if (deviceTrials.length > 0) {
           const existing = deviceTrials[0];
+          const existingEmail = (existing.customer_email || '').toLowerCase().trim();
+
+          // Reject if device was previously registered under a different email/ID
+          if (existingEmail && existingEmail !== normalizedEmail) {
+            throw new Error(`This device has already activated a 7-day free trial under another account (${existingEmail.substring(0, 3)}***). Only one free trial is allowed per device. Please sign in with your original account or upgrade to Ravn Pro.`);
+          }
+
           const isExpired = existing.expires_at ? new Date(existing.expires_at) < new Date() : false;
           if (isExpired || existing.status === 'expired' || existing.status === 'revoked') {
             throw new Error(`This Mac (Device ID: ${cleanDeviceId.substring(0, 8)}...) has already used its 7-day free trial. Please purchase a Pro license to continue.`);
@@ -83,6 +93,26 @@ export class LicenseService {
               signedPayload: existing.signed_payload,
               expiresAt: existing.expires_at ? new Date(existing.expires_at) : null,
             };
+          }
+        }
+
+        // Also check audit_logs in case trial was requested with this deviceId under a different email before activation
+        const [auditTrials] = await dbPool.execute<RowDataPacket[]>(
+          `SELECT al.* FROM audit_logs al
+           WHERE al.device_id = ? AND al.event_type IN ('trial_claimed', 'activation_success')
+           ORDER BY al.created_at DESC LIMIT 10`,
+          [cleanDeviceId]
+        );
+
+        for (const audit of auditTrials) {
+          try {
+            const details = typeof audit.details === 'string' ? JSON.parse(audit.details) : audit.details;
+            const auditEmail = details?.email ? String(details.email).toLowerCase().trim() : null;
+            if (auditEmail && auditEmail !== normalizedEmail) {
+              throw new Error(`This device has already claimed a 7-day free trial under another account/ID (${auditEmail.substring(0, 3)}***). Only 1 free trial is permitted per device. Please sign in with your original account or upgrade to Ravn Pro.`);
+            }
+          } catch (e: any) {
+            if (e.message?.includes('already claimed') || e.message?.includes('already activated')) throw e;
           }
         }
       }
@@ -186,11 +216,17 @@ export class LicenseService {
     );
 
     // Audit Log
-    await this.logAudit('license_created', licenseKey, null, null, {
-      plan: options.planType,
-      email: options.email,
-      maxDevices,
-    });
+    await this.logAudit(
+      options.planType === 'trial' ? 'trial_claimed' : 'license_created',
+      licenseKey,
+      options.deviceId ?? null,
+      null,
+      {
+        plan: options.planType,
+        email: options.email,
+        maxDevices,
+      }
+    );
 
     return {
       licenseKey,
@@ -259,19 +295,32 @@ export class LicenseService {
     // ── Enforce 1 Trial per Hardware Device UUID ──
     if (license.plan_type === 'trial') {
       const [priorDeviceTrials] = await dbPool.execute<RowDataPacket[]>(
-        `SELECT l.* FROM license_activations la
+        `SELECT l.*, c.email as customer_email FROM license_activations la
          JOIN licenses l ON la.license_id = l.id
+         JOIN customers c ON l.customer_id = c.id
          WHERE la.device_id = ? AND l.plan_type = 'trial' AND l.id != ?`,
         [options.deviceId.trim(), license.id]
       );
       if (priorDeviceTrials.length > 0) {
         const prev = priorDeviceTrials[0];
-        const isExpired = prev.expires_at ? new Date(prev.expires_at) < new Date() : false;
-        if (isExpired || prev.status === 'expired' || prev.status === 'revoked') {
-          await this.logAudit('activation_rejected_trial_device_used', key, options.deviceId, options.ipAddress ?? null);
+        const prevEmail = (prev.customer_email || '').toLowerCase().trim();
+        const isDifferentAccount = prevEmail && prevEmail !== license.customer_email.toLowerCase().trim();
+
+        await this.logAudit('activation_rejected_trial_device_used', key, options.deviceId, options.ipAddress ?? null, {
+          priorLicenseId: prev.id,
+          priorEmail: prevEmail,
+          isDifferentAccount,
+        });
+
+        if (isDifferentAccount) {
           return {
             success: false,
-            message: 'This Mac has already used a 7-Day Free Trial that has expired. Please upgrade to Ravn Pro or Lifetime to continue.',
+            message: `This Mac has already activated a 7-Day Free Trial under another account (${prevEmail.substring(0, 3)}***). Only 1 free trial is permitted per device. Please sign in with your original account or upgrade to Ravn Pro.`,
+          };
+        } else {
+          return {
+            success: false,
+            message: 'This Mac has already used its 7-Day Free Trial. Please upgrade to Ravn Pro or Lifetime to continue enjoying Pro features.',
           };
         }
       }
