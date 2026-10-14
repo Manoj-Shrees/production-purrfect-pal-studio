@@ -265,7 +265,7 @@ export class EmailService {
                   
                   <div class="step-item" style="margin-bottom: 0;">
                     <span class="step-num">3</span>
-                    <div><strong>Enjoy Pro Power:</strong> Unlock 48-segment downloads, VR converter, Media Studio, and theme studio.</div>
+                    <div><strong>Enjoy Pro Power:</strong> Unlock 48-segment downloads, Turbo Boost Channel Bonding, VR converter, Media Studio, and theme studio.</div>
                   </div>
                 </div>
 

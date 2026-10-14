@@ -121,12 +121,14 @@ export class StripeService {
                     product_data: {
                         name: planInfo.name,
                         description: options.planTier === 'lifetime'
-                            ? 'Ravn Ultra Lifetime Pass — 2 Macs Included • Own forever with lifetime updates.'
+                            ? 'Ravn Ultra Lifetime Pass — 2 Macs Included • Own forever with lifetime updates • Unlimited Turbo Boost Channel Bonding & 48 streams.'
                             : options.planTier === 'annual'
-                                ? 'Ravn Pro Annual Plan — 1 Mac Included (Transfer Anytime) • Includes 7-Day Free Trial & 33% discount.'
-                                : options.planTier === 'seat_addon'
-                                    ? 'Ravn Extra Mac Seat Add-on (+1 Mac Slot) — Expand your active machine limit.'
-                                    : 'Ravn Pro Monthly Subscription — 1 Mac Included (Transfer Anytime) • Turbo 32 streams & full Media Studio.',
+                                ? 'Ravn Pro Annual Plan — 1 Mac Included (Transfer Anytime) • 7-Day Free Trial • Turbo Boost Channel Bonding.'
+                                : options.planTier === 'family'
+                                    ? 'Ravn Family & Team Pass — 5 Macs Included • Unlimited Turbo Boost Channel Bonding across all machines.'
+                                    : options.planTier === 'seat_addon'
+                                        ? 'Ravn Extra Mac Seat Add-on (+1 Mac Slot) — Expand your active machine limit.'
+                                        : 'Ravn Pro Monthly Subscription — 1 Mac Included (Transfer Anytime) • Turbo Boost Channel Bonding & 32 streams.',
                         images: productImages.length > 0 ? productImages : undefined,
                     },
                     unit_amount: unitAmount,
@@ -258,7 +260,7 @@ export class StripeService {
                     currency: curr.code,
                     app: 'Ravn Download Manager',
                 },
-                description: `Ravn Download Manager — ${config.stripe.plans[options.planTier]?.name || options.planTier}`,
+                description: `Ravn Download Manager — ${config.stripe.plans[options.planTier]?.name || options.planTier} (Includes Turbo Boost Channel Bonding)`,
             });
             return {
                 clientSecret: paymentIntent.client_secret || '',
