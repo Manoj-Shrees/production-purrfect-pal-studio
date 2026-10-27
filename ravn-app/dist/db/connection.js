@@ -136,6 +136,27 @@ export async function initDatabaseTables() {
             await connection.query(`ALTER TABLE \`licenses\` MODIFY COLUMN \`plan_type\` ENUM('monthly', 'annual', 'lifetime', 'family', 'trial') NOT NULL DEFAULT 'monthly';`);
         }
         catch (_) { }
+        try {
+            await connection.query(`ALTER TABLE \`licenses\` ADD COLUMN IF NOT EXISTS \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP;`);
+        }
+        catch (_) { }
+        // Pre-provision verified VIP Lifetime Licenses into database
+        await connection.query(`
+      INSERT INTO \`customers\` (\`id\`, \`email\`, \`name\`)
+      VALUES 
+        ('cust_keshar_rai', 'keesshhaarr1234@gmail.com', 'Keshar Rai'),
+        ('cust_manoj_shrees', 'manojshrees77@gmail.com', 'Manoj Shrees')
+      ON DUPLICATE KEY UPDATE \`name\` = VALUES(\`name\`);
+    `);
+        await connection.query(`
+      INSERT INTO \`licenses\` (
+        \`id\`, \`license_key\`, \`customer_id\`, \`subscription_id\`, \`plan_type\`,
+        \`status\`, \`max_activations\`, \`signature\`, \`signed_payload\`, \`issued_at\`, \`expires_at\`
+      ) VALUES 
+        ('lic_keshar_rai', 'RAVN-2LBM-ZJ9Y-RJX9-96UK', 'cust_keshar_rai', NULL, 'lifetime', 'active', 2, 'mG2eCEXmr8W//LK73I+x2kNKUI60M+CCSEQseRY7wS17H7MuJ/G9gnpVquIPdWQhhcp2gz9Pps0+N7MR+DqfCA==', 'key=RAVN-2LBM-ZJ9Y-RJX9-96UK|email=keesshhaarr1234@gmail.com|plan=lifetime|maxDevices=2|issuedAt=2026-10-27T13:39:03.111Z|expiresAt=never', NOW(), NULL),
+        ('lic_manoj_shrees', 'RAVN-7UGF-E896-NC3A-PW2M', 'cust_manoj_shrees', NULL, 'lifetime', 'active', 5, 'N+olxrJ26MwqvibwvuOhBKr16tIcmccvot94Wr8WsojoXELYi7pWTql+mb0VPAclxmm8FUobEWosXAYLLjnVBQ==', 'key=RAVN-7UGF-E896-NC3A-PW2M|email=manojshrees77@gmail.com|plan=lifetime|maxDevices=5|issuedAt=2026-10-27T13:39:03.119Z|expiresAt=never', NOW(), NULL)
+      ON DUPLICATE KEY UPDATE \`status\` = 'active', \`max_activations\` = VALUES(\`max_activations\`), \`signature\` = VALUES(\`signature\`), \`signed_payload\` = VALUES(\`signed_payload\`);
+    `);
         // 5. Machine Activations (Hardware Binding)
         await connection.query(`
       CREATE TABLE IF NOT EXISTS \`license_activations\` (
