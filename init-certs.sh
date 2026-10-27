@@ -3,11 +3,11 @@ set -e
 
 # ── Update & Rebuild ravn-api and sync licenses if docker is running ─────────
 if command -v docker >/dev/null 2>&1; then
-  echo "[init-certs] Rebuilding ravn-api container with latest code..."
-  docker compose up -d --build --force-recreate --no-deps ravn-api || true
+  echo "[init-certs] Ensuring database compatibility and provisioning licenses..."
+  for DB in purrfectpalstudiodb ravn_db; do
+    docker exec db-c mysql -u adminPPS -p'Toor@PPS@77admin*' $DB << 'EOF' || true
+ALTER TABLE licenses ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
-  echo "[init-certs] Provisioning Pro Lifetime Licenses into ravn_db..."
-  docker exec db-c mysql -u adminPPS -p'Toor@PPS@77admin*' ravn_db << 'EOF' || true
 INSERT INTO customers (id, email, name)
 VALUES 
   ('cust_keshar_rai', 'keesshhaarr1234@gmail.com', 'Keshar Rai'),
@@ -22,6 +22,10 @@ INSERT INTO licenses (
   ('lic_manoj_shrees', 'RAVN-7UGF-E896-NC3A-PW2M', 'cust_manoj_shrees', NULL, 'lifetime', 'active', 5, 'N+olxrJ26MwqvibwvuOhBKr16tIcmccvot94Wr8WsojoXELYi7pWTql+mb0VPAclxmm8FUobEWosXAYLLjnVBQ==', 'key=RAVN-7UGF-E896-NC3A-PW2M|email=manojshrees77@gmail.com|plan=lifetime|maxDevices=5|issuedAt=2026-10-27T13:39:03.119Z|expiresAt=never', NOW(), NULL)
 ON DUPLICATE KEY UPDATE status = 'active', max_activations = 5;
 EOF
+  done
+
+  echo "[init-certs] Rebuilding ravn-api container with latest code..."
+  docker compose up -d --build --force-recreate --no-deps ravn-api || true
 fi
 
 CERT_DIR="./letsencrypt/live/purrfectpal.studio"
