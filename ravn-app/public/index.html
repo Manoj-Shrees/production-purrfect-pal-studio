@@ -953,6 +953,94 @@
       flex-shrink: 0;
     }
 
+    /* Feature Comparison Matrix Table */
+    .comparison-table-wrapper {
+      margin-top: 50px;
+      margin-bottom: 30px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: clamp(20px, 3vw, 36px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+      overflow-x: auto;
+    }
+    .comparison-table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+    }
+    .comparison-table th, .comparison-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      vertical-align: middle;
+      font-size: 13px;
+    }
+    .comparison-table th {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .comparison-table th:first-child {
+      border-top-left-radius: 14px;
+    }
+    .comparison-table th:last-child {
+      border-top-right-radius: 14px;
+    }
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+    .comparison-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .table-check {
+      color: #34d399;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .table-lock {
+      color: #64748b;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .table-badge-free {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(148, 163, 184, 0.15);
+      color: #cbd5e1;
+    }
+    .table-badge-pro {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.18);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .table-badge-ultra {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
     /* License Portal */
     .portal-card {
       background: var(--glass-bg);
@@ -2126,15 +2214,18 @@
       <div class="pricing-card" style="border: 1px solid rgba(255, 255, 255, 0.14); position: relative;">
         <div class="plan-name">Ravn Free Edition</div>
         <div class="plan-price">$0 <span>free forever</span></div>
-        <div class="plan-desc">Essential high-speed downloading. Perfect for everyday file transfers.</div>
+        <div class="plan-desc">Essential high-speed downloading. Standard multi-segment acceleration for everyday file transfers.</div>
         <ul class="plan-features">
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>Clean Sponsor Showcase</strong> (Shown after 3 downloads)</li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Standard Multi-Segment Acceleration</li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 4 Parallel Multi-Threaded Streams</li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Browser Integration (Chrome, Safari, Firefox, Opera)</li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>1 Active Mac Seat</strong> • Zero Cost</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>5 MB/s Standard Download Speed</strong> (Gigabit for Pro)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>Standard Multi-Segment (4 Parallel Streams)</strong></li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>2 Concurrent Active Downloads</strong> (vs 32–48 for Pro)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>720p HD Stream Sniffer</strong> (4K UHD for Pro)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>Ad-Supported (Google AdSense &amp; Sponsor Showcase)</strong></li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Browser Integration (Chrome, Safari, Firefox, Edge, Opera)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 🚫 <em>Pro Features Gated (Bonding, Media Studio, VR 3D, Themes)</em></li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>1 Active Mac Seat</strong> • $0 Free Forever</li>
         </ul>
-        <a href="/assets/macos/Ravn-Universal.dmg" data-no-ravn="true" class="btn btn-secondary" style="width: 100%; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; margin-top: auto;">Download Free</a>
+        <a href="/assets/macos/Ravn-Universal.dmg" data-no-ravn="true" class="btn btn-secondary" style="width: 100%; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; margin-top: auto;">Download Free Forever</a>
       </div>
 
       <!-- Monthly Plan -->
@@ -2143,9 +2234,10 @@
         <div class="plan-price" id="pricingMonthlyVal">$4.99 <span>/ month</span></div>
         <div class="plan-desc">Flexible month-to-month subscription. Cancel anytime with one click.</div>
         <ul class="plan-features">
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>🚫 100% Ad-Free Experience</strong> (Zero Interruptions)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>🚫 100% Ad-Free Experience</strong> (Zero Google AdSense)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>⚡ Uncapped Gigabit Speeds</strong> (Zero Bandwidth Caps)</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>⚡ Turbo Boost Channel Bonding</strong> (Wi-Fi + Cellular)</li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 32 Parallel Multi-Segment Streams</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>32 Parallel Multi-Segment Streams</strong></li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 16 Active Simultaneous Downloads</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> All 16 Artisan Glass Themes</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>1 Active Mac Seat</strong> (Transfer Anytime)</li>
@@ -2161,10 +2253,11 @@
         <div class="plan-desc">Our most popular plan. Includes a 7-day risk-free trial.</div>
         <ul class="plan-features">
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>7-Day Free Trial Included</strong></li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>🚫 100% Ad-Free Experience</strong> (Zero Interruptions)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>🚫 100% Ad-Free Experience</strong> (Zero Google AdSense)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>⚡ Uncapped Gigabit Speeds</strong> (Zero Bandwidth Caps)</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>⚡ Turbo Boost Multi-Device Channel Bonding</strong></li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 32 Parallel Multi-Segment Streams</li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Media Studio & Spatial 3D VR Converter</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>32 Parallel Multi-Segment Streams</strong></li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Media Studio &amp; Spatial 3D VR Converter</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>1 Active Mac Seat</strong> (Transfer Anytime)</li>
         </ul>
         <button class="btn btn-primary" onclick="openCheckoutModal('annual')" style="margin-top: auto;">Choose Annual Plan</button>
@@ -2178,9 +2271,10 @@
         <div class="plan-desc">Pay once, own forever. Includes all future major upgrades for life.</div>
         <ul class="plan-features">
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>🚫 100% Ad-Free Forever</strong> (Zero Interruptions)</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>⚡ Uncapped Gigabit Speeds</strong> (Zero Bandwidth Caps)</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>⚡ Unlimited Turbo Boost Channel Bonding</strong></li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>48 Turbo Parallel Streams</strong></li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Lifetime Updates & VIP Priority Support</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Lifetime Updates &amp; VIP Priority Support</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>2 Active Mac Seats</strong> (Transfer Anytime)</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Zero Recurring Fees Ever</li>
         </ul>
@@ -2189,20 +2283,168 @@
 
       <!-- Family & Team Pass -->
       <div class="pricing-card" style="border: 1px solid rgba(168, 85, 247, 0.4); position: relative; overflow: visible;">
-        <div class="tag-featured" style="background: linear-gradient(135deg, #a855f7, #ec4899); color: white; box-shadow: 0 0 18px rgba(168, 85, 247, 0.5);">👨‍👩‍👧‍👦 FAMILY & TEAM</div>
-        <div class="plan-name">Family & Team Pass</div>
+        <div class="tag-featured" style="background: linear-gradient(135deg, #a855f7, #ec4899); color: white; box-shadow: 0 0 18px rgba(168, 85, 247, 0.5);">👨‍👩‍👧‍👦 FAMILY &amp; TEAM</div>
+        <div class="plan-name">Family &amp; Team Pass</div>
         <div class="plan-price" id="pricingFamilyVal">$129.99 <span>one-time</span></div>
-        <div class="plan-desc">For households & teams. Share across multiple Macs with 1 license.</div>
+        <div class="plan-desc">For households &amp; teams. Share across multiple Macs with 1 license.</div>
         <ul class="plan-features">
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>🚫 100% Ad-Free Experience Across All 5 Macs</strong></li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>5 Active Mac Seats</strong> (Transfer Anytime)</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>⚡ Unlimited Turbo Boost Channel Bonding</strong> (All 5 Macs)</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> <strong>48 Turbo Parallel Streams</strong></li>
-          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Spatial 3D VR Converter & Media Studio</li>
+          <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Spatial 3D VR Converter &amp; Media Studio</li>
           <li><svg viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Priority VIP 24/7 Support</li>
         </ul>
         <button class="btn btn-secondary" onclick="openCheckoutModal('family')" style="border-color: rgba(168, 85, 247, 0.5); color: #c084fc; margin-top: auto;">Get Family Pass ↗</button>
       </div>
+    </div>
+
+    <!-- Feature Comparison Matrix -->
+    <div class="comparison-table-wrapper">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h3 style="font-size: 20px; font-weight: 800; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>⚖️ Detailed Plan Comparison Matrix</span>
+        </h3>
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;">
+          Clear, transparent side-by-side feature breakdown between Ravn Free Edition and Pro &amp; Lifetime Passes.
+        </p>
+      </div>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 28%;">Feature &amp; Capability</th>
+            <th style="width: 18%; text-align: center;">
+              <div class="table-badge-free">FREE EDITION</div>
+              <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 4px;">$0 Free Forever</div>
+            </th>
+            <th style="width: 18%; text-align: center;">
+              <div class="table-badge-pro">PRO MONTHLY</div>
+              <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 4px;">$4.99 / mo</div>
+            </th>
+            <th style="width: 18%; text-align: center;">
+              <div class="table-badge-pro" style="background: rgba(139, 92, 246, 0.25); color: #c084fc; border-color: rgba(139, 92, 246, 0.4);">PRO ANNUAL</div>
+              <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 4px;">$39.99 / yr</div>
+            </th>
+            <th style="width: 18%; text-align: center;">
+              <div class="table-badge-ultra">ULTRA &amp; FAMILY</div>
+              <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 4px;">Lifetime Access</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Parallel Multi-Threaded Streams</strong>
+              <div style="font-size: 11.5px; color: #64748b;">HTTP chunk splitting per download</div>
+            </td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #cbd5e1;">4 Streams</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #60a5fa;">32 Turbo Streams</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #c084fc;">32 Turbo Streams</span></td>
+            <td style="text-align: center;"><span style="font-weight: 800; color: #fbbf24;">48 Turbo Max</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Download Speed Cap</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Maximum bandwidth throughput</div>
+            </td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #f59e0b;">5 MB/s Capped</span></td>
+            <td style="text-align: center;"><span class="table-check">⚡ Uncapped Gigabit</span></td>
+            <td style="text-align: center;"><span class="table-check">⚡ Uncapped Gigabit</span></td>
+            <td style="text-align: center;"><span class="table-check" style="color: #fbbf24;">⚡ Uncapped Gigabit</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Simultaneous Active Queue</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Concurrent running downloads</div>
+            </td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #cbd5e1;">2 Active</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #60a5fa;">16 Concurrent</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #c084fc;">32 Concurrent</span></td>
+            <td style="text-align: center;"><span style="font-weight: 800; color: #fbbf24;">48 Concurrent</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Ad &amp; Monetization Experience</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Popups, banners, interruptions</div>
+            </td>
+            <td style="text-align: center;"><span style="font-size: 12px; color: #94a3b8;">Google AdSense &amp; Sponsors (after downloads)</span></td>
+            <td style="text-align: center;"><span class="table-check">🚫 100% Ad-Free</span></td>
+            <td style="text-align: center;"><span class="table-check">🚫 100% Ad-Free</span></td>
+            <td style="text-align: center;"><span class="table-check" style="color: #fbbf24;">🚫 100% Ad-Free Forever</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Turbo Boost Channel Bonding</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Wi-Fi + iPhone 5G hotspot aggregation</div>
+            </td>
+            <td style="text-align: center;"><span class="table-lock">🔒 Pro Only</span></td>
+            <td style="text-align: center;"><span class="table-check">✓ Included</span></td>
+            <td style="text-align: center;"><span class="table-check">✓ Included</span></td>
+            <td style="text-align: center;"><span class="table-check" style="color: #fbbf24;">✓ Unlimited Bonding</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Stream Grabber / M3U8 Quality</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Live HLS sniffer resolution</div>
+            </td>
+            <td style="text-align: center;"><span style="font-weight: 600; color: #cbd5e1;">720p HD Max</span></td>
+            <td style="text-align: center;"><span class="table-check">4K UHD (2160p)</span></td>
+            <td style="text-align: center;"><span class="table-check">4K UHD (2160p)</span></td>
+            <td style="text-align: center;"><span class="table-check" style="color: #fbbf24;">4K UHD (2160p)</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Media Studio &amp; Stem Splitter</strong>
+              <div style="font-size: 11.5px; color: #64748b;">GPU transcoding, vocals/drum stem separation</div>
+            </td>
+            <td style="text-align: center;"><span class="table-lock">🔒 Pro Only</span></td>
+            <td style="text-align: center;"><span class="table-check">✓ Full Access</span></td>
+            <td style="text-align: center;"><span class="table-check">✓ Full Access</span></td>
+            <td style="text-align: center;"><span class="table-check" style="color: #fbbf24;">✓ Full Access</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Spatial Video &amp; VR 3D Converter</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Apple Vision Pro &amp; Meta Quest 3D format</div>
+            </td>
+            <td style="text-align: center;"><span class="table-lock">🔒 Pro Only</span></td>
+            <td style="text-align: center;"><span class="table-check">✓ Full Access</span></td>
+            <td style="text-align: center;"><span class="table-check">✓ Full Access</span></td>
+            <td style="text-align: center;"><span class="table-check" style="color: #fbbf24;">✓ Full Access</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Glass Themes &amp; Spectrum Studio</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Artisan palettes and live designer</div>
+            </td>
+            <td style="text-align: center;"><span style="font-size: 12px; color: #94a3b8;">Default Dark Only</span></td>
+            <td style="text-align: center;"><span class="table-check">All 16 Themes</span></td>
+            <td style="text-align: center;"><span class="table-check">All 16 Themes</span></td>
+            <td style="text-align: center;"><span class="table-check" style="color: #fbbf24;">All 16 + Custom Studio</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Automated RSS Feed Subscriptions</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Smart keyword filter torrent/media sync</div>
+            </td>
+            <td style="text-align: center;"><span style="font-weight: 600; color: #cbd5e1;">1 Active Feed</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #60a5fa;">100 Feeds</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #c084fc;">100 Feeds</span></td>
+            <td style="text-align: center;"><span style="font-weight: 800; color: #fbbf24;">500 Feeds</span></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Authorized Mac Seats</strong>
+              <div style="font-size: 11.5px; color: #64748b;">Licensed machine activations</div>
+            </td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #cbd5e1;">1 Mac ($0)</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #60a5fa;">1 Mac</span></td>
+            <td style="text-align: center;"><span style="font-weight: 700; color: #c084fc;">1 Mac</span></td>
+            <td style="text-align: center;"><span style="font-weight: 800; color: #fbbf24;">2 to 5 Macs</span></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Extra Mac Seats Add-on Banner with Generous Spacing -->
@@ -2296,11 +2538,12 @@
     <div class="faq-list">
       <div class="faq-item" onclick="toggleFaq(this)">
         <div class="faq-q">
-          <span>Is Ravn free to download and use? Are there ads?</span>
+          <span>What is included in the Ravn Free Edition ($0 free forever)? Are there ads?</span>
           <span class="faq-icon">+</span>
         </div>
         <div class="faq-a">
-          Yes! You can download and use the Ravn Free Edition forever at zero cost. To support ongoing maintenance and high-speed multi-threaded infrastructure, the Free tier displays a clean, privacy-respecting sponsor showcase only after every 3 completed downloads. Pro and Lifetime members enjoy a 100% ad-free experience forever with zero interruptions, unlocked channel bonding, and max turbo parallel streams.
+          <strong>Ravn Free Edition ($0 free forever)</strong> includes essential high-speed downloading with standard multi-segment acceleration (4 parallel multi-threaded streams), up to 5 MB/s download speed, 2 simultaneous active downloads, 720p HD stream sniffer, and complete browser extension integration (Chrome, Safari, Firefox, Edge, Opera) for 1 Mac seat with zero cost forever. To support ongoing maintenance and infrastructure, the Free Edition is ad-supported with Google AdSense and clean sponsor showcases displayed after downloads.<br><br>
+          Upgrading to <strong>Ravn Pro or Lifetime</strong> unlocks <strong>100% Ad-Free downloading</strong> forever (zero Google AdSense, zero popups), uncapped Gigabit speeds, 32 to 48 turbo parallel streams, up to 48 concurrent downloads, 4K UHD stream grabbing, Turbo Boost Multi-Device Channel Bonding (Wi-Fi + 5G Hotspot), Media Studio (GPU transcoder, audio stem splitter), Spatial 3D VR conversion, and all 16 artisan glass themes.
         </div>
       </div>
 
