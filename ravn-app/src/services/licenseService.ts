@@ -139,7 +139,7 @@ export class LicenseService {
       `SELECT l.* FROM licenses l
        WHERE l.customer_id = ? AND l.plan_type = ? AND l.status = 'active'
        AND (l.expires_at IS NULL OR l.expires_at > NOW())
-       ORDER BY l.created_at DESC LIMIT 1`,
+       ORDER BY l.issued_at DESC LIMIT 1`,
       [resolvedCustomerId, options.planType]
     );
 
@@ -545,7 +545,7 @@ export class LicenseService {
       `SELECT l.license_key FROM licenses l
        JOIN customers c ON l.customer_id = c.id
        WHERE c.email = ? AND l.status = 'active'
-       ORDER BY l.created_at DESC LIMIT 1`,
+       ORDER BY l.issued_at DESC LIMIT 1`,
       [cleanEmail]
     );
 

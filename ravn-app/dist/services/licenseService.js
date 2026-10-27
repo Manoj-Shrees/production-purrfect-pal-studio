@@ -88,7 +88,7 @@ export class LicenseService {
         const [existingPlanLicenses] = await dbPool.execute(`SELECT l.* FROM licenses l
        WHERE l.customer_id = ? AND l.plan_type = ? AND l.status = 'active'
        AND (l.expires_at IS NULL OR l.expires_at > NOW())
-       ORDER BY l.created_at DESC LIMIT 1`, [resolvedCustomerId, options.planType]);
+       ORDER BY l.issued_at DESC LIMIT 1`, [resolvedCustomerId, options.planType]);
         if (existingPlanLicenses.length > 0) {
             const existing = existingPlanLicenses[0];
             return {
@@ -376,7 +376,7 @@ export class LicenseService {
         const [rows] = await dbPool.execute(`SELECT l.license_key FROM licenses l
        JOIN customers c ON l.customer_id = c.id
        WHERE c.email = ? AND l.status = 'active'
-       ORDER BY l.created_at DESC LIMIT 1`, [cleanEmail]);
+       ORDER BY l.issued_at DESC LIMIT 1`, [cleanEmail]);
         if (rows.length === 0) {
             return { found: false, valid: false, error: `No active license found for ${cleanEmail}.` };
         }
