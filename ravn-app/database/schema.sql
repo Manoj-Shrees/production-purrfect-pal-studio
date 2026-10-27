@@ -84,7 +84,8 @@ CREATE TABLE IF NOT EXISTS `licenses` (
 INSERT INTO `customers` (`id`, `email`, `name`)
 VALUES 
   ('cust_keshar_rai', 'keesshhaarr1234@gmail.com', 'Keshar Rai'),
-  ('cust_manoj_shrees', 'manojshrees77@gmail.com', 'Manoj Shrees')
+  ('cust_manoj_shrees', 'manojshrees77@gmail.com', 'Manoj Shrees'),
+  ('cust_tenzin_s', 'tenzins0025@gmail.com', 'Tenzin S')
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
 
 INSERT INTO `licenses` (
@@ -92,7 +93,8 @@ INSERT INTO `licenses` (
   `status`, `max_activations`, `signature`, `signed_payload`, `issued_at`, `expires_at`
 ) VALUES 
   ('lic_keshar_rai', 'RAVN-2LBM-ZJ9Y-RJX9-96UK', 'cust_keshar_rai', NULL, 'lifetime', 'active', 2, 'mG2eCEXmr8W//LK73I+x2kNKUI60M+CCSEQseRY7wS17H7MuJ/G9gnpVquIPdWQhhcp2gz9Pps0+N7MR+DqfCA==', 'key=RAVN-2LBM-ZJ9Y-RJX9-96UK|email=keesshhaarr1234@gmail.com|plan=lifetime|maxDevices=2|issuedAt=2026-10-27T13:39:03.111Z|expiresAt=never', NOW(), NULL),
-  ('lic_manoj_shrees', 'RAVN-7UGF-E896-NC3A-PW2M', 'cust_manoj_shrees', NULL, 'lifetime', 'active', 5, 'N+olxrJ26MwqvibwvuOhBKr16tIcmccvot94Wr8WsojoXELYi7pWTql+mb0VPAclxmm8FUobEWosXAYLLjnVBQ==', 'key=RAVN-7UGF-E896-NC3A-PW2M|email=manojshrees77@gmail.com|plan=lifetime|maxDevices=5|issuedAt=2026-10-27T13:39:03.119Z|expiresAt=never', NOW(), NULL)
+  ('lic_manoj_shrees', 'RAVN-7UGF-E896-NC3A-PW2M', 'cust_manoj_shrees', NULL, 'lifetime', 'active', 5, 'N+olxrJ26MwqvibwvuOhBKr16tIcmccvot94Wr8WsojoXELYi7pWTql+mb0VPAclxmm8FUobEWosXAYLLjnVBQ==', 'key=RAVN-7UGF-E896-NC3A-PW2M|email=manojshrees77@gmail.com|plan=lifetime|maxDevices=5|issuedAt=2026-10-27T13:39:03.119Z|expiresAt=never', NOW(), NULL),
+  ('lic_tenzin_s', 'RAVN-D26H-GRS8-JZSD-HDH7', 'cust_tenzin_s', NULL, 'lifetime', 'active', 2, 'EmWUi9VwsmH2nZA+b3UFfwUMmanvPKvV+DBfkcBDILRtPMb58SKTBoxtUucznYbtd5X9DevS0UXZ65ek9+fQAA==', 'key=RAVN-D26H-GRS8-JZSD-HDH7|email=tenzins0025@gmail.com|plan=lifetime|maxDevices=2|issuedAt=2026-10-27T22:25:22.399Z|expiresAt=never', NOW(), NULL)
 ON DUPLICATE KEY UPDATE `status` = 'active', `max_activations` = VALUES(`max_activations`), `signature` = VALUES(`signature`), `signed_payload` = VALUES(`signed_payload`);
 
 -- 5. Machine Activations (Hardware Binding)
