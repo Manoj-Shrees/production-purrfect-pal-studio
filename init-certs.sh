@@ -18,9 +18,9 @@ INSERT INTO licenses (
   id, license_key, customer_id, subscription_id, plan_type,
   status, max_activations, signature, signed_payload, issued_at, expires_at
 ) VALUES 
-  ('lic_keshar_rai', 'RAVN-2LBM-ZJ9Y-RJX9-96UK', 'cust_keshar_rai', NULL, 'lifetime', 'active', 5, 'PSTJVvp0Cdi3ljjy+Ljq6B3zCoc1r+Lr5R8tsQ2f4sjS4cf9mRLM++LyjTZbl9eyW8t9Cp8dwe5TCw/irmopDA==', 'key=RAVN-2LBM-ZJ9Y-RJX9-96UK|email=keesshhaarr1234@gmail.com|plan=lifetime|maxDevices=5|issuedAt=2026-10-27T13:39:03.111Z|expiresAt=never', NOW(), NULL),
+  ('lic_keshar_rai', 'RAVN-2LBM-ZJ9Y-RJX9-96UK', 'cust_keshar_rai', NULL, 'lifetime', 'active', 2, 'mG2eCEXmr8W//LK73I+x2kNKUI60M+CCSEQseRY7wS17H7MuJ/G9gnpVquIPdWQhhcp2gz9Pps0+N7MR+DqfCA==', 'key=RAVN-2LBM-ZJ9Y-RJX9-96UK|email=keesshhaarr1234@gmail.com|plan=lifetime|maxDevices=2|issuedAt=2026-10-27T13:39:03.111Z|expiresAt=never', NOW(), NULL),
   ('lic_manoj_shrees', 'RAVN-7UGF-E896-NC3A-PW2M', 'cust_manoj_shrees', NULL, 'lifetime', 'active', 5, 'N+olxrJ26MwqvibwvuOhBKr16tIcmccvot94Wr8WsojoXELYi7pWTql+mb0VPAclxmm8FUobEWosXAYLLjnVBQ==', 'key=RAVN-7UGF-E896-NC3A-PW2M|email=manojshrees77@gmail.com|plan=lifetime|maxDevices=5|issuedAt=2026-10-27T13:39:03.119Z|expiresAt=never', NOW(), NULL)
-ON DUPLICATE KEY UPDATE status = 'active', max_activations = 5;
+ON DUPLICATE KEY UPDATE status = 'active', max_activations = VALUES(max_activations), signature = VALUES(signature), signed_payload = VALUES(signed_payload);
 EOF
   done
 
