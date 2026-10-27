@@ -254,6 +254,10 @@ sleep 5
 docker compose up -d --force-recreate --no-deps backend-2 nginx
 sleep 6
 
+# Recreate and rebuild ravn-api with latest code
+docker compose up -d --build --force-recreate --no-deps ravn-api
+sleep 3
+
 echo "[deploy] ── Step 6: Run SMTP diagnostics inside container ─────────"
 ACTIVE_CONTAINER=$(docker ps --format '{{.Names}}' | grep backend-c | head -n 1 || echo "backend-c-1")
 docker exec "$ACTIVE_CONTAINER" node -e "
